@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--
+* @Copyright(c): 厦门路桥信息股份有限公司  版权所有
+* @author :Administrator
+* @Description:考勤报表管理 
+* @createDate:2018-3-27
+-->
+<head>
+	<meta charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+	<title>考勤报表管理</title>
+	<!-- Bootstrap 3.3.7 -->
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.css}"/>
+</head>
+<body>
+    <div class="content">
+        <div id="toolbar" style="width:600px;">
+            <form id="formSearch" class="form-horizontal">
+       			<div class="form-group" style="width:220px;float:left;margin-bottom:0;">
+                    <label class="control-label col-sm-6" style="padding-top:0;">入场时间:</label>
+                    <div class="col-sm-6" style="padding:0;">
+                    	<select class="form-control" name="inTime" onchange="queryInfo()">
+                    		<option value="">请选择</option>
+                    		<option value="1">今天</option>
+                    		<option value="2">本周</option>
+                    		<option value="3">本月</option>
+                    		<option value="4">本季度</option>
+                    		<option value="5">今年</option>
+                    	</select>
+                    	<!-- <input type="text" class="form-control" id="query_personnel.companyName_like" name="query_personnel.companyName_like" /> --> 
+                    </div>
+               	</div>
+       			<div class="form-group" style="width:220px;float:left;margin-bottom:0;">
+        			<label class="control-label col-sm-6" style="padding-top:0;">出场时间:</label>
+                    <div class="col-sm-6" style="padding:0;">
+                   	 	<select class="form-control" name="outTime" onchange="queryInfo()">
+                    		<option value="">请选择</option>
+                    		<option value="1">今天</option>
+                    		<option value="2">本周</option>
+                    		<option value="3">本月</option>
+                    		<option value="4">本季度</option>
+                    		<option value="5">今年</option>
+                   		</select>
+                    	 <!-- <input type="text" class="form-control" id="query_userName_like" name="query_userName_like" /> --> 
+                    </div>
+                </div>
+            </form>
+        </div>
+        <table id="dataList"></table>
+    </div>
+    
+    <div class="modal fade" id="addModal" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+				 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">考勤报表管理</h4>
+				</div>
+				<div class="modal-body" style="overflow: hidden; padding: 10px;">
+					<form class="form-horizontal" id="inputForm" name="inputForm">
+		            		<input type="hidden" id="id" name="id" value=""/>
+		            		<div class="row">
+							    <div class="col-md-offset-2 col-md-8 col-xs-8 col-sm-8">
+								    <div class="form-group">
+									    <div class="input-group">
+										  <span class="input-group-addon">入场时间</span>
+										  <input type="text" class="form-control update" name="atteInTime" id="atteInTime" />
+										</div>
+									</div>
+								</div>
+							</div>
+		            		<div class="row">
+							    <div class="col-md-offset-2 col-md-8 col-xs-8 col-sm-8">
+								    <div class="form-group">
+									    <div class="input-group">
+										  <span class="input-group-addon">出场时间</span>
+										  <input type="text" class="form-control update" name="atteOutTime" id="atteOutTime" />
+										</div>
+									</div>
+								</div>
+							</div>
+		            		<div class="row">
+							    <div class="col-md-offset-2 col-md-8 col-xs-8 col-sm-8">
+								    <div class="form-group">
+									    <div class="input-group">
+										  <span class="input-group-addon">在岗时长</span>
+										  <input type="text" class="form-control update" name="onDuty" id="onDuty" />
+										</div>
+									</div>
+								</div>
+							</div>
+		            		<div class="row">
+							    <div class="col-md-offset-2 col-md-8 col-xs-8 col-sm-8">
+								    <div class="form-group">
+									    <div class="input-group">
+										  <span class="input-group-addon">工种</span>
+										  <input type="text" class="form-control update" name="workType" id="workType" />
+										</div>
+									</div>
+								</div>
+							</div>
+		            		<div class="row">
+							    <div class="col-md-offset-2 col-md-8 col-xs-8 col-sm-8">
+								    <div class="form-group">
+									    <div class="input-group">
+										  <span class="input-group-addon">考勤信息ID</span>
+										  <input type="text" class="form-control update" name="atteInfomationIds" id="atteInfomationIds" />
+										</div>
+									</div>
+								</div>
+							</div>
+
+		            	</form>
+				</div>
+				<div class="modal-footer">
+					 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> 
+					 <button id="btnSubmit" type="button" onclick="doSave()" class="btn btn-primary">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- frame窗口信息 -->
+	<div class="modal fade modal-primary" id="common_frame_win" role="dialog" data-backdrop="false" aria-hidden="true">
+		<div class="modal-dialog" style="width:1024px;">
+	      	<div class="modal-content" style="background-color:rgba(255, 255, 255, 0);">
+		        <div class="modal-header" style="padding:5px;">
+		          	<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top:0;">
+		            	<span aria-hidden="true">&times;</span>
+		            </button>
+		            <button type="button" class="close max-btn" style="margin-right:5px;margin-top: -1px;" onclick="fnMaxModalWin(this)">
+		            	<i class="fa fa-square-o" style="font-size:16px;"></i>
+		            </button>
+		          	<h4 class="modal-title" style="text-align:left;"></h4>
+		        </div>
+		        <div class="modal-body" style="height: 550px;padding:0px;background-color: rgba(3, 51, 101, 0.9) !important;">
+		          	<iframe style="width: 100%;height:100%;border:0;"></iframe>
+		        </div>
+	      	</div>
+		</div>
+	</div>
+</body>
+<!-- jQuery 2.2.3 -->
+<script th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/dist/js/app.min.js}"></script>
+<script th:src="@{/static/js/common.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/static/plugins/jQuery/jquery.serializejson.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/tableExport.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+	var CTX = [[@{/}]];
+	$(function () {
+	    //1.初始化Table
+	    var oTable = new TableInit();
+	    oTable.Init();
+	});
+	
+	//初始化列表
+	var TableInit = function () {
+	    var oTableInit = new Object();
+	    //初始化Table
+	    oTableInit.Init = function () {
+	        $('#dataList').bootstrapTable({
+	        	url: CTX + 'attendance-report/query-attendance-report-page',         //请求后台的URL（*）
+	            method: 'get',                      //请求方式（*）
+	            toolbar: '#toolbar',                //工具按钮用哪个容器
+	            striped: true,                      //是否显示行间隔色
+	            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+	            pagination: true,                   //是否显示分页（*）
+	            sortable: true,                     //是否启用排序
+	            sortOrder: "asc",                   //排序方式
+	            queryParams: oTableInit.queryParams,//传递参数（*）
+	            sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+	            pageNumber:1,                       //初始化加载第一页，默认第一页
+	            pageSize: 10,                       //每页的记录行数（*）
+	            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+	            queryParamsType: "a",
+	            search: true,                       //是否显示表格搜索
+	            showColumns: true,                  //是否显示所有的列
+	            showRefresh: true,                  //是否显示刷新按钮
+	            minimumCountColumns: 2,             //最少允许的列数
+	            clickToSelect: true,                //是否启用点击选中行
+	            height: $(window).height()-30,      //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+	            uniqueId: "id",                     //每一行的唯一标识，一般为主键列
+	            showToggle:true,                    //是否显示详细视图和列表视图的切换按钮
+	            cardView: false,                    //是否显示详细视图
+	            detailView: false,                  //是否显示父子表
+	            showExport: true,                     //是否显示导出
+	            exportDataType: "basic",              //basic', 'all', 'selected'.
+	            exportTypes:[ 'excel','doc', 'xml','csv','json'],  //导出文件类型
+	            exportOptions:{  
+	                ignoreColumn: [0],  //忽略某一列的索引 ,如 [0,1]
+	                fileName: '考勤报表导出',  //文件名称设置  
+	                worksheetName: '信息',  //表格工作区名称  
+	                tableName: '考勤报表导出文件'
+	            },
+	            columns: [
+            	{
+				    field: 'companyName',
+				    title:'单位名称'
+				},{
+				    field: 'projectTeam',
+				    title:'部门班组',
+				    formatter:function(v,r,i){
+				    	return (v==null||v=='')?'-':v;
+				    }
+				},{
+				    field: 'name',
+				    title:'人员'
+				},{
+				    field: 'idNumber',
+				    title:'身份证'
+				},{
+				    field: 'workType',
+				    title:'工种',
+				    formatter:function(v,r,i){
+				    	if(v==null){
+				    		return '(管理员)';
+				    	}
+				    	return v;
+				    }
+				},{
+				    field: 'atteInTime',
+				    title:'入场时间',
+				    sortable:true,
+				    formatter:function(v,r,i){
+				    	return (new Date(v)).Format('yyyy-MM-dd hh:mm:ss');
+				    }
+				},{
+				    field: 'atteOutTime',
+				    title:'出场时间',
+				    sortable:true,
+				    formatter:function(v,r,i){
+				    	if(v!=null){
+					    	return (new Date(v)).Format('yyyy-MM-dd hh:mm:ss');
+				    	}else{return null;}
+				    }
+				},{
+				    field: 'onDuty',
+				    title:'在岗时长',
+				    sortable:true,
+				    formatter:function(v,r,i){
+				    	return v!=null?v.toFixed(2):null;
+				    }
+				},{
+				    field: 'atteInfomationIds',
+				    title:'操作',
+				    align : 'center',
+					valign : 'middle',
+					clickToSelect : false,
+                    formatter: function (v, r, i) {
+                    	var operateHtml = '<button type="button" onclick="doShowDetail(\''+r.id+'\')" style="background: none; border:none;"><i class="fa fa-search"></i></button>';
+                        return operateHtml;
+                    }
+				}
+				]
+	        });
+	        $('.search input').attr('placeholder','人员姓名');
+	    };
+
+	    //得到查询的参数
+	    oTableInit.queryParams = function (params) {
+	    	var data = JSON.stringify($('#formSearch').serializeJSON());
+	        var temp = {   //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+	    		pageNum: params.pageNumber,//页码params.offset
+                size: params.pageSize,//页面大小params.limit
+                order: params.sortOrder,//排序 params.order
+                ordername: params.sortName,//排序字段 params.sort
+                form:data,
+	            search:params.searchText
+	        };
+	        return temp;
+	    };
+	    return oTableInit;
+	};
+	
+	
+	//查询-刷新
+	var queryInfo = function(){
+		var data = JSON.stringify($('#formSearch').serializeJSON());
+		var queryData = {form: data};
+		$('#dataList').bootstrapTable('refresh',{pageNumber:1,pageSize:10,query:queryData});
+	}
+	
+	function doShowDetail(reportId){
+		var url = CTX+'atte-infomation/query-atte-infomation.html?reportId='+reportId;
+		top.openCommonFrameWin(url,$(window.parent).width()*3/4,$(window.parent).height()-50);
+		/* top.returnData = null;
+		var title;
+		var url = url;
+		var dlg = top.Dialog ? new top.Dialog() : new Dialog();//定义Dialog对象
+		dlg.Model = true;
+		dlg.Drag = false;
+		dlg.Width = $(window.parent).width()*3/4;//定义长度
+		dlg.Height =$(window.parent).height()-50;	
+		dlg.URL = url;
+		dlg.Title = "人员考勤详细";
+		dlg.CancelEvent = function() {
+			//if (top.returnData) {
+			//	alert(top.returnData);
+			//}
+			dlg.close();
+		}
+		dlg.show(); */
+	}
+/*]]>*/
+</script>	
+</html>

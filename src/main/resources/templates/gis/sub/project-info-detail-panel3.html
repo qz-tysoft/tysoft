@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/>
+<title>项目工程-现场视频</title>
+<style type="text/css">
+	.my-content-body{
+		padding:5px;height: 100%;
+		overflow: hidden;
+	}
+	.my-accordion{
+		margin-bottom:1px;
+		width:100%;
+	}
+	.my-accordion .title{
+		margin-bottom:0px;
+	}
+	.my-accordion .title:ACTIVE{
+		background: rgba(4, 90, 138, 0.8);
+	}
+	.accordion-content{
+		display: none;
+		overflow: auto;
+	}
+	.my-accordion .actived{
+		display:block;
+	}
+	.video-title{
+		position: absolute;left:0;right:0;bottom:0;text-align: center;
+		margin:4px;
+		background: rgba(0, 0, 0, 0.3);
+    	color: #fff;
+	}
+	.video-loading{
+		width:100%;text-align:center;color:#fff;padding:10px;
+		overflow: hidden;
+	}
+	.thumbnail{position: relative;margin: 10px 0px;}
+	.input-group {
+	    padding-bottom: 5px;
+	}
+</style>
+</head>
+<body>
+	<div id="content-body-panel3" class="my-content-body">
+		<div id="video-searchbar-panel3" class="input-group input-group-sm">
+          	<input type="text" class="form-control" placeholder="摄像机名称..."/>
+           	<span class="input-group-btn">
+                <button type="button" class="btn btn-info btn-flat">查询</button>
+           	</span>
+        </div>
+	</div>
+	<script th:inline="javascript" type="text/javascript">
+	/*<![CDATA[*/
+		$(function(){
+			//加载摄像机分组
+			fnQueryVidiconGroup();
+			//初始化搜索按钮事件
+			$('#video-searchbar-panel3 button').on('click',function(){
+				var searchTxt = $('#video-searchbar-panel3 input').val();
+				var groupId = $('.my-accordion .actived').prev().attr('groupId');
+				queryVidiconData(searchTxt,groupId,1,10);
+			});
+			//初始化搜索框回车事件
+			$('#video-searchbar-panel3 input').on('keydown',function(e){
+				if(e.keyCode==13){
+					var searchTxt = $('#video-searchbar-panel3 input').val();
+					var groupId = $('.my-accordion .actived').prev().attr('groupId');
+					queryVidiconData(searchTxt,groupId,1,10);
+				}
+			});
+		});
+			
+		var GroupParamMap = [];
+		/**
+		 * 加载摄像机分组
+		 */
+		function fnQueryVidiconGroup(){
+			var projectInfoId = [[${projectInfo.id}]];
+			$.ajax({
+				url:CTX+'vidicon/query-vidicon-group',
+				type:'GET',
+				dataType:'json',
+				data: {projectInfoId:projectInfoId},
+				timeout:10000,
+				success:function(json){
+					if(json){
+						var htmlStr = '';
+						$.each(json,function(i,group){
+							htmlStr += 
+								'<div class="my-accordion">'+
+								'	<h4 class="title" groupId="'+group.id+'">'+group.text+'<span>&nbsp;('+group.tags[0]+')</span><em class="pull-right fa '+(i==0?'fa-chevron-up':'fa-chevron-down')+'"></em></h4>'+
+								'	<div class="accordion-content'+(i==0?' actived':'')+'"></div>'+
+								'</div>';
+							GroupParamMap.push(
+								{
+									groupId:group.id,
+									param:{
+										searchTxt:'',
+										pageNo:1,
+										pageSize:10,
+										total:0
+									}
+								}
+							);
+						});
+						if(htmlStr==''){
+							htmlStr = '<div class="my-no-data-panel">暂无数据</div>';
+						}
+						$('#content-body-panel3').append(htmlStr);
+						//初始化折叠列表
+						initAccordion();
+						//初始加载第一个折叠列表数据
+						if(GroupParamMap.length>0){
+							var groupMap = 	GroupParamMap[0];
+							queryVidiconData(groupMap.param.searchTxt,groupMap.groupId,1,10);
+						}
+					}
+				}
+			});
+		}
+		/**
+		 * 初始化折叠列表
+		 */
+		function initAccordion(){
+			var accordionHeight = 0;
+			$('.my-accordion').each(function(){
+				accordionHeight += $(this).find('h4').outerHeight()+1;
+			});
+			accordionHeight += $('#video-searchbar-panel3').outerHeight();
+			$('.my-accordion .actived').height($('#content-body-panel3').parent().parent().height()-accordionHeight-10);
+			$('.my-accordion h4').on('click',function(){
+				if($(this).next().hasClass('actived')){
+					return;
+				}
+				$('.accordion-content').each(function(){
+					if($(this).hasClass('actived')){
+						$(this).animate({height:'0px'},'fast',function(){
+							$(this).removeClass('actived');
+						});
+						$(this).prev().find('em').removeClass('fa-chevron-up');
+						$(this).prev().find('em').addClass('fa-chevron-down');
+					}
+				});
+				$(this).next().addClass('actived');
+				$(this).next().animate({height:($('.my-content-body').height()-accordionHeight)+'px'},'fast',function(){
+					$(this).prev().find('em').removeClass('fa-chevron-down');
+					$(this).prev().find('em').addClass('fa-chevron-up');
+				});
+				
+				var groupId = $(this).attr('groupId');
+				window.setTimeout(function(){
+					var param = null;
+					$.each(GroupParamMap,function(i,groupMap){
+						if(groupMap.groupId == groupId){
+							param = groupMap.param;
+						}
+					});
+					if(param!=null){
+						if($('.my-accordion .actived').find('.mCSB_container').html()==''){
+							$('#video-searchbar-panel3 input').val('');
+							queryVidiconData($('#video-searchbar-panel3 input').val(),groupId,param.pageNo,param.pageSize);
+						}else{
+							$('#video-searchbar-panel3 input').val(param.searchTxt);
+						}
+					}
+				},300);
+			});
+			
+			$('.accordion-content').mCustomScrollbar({
+				theme:"minimal-dark",
+				scrollbarPosition:"outside",
+				callbacks:{
+					//滚动到底部时触发
+					onTotalScroll:function(){
+						var groupId = $(this).prev().attr('groupId');
+						var searchTxt = $('#video-searchbar-panel3 input').val();
+						var data_length = $('.my-accordion .actived').find('.mCSB_container').find('.col-sm-6').length;
+						var param = null;
+						$.each(GroupParamMap,function(i,groupMap){
+							if(groupMap.groupId == groupId){
+								param = groupMap.param;
+							}
+						});
+						if(param!=null){
+							if(data_length>=param.total){
+								$('.my-accordion .actived').find('.mCSB_container').find('.video-loading').html('没有了');
+							}else{
+								param.pageNo++;
+								queryVidiconData(searchTxt,groupId,param.pageNo,param.pageSize);
+							}
+						}
+					}
+				}
+			});	
+		}
+		/**
+		 * 查询摄像头列表
+		 * @param areaName
+		 * @param bizType
+		 * @param pageNo
+		 * @param pageSize
+		 * @returns
+		 */
+		function queryVidiconData(searchTxt,groupId,pageNo,pageSize){
+			if(pageNo<=1){
+				$('.my-accordion .actived').find('.mCSB_container').html('<div class="video-loading"><i class="fa fa-spin fa-refresh"></i>加载中...</div>');
+			}
+			var projectInfoId = [[${projectInfo.id}]];
+			$.ajax({
+				url:CTX+'vidicon/query-vidicon-page',
+				type:'GET',
+				timeout:10000,
+				dataType:'json',
+				data:{search:searchTxt,vidiconGroupId:groupId,projectInfoId:projectInfoId,pageNo:pageNo,pageSize:pageSize},
+				success:function(json){
+					$('.my-accordion .actived').find('.mCSB_container').find('.video-loading').remove();
+					if(json&&json.total>0){
+						var htmlStr = '';
+						$.each(json.rows,function(i,data){
+							var imgUrl = STATIC+"capture/"+data.vidiconId+"_capture.jpg";
+							htmlStr += 
+								'<div class="col-xs-6 col-sm-6">'+
+								'	<a href="javascript:openVidiconWinPanel3(\''+data.id+'\',\''+data.name+'\');" class="thumbnail">'+
+								'		<img src="'+imgUrl+'" onerror="this.src=\''+STATIC+'images/noimage.jpg\';"/>'+
+								'		<div class="video-title">'+data.name+'</div>'+
+								'	</a>'+
+								'</div>';
+						});
+						if(json.total<=10){
+							htmlStr+= '<div class="video-loading">没有了</div>';
+						}else{
+							htmlStr+= '<div class="video-loading"><i class="fa fa-spin fa-refresh"></i>加载更多...</div>';
+						}
+						$('.my-accordion .actived').find('.mCSB_container').append(htmlStr);
+					}else{
+						$('.my-accordion .actived').find('.mCSB_container').append('<div class="video-loading">暂无数据</div>');
+					}
+					$.each(GroupParamMap,function(i,groupMap){
+						if(groupMap.groupId == groupId){
+							groupMap.param.total = json.total;
+							groupMap.param.pageNo = pageNo;
+							groupMap.param.searchTxt = searchTxt;
+						}
+					});
+				},
+				error:function(){
+					$('.my-accordion .actived').find('.mCSB_container').html('<div class="video-loading">请求超时或网络错误</div>');
+				}
+			});
+		}
+		
+		
+		function openVidiconWinPanel3(id,name){
+			$('#dhvideo_win').modal('toggle');
+			$('#dhvideo_win .modal-title').html(name+'-实时视频');
+			$.ajax({
+				url: CTX+'vidicon/find-vidicon',
+				data:{id:id},
+				type:'get',
+				dataType:'json',
+				success:function(vidicon){
+					if(vidicon){
+						if(!initDHOcxHandle){
+							DPSDK_Init();
+						}	
+						if(!initDHOcxHandle){
+							$('#dhvideo_win').modal('toggle');
+							return;
+						}
+						var playocx = document.getElementById("DPSDK_OCX");
+						//如果未登录平台则先登录平台
+						if(DH_LoginHandle!=0){
+							DH_SmartWndId = playocx.DPSDK_CreateSmartWnd(0, 0, 100, 100);
+							playocx.DPSDK_SetWndCount(DH_SmartWndId,1);//设置单个窗口
+							playocx.DPSDK_SetSelWnd(DH_SmartWndId,0);	//选中一个窗口
+							playocx.DPSDK_SetWndStyle(1);				//窗口定制风格
+							if(DH_serverIP==null){
+								DH_serverIP = vidicon.serverOutIp;
+								DPSDK_Login(DH_serverIP,vidicon.serverOutPort,vidicon.userName,vidicon.userPwd);//server.extranetipaddress外网  server.userpwd
+							}
+						}
+						//如果已登录平台且服务平台不一样则重新登录
+						else if(DH_serverIP != vidicon.serverOutIp){
+							DPSDK_Logout();
+							DH_serverIP = vidicon.serverOutIp;
+							DPSDK_Login(DH_serverIP,vidicon.serverOutPort,vidicon.userName,vidicon.userPwd);//server.extranetipaddress外网  server.userpwd
+						}
+						if(DH_LoginHandle!=0){return;}
+						DPSDK_PlayVideo(vidicon.vidiconId);
+					}
+				},
+				error:function(){
+					alert('请求超时或系统错误');
+				}
+			});
+		}
+	/*]]>*/
+	</script>
+</body>
+</html>

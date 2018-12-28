@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Office</title>
+<script type="text/javascript">
+          	function Save() {
+              	document.getElementById("PageOfficeCtrl1").WebSave();
+        	}
+        </script>
+
+<script type="text/javascript">
+  		  function aaa() {
+              document.getElementById("PageOfficeCtrl1").FullScreen = true;
+          }
+  		  
+  		  
+  		</script>
+
+<!--显示云痕迹 -->
+<script type="text/javascript">
+  		  function ShowRevisions () {
+  			document.getElementById("PageOfficeCtrl1").ShowRevisions = true|false; 
+          }
+  		</script>
+
+
+<!--另存正文-->
+<script type="text/javascript">
+  		  function SavaAsContract() {
+  			document.getElementById("PageOfficeCtrl1").ShowDialog(3);           }
+  		</script>
+
+<!-- 刷新 -->
+<script type="text/javascript">
+  		   function showMain() {
+  			 document.getElementById("PageOfficeCtrl1").ShowRevisions = false;
+  	        }
+  		   
+  		</script>
+  		
+
+<!-- 文件上传（ajax） -->
+   <script type="text/javascript">
+  	  		function uploadContract(folderId,folderName){
+  	  		//调用统一附件管理页面
+  	  		document.getElementById("contract_upload").click();
+  	  	    isChoose();
+  	  		}
+  		   </script>
+           <!-- 关闭时候触发事件 -->
+  		   <script type="text/javascript">
+
+  	       function BeforeBrowserClosed(){
+  	    	 Save();
+  	       }
+
+  		   </script>
+  		   
+  		   
+
+</head>
+<body>
+<form action="" id="uploadForm" method="post" enctype="multipart/form-data">
+<input type="file"  id="contract_upload" name="contract_upload"  accept=".doc,.docx" /> 
+</form>
+	<div id="pageofficeWord" style="width: 1200px; height: 1000px;"
+		th:utext="${pageoffice}"></div>
+
+</body>
+<script th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/static/js/common.js}"></script>
+<script
+	th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></script>
+<script
+	th:src="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script
+	th:src="@{/static/plugins/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/static/plugins/jQuery/jquery.serializejson.min.js}"></script>
+<script th:src="@{/static/plugins/datepicker/bootstrap-datepicker.js}"></script>
+<script
+	th:src="@{/static/plugins/datepicker/locales/bootstrap-datepicker.zh-CN.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.js}"></script>
+<script
+	th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/plugins/bootstrap-contextmenu/bootstrap-contextmenu.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/plugins/bootstrap-contextmenu/prettify.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/plugins/attention/zDialog/zDrag.js}"></script>
+<!-- Slimscroll -->
+<script type="text/javascript"
+	th:src="@{/static/plugins/slimScroll/jquery.slimscroll.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/dist/js/app.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
+<script type="text/javascript" src="pageoffice.js" id="po_js_main"></script>
+<script th:inline="javascript" type="text/javascript">
+	/*<![CDATA[*/	
+	var CTX = [[@{/}]];
+	$(function () {
+			//附件管理弹窗关闭事件
+			$("#contract_upload").hide();
+			$('#upload_annex_win').on('hidden.bs.modal',function(){
+				var returnData = $('#upload_annex_win iframe')[0].contentWindow.parentCallBack();//window.frames['annexFrame'].window.parentCallBack();//
+				$('#upload_annex_win iframe').removeAttr('src');
+				if(ANNEX_CALLBACK){
+					ANNEX_CALLBACK(returnData);
+				}
+				ANNEX_CALLBACK = null;
+			});
+			
+			//查看图片窗口关闭事件
+			$('#common_viewimg_win').on('hidden.bs.modal',function(){
+				$('#common_viewimg_win modal-body').empty();
+			});
+		});
+	
+	//关闭文件前执行的方法
+	function close(){
+		
+		 $.ajax({
+	        	url: CTX+'/isSave',
+	            type: "POST",
+	            data: {chooseFile:1},
+	            dataType: "text",
+	            success: function (data) {
+	                alert("222");
+	            },
+	            error: function () {
+	                alert("上传失败！");
+	            }
+	        });
+		  
+	}
+	
+	 function PageOffice(){
+	  		POBrowser.openWindowModeless(CTX+'/word','width=1240px;height=800px;');
+	  	}
+	
+	//正文上传
+	var firstChooseFile;
+	var count=0;
+	function isChoose(){
+		var fileName;
+		var chooseFile=$("#contract_upload").val();
+			
+	   if(chooseFile.length==0||chooseFile.length==1){
+			return
+		}
+		var test=  document.getElementById('contract_upload').files[0].name;
+		fileName=test.split(".")[0];
+		var chooseFile=$("#contract_upload").val();
+		  if($("#contract_upload").val()!=null&&$("#contract_upload").val()!=" "){
+				//判断文件个数(一次只能上传1份);
+				var filePaths = $("#contract_upload")[0].files;
+				if(filePaths.length>1){
+					alert("一次只能上传一份正文！");
+					return;
+				}
+				
+				//判断上传文件类型
+				var fileAccept = $("#contract_upload").val().split(".")[1];//获取上传文件的后缀
+				if(fileAccept!=null&&fileAccept!=" "){
+					if( fileAccept!="doc" && fileAccept!="docx" ){
+						alert("合同正文只能是.doc和.docx文件！");
+						return
+					}
+					var tip="是否上传？！";
+					 if (confirm(tip)==true){ 
+						 $("#contract_upload").hide();
+						 var formData = new FormData($("#contract_upload")[0]);
+					        formData.append("appFile", document.getElementById("contract_upload").files[0]);
+					        var chooseFile=$("#contract_upload").val();
+					        
+					        $.ajax({
+					        	url: CTX+'/upload-annex',
+				                type: 'POST',
+				                cache: false,
+				                data: new FormData($('#uploadForm')[0]),
+				                processData: false,
+				                contentType: false
+				       }).done(function(res) {
+				           //打印返回值信息
+				           $("#contract_upload").hide();
+				           alert("上传成功");
+				           //关闭重新打开
+				           window.external.close(); 
+				          PageOffice();
+				     }).fail(function(res) {
+				          alert("上传失败");
+				    });
+				     }else {
+				    	 return false;
+				     }
+				}
+			
+				  } 
+		  $("#contract_upload").replaceWith('<input type="file"  id="contract_upload" name="contract_upload" accept=".doc,.docx" />');
+	}
+	/*]]>*/	
+	</script>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--
+* @Copyright(c): 厦门路桥信息股份有限公司  版权所有
+* @author :XMRBI
+* @Description:工程信息
+* @createDate:2018-8-2
+-->
+<head>
+	<meta charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+	<title>工程信息</title>
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/select2/select2.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-validator/css/bootstrapValidator.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css}"/>
+    <!-- Theme style -->
+	<link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+	<!-- Bootstrap 3.3.7 -->
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.css}"/>
+	<style type="text/css">
+	.panel {
+	  margin-bottom: 0px;
+	}
+	.form-group {
+	  margin-bottom: 2px;
+	}
+	
+	</style>
+	<style type="text/css">
+        html, body {
+            overflow-x: hidden;
+        }
+
+        body {
+            padding-top: 5px;
+        }
+        
+        .box.box-solid.box-default>.box-header {
+        	background-color: #DEF2FF;
+        }
+        
+        .col-sm-10 span {
+            word-break: break-all;
+            word-wrap: break-word;
+            white-space: normal;
+            display: block;
+            float: left;
+            height: 34px;
+            padding: 6px 12px 6px 0px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #777;
+        }
+        
+		#compList>thead>tr>th{text-align: center;vertical-align: middle !important;}
+		#compList>tbody>tr>td{vertical-align: middle !important;}
+		
+		#annexList>thead>tr>th{text-align: center;vertical-align: middle !important;vertical-align: middle !important;}
+		#annexList>tbody>tr>td{text-align: center;vertical-align: middle !important;vertical-align: middle !important;}
+		
+		#btn_upload,#btn_delete{
+			padding: 3px 6px;
+			font-size: 12px;
+		}
+		
+		input{
+			text-align: center;
+		}
+		
+		.table>tbody>tr>td{
+			padding: 3px;
+		}
+		
+		table,table tr th, table tr td { border:1px solid #000; }
+        table {border-collapse: collapse; padding:2px;}
+          
+    </style>
+</head>
+<body>
+<div class="container-fluid" style="width:100%; height: 100%" >
+	<div class="row">
+		<div class="col-md-12">
+			<ul id="myTab" class="nav nav-tabs">
+				<li class="active">
+					<a href="#originalInfo" data-toggle="tab">供应商信息</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	
+	<div id="myTabContent" class="tab-content">
+		<div class="tab-pane fade in active" id="originalInfo">
+		<div id="originalInfo_print">
+		   <br/>
+		   <br/>
+		    <br/>
+		    <table id="projectList" class="table table-bordered" style="width: 100%">
+			   	<thead >
+			   		<tr align="center">
+			   		
+			   		</tr>
+			   	</thead>
+			   	<tbody id="project_body">
+			   		<tr  height="36px;">
+			   			<td align="center" >
+			   				<span th:text="项目编码" ></span>
+			   			</td>
+			   			<td align="center">
+			   			     
+			   			</td>
+			   			
+			   			<td align="center">
+			   			
+			   			      <span th:text="项目名称" ></span>
+			   			</td>
+			   			
+			   			<td align="center">
+			   			       <span  th:text="${project.projectName}"></span>
+			   			</td>
+			   		</tr>
+			   		
+			   		
+			   		<tr  height="36px;">
+			   			<td align="center"  >
+			   				<span th:text="项目状态" ></span>
+			   			</td>
+			   			<td align="center">
+			   			       <span th:if=" ${project.projectState} ==1" th:text="无效"></span>
+			   			       <span th:if=" ${project.projectState} ==0" th:text="有效"></span>
+			   			</td>
+			   			
+			   			<td align="center">
+			   			     
+			   			</td>
+			   			
+			   			<td align="center">
+			   			
+			   			</td>
+			   		</tr>
+			   		
+			   		
+			   			<tr  height="36px;">
+			   			<td align="center" >
+			   				<span th:text="备注" ></span>
+			   			</td>
+			   		
+			   			
+			   		</tr>
+			   		
+			   		
+			   	</tbody>
+			 </table>
+			 </div>
+			   
+			 <div style="text-align: center;margin-bottom: 10px;">
+		    <br/>
+		    <br/>
+		    <br/>
+				 <button type="button" onclick="fnCloseWin()" class="btn btn-primary" style="margin-right: 25px;width: 80px;">关闭</button> 
+			</div>
+		</div>
+	</div>
+
+</div>
+
+</body>
+<!-- jQuery 2.2.3 -->
+<script th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/static/js/common.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/static/plugins/jQuery/jquery.serializejson.min.js}"></script>
+<script th:src="@{/static/plugins/datepicker/bootstrap-datepicker.js}"></script>
+<script th:src="@{/static/plugins/datepicker/locales/bootstrap-datepicker.zh-CN.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/bootstrap-contextmenu.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/prettify.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/attention/zDialog/zDrag.js}"></script>
+<!-- Slimscroll -->
+<script type="text/javascript" th:src="@{/static/plugins/slimScroll/jquery.slimscroll.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/dist/js/app.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+	var CTX = [[@{/}]];
+	
+	$(function () {
+	    //初始化Button的点击事件
+	    var oButtonInit = new ButtonInit();
+	    oButtonInit.Init();
+	    
+	    $('.datepicker').datepicker({
+	    	format:'yyyy-mm-dd',
+	    	language:'zh-CN',
+	      	autoclose: true
+	    });
+	    
+	});
+	
+	
+	//初始化按钮
+	var ButtonInit = function () {
+	    var oInit = new Object();
+	    var postdata = {};
+
+	    oInit.Init = function () {
+	        //初始化页面上面的按钮事件
+	    };
+
+	    return oInit;
+	};
+	
+	function formatDate(time){
+	    var date = new Date(time);
+
+	    var year = date.getFullYear(),
+	        month = date.getMonth()+1,//月份是从0开始的
+	        day = date.getDate(),
+	        hour = date.getHours(),
+	        min = date.getMinutes(),
+	        sec = date.getSeconds();
+	    var preArr = Array.apply(null,Array(10)).map(function(elem, index) {
+	        return '0'+index;
+	    });////开个长度为10的数组 格式为 00 01 02 03
+
+	    var newTime = year + '-' +
+	                (preArr[month]||month) + '-' +
+	                (preArr[day]||day) + ' ' +
+	                (preArr[hour]||hour) + ':' +
+	                (preArr[min]||min) + ':' +
+	                (preArr[sec]||sec);
+
+	    return newTime;         
+	}
+	
+	
+	//关闭
+	function fnCloseWin(){
+		window.parent.closeCommonFrameWin(true);
+	}
+	
+	//打印
+	function fnPrint(version){
+		var p_html;
+		if(version == 0){
+			p_html = $("#originalInfo_print").html();
+		}else{
+			p_html = $("#editInfo_print").html();
+		}
+		var newWin = window.open('', '_self', ''); //在当前页打开新的窗口
+		var tbStyle = 'table,table tr th, table tr td { border:1px solid #000; }table {border-collapse: collapse; padding:2px;}'
+		newWin.document.write("<head><style>#print-content{font-size:14px}"+tbStyle+"</style></head>"); //向新窗口添加css样式
+		newWin.document.write(p_html);
+		newWin.print();
+		newWin.location.reload(); //重新加载使窗口恢复到打印前状态l
+	}
+	
+	
+	
+	/*]]>*/
+</script>	
+</html>

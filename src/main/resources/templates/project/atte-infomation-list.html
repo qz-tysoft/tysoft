@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+	<title>人员考勤详细</title>
+	<!-- Bootstrap 3.3.7 -->
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.css}"/>
+</head>
+<body>
+	<div class="content">
+		<div id="toolbar">
+            <form id="formSearch" class="form-horizontal">
+            	<input type="hidden" name="atteInfomationIds" th:value="${atteInfomationIds}"/>
+       			<div class="form-group" style="width:250px;float:left;margin-bottom:0;">
+                    <label class="control-label col-sm-6" style="padding-top:0;">进出类型:</label>
+                    <div class="col-sm-6" style="padding:0;">
+                    	<select class="form-control" name="swipeStatus" onchange="queryInfo()">
+                    		<option value="">请选择</option>
+                    		<option value="1">进入工地</option>
+                    		<option value="2">离开工地</option>
+                    	</select>
+                    </div>
+               	</div>
+            </form>
+        </div>
+        <table id="dataList"></table>
+	</div>
+</body>
+<!-- jQuery 2.2.3 -->
+<script th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/dist/js/app.min.js}"></script>
+<script th:src="@{/static/js/common.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/static/plugins/jQuery/jquery.serializejson.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/tableExport.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+	var CTX = [[@{/}]];
+	$(function () {
+		if($("input[name='atteInfomationIds']").val()==''){
+			alert('无考勤记录');
+			window.parent.closeCommonFrameWin();
+			return;
+		}
+	    //1.初始化Table
+	    var oTable = new TableInit();
+	    oTable.Init();
+	});
+	//初始化列表
+	var TableInit = function () {
+	    var oTableInit = new Object();
+	    //初始化Table
+	    oTableInit.Init = function () {
+	        $('#dataList').bootstrapTable({
+	        	url: CTX + 'atte-infomation/ajax-query-atte-infomation',         //请求后台的URL（*）
+	            method: 'get',                      //请求方式（*）
+	            toolbar: '#toolbar',                //工具按钮用哪个容器
+	            striped: true,                      //是否显示行间隔色
+	            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+	            pagination: false,                   //是否显示分页（*）
+	            sortable: true,                     //是否启用排序
+	            sortOrder: "asc",                   //排序方式
+	            queryParams: oTableInit.queryParams,//传递参数（*）
+	            sidePagination: "server",
+	            queryParamsType: "a",
+	            search: false,                       //是否显示表格搜索
+	            showColumns: true,                  //是否显示所有的列
+	            showRefresh: true,                  //是否显示刷新按钮
+	            minimumCountColumns: 2,             //最少允许的列数
+	            clickToSelect: false,                //是否启用点击选中行
+	            height: $(window).height()-30,      //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+	            uniqueId: "id",                     //每一行的唯一标识，一般为主键列
+	            showToggle:true,                    //是否显示详细视图和列表视图的切换按钮
+	            cardView: false,                    //是否显示详细视图
+	            detailView: false,                  //是否显示父子表
+	            columns: [
+            	{
+				    field: 'projectInfoName',
+				    title:'项目名称'
+				},{
+				    field: 'name',
+				    title:'人员'
+				},{
+				    field: 'idNumber',
+				    title:'身份证'
+				},{
+				    field: 'companyName',
+				    title:'单位名称'
+				},{
+				    field: 'teamName',
+				    title:'部门/班组'
+				},{
+				    field: 'workType',
+				    title:'工种',
+				    formatter:function(v,r,i){
+				    	if(v==null){
+				    		return '(管理员)';
+				    	}
+				    	return v;
+				    }
+				},{
+				    field: 'swipeTime',
+				    title:'考勤时间',
+				    formatter:function(v,r,i){
+				    	return (new Date(v)).Format('yyyy-MM-dd hh:mm:ss');
+				    }
+				},{
+				    field: 'swipeStatus',
+				    title:'进出类型',
+                    formatter: function (v, r, i) {
+                    	if(v==1){return '进入工地';}
+                    	else{return '离开工地';}
+                    }
+				}
+				]
+	        });
+	    };
+
+	    //得到查询的参数
+	    oTableInit.queryParams = function (params) {
+	    	var data = JSON.stringify($('#formSearch').serializeJSON());
+	        var temp = {   //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+                from: data
+	        };
+	        return temp;
+	    };
+	    return oTableInit;
+	};
+	
+	//查询-刷新
+	var queryInfo = function(){
+		var data = JSON.stringify($('#formSearch').serializeJSON());
+		var queryData = {form: data};
+		$('#dataList').bootstrapTable('refresh',{query:queryData});
+	}
+/*]]>*/	
+</script>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/>
+<title>项目工程-门禁考勤</title>
+</head>
+<body>
+	<h4 class="title">门禁监控 <span class="pull-right" style="font-size: 14px;">截至当前24小时内</span></h4>
+	<div style="width:100%;padding:5px;min-height:130px;">
+		<ul id="panel2_acc_device_list" class="products-list product-list-in-box">
+     	</ul>
+	</div>
+	<br/>
+	<h4 class="title">当前出入场统计 <span class="pull-right" style="font-size: 14px;">截至当前24小时内</span></h4>
+	<div style="width:100%;overflow: hidden;">
+		<div class="col-sm-4 no-padding">
+			<div class="hori-panel" style="height:100px;">
+				<div class="bg-aqua">
+					<h4 style="margin-top:30px;">入场人员</h4>
+					<h4 class="text-number" id="panel2_count_in_num">0 人</h4>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-4 no-padding">
+			<div class="hori-panel" style="height:100px;">
+				<div class="bg-green">
+					<h4 style="margin-top:30px;">出场人员</h4>
+					<h4 class="text-number" id="panel2_count_out_num">0 人</h4>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-4 no-padding">
+			<div class="hori-panel" style="height:100px;">
+				<div class="bg-yellow">
+					<h4 style="margin-top:30px;">在场人员</h4>
+					<h4 class="text-number" id="panel2_count_ing_num">0 人</h4>
+				</div>
+			</div>
+		</div>
+	</div>
+	<br/>
+	<h4 class="title">当前出入场情况统计 <span class="pull-right" style="font-size: 14px;">截至当前24小时内</span></h4>
+	<div style="width:100%;overflow: hidden;">
+		<div id="panel2_inout_chart" class="chart" style="height:200px;"></div>
+	</div>
+	<script id="panel2_device_list_temp" type="text/template">
+		{{?it.length>0}}
+		{{~it:data}}
+		<li class="item" fieldType="{{=data.deviceType}}" fieldId="{{=data.id}}">
+	         <div class="product-img"> 
+				{{?data.deviceType=='acc'}}
+				<img th:src="@{/static/images/acc-device.png}" style="width:60px;height:auto;"/>
+				{{??}}
+				<img th:src="@{/static/images/att-device.png}" style="width:60px;height:auto;"/>
+				{{?}}
+	         </div>
+	         <div class="product-info" style="margin:6px 0px;">
+	           	<a href="javascript:void(0)" class="product-title"  style="color:#fff;">
+	           		{{=data.deviceName}}
+					{{?data.status=='1'}}
+					<span class="label label-success pull-right" style="margin-right:10px;">在线</span>
+					{{??}}
+					<span class="label label-danger pull-right" style="margin-right:10px;">离线</span>
+					{{?}}
+	           	</a>
+	            <div class="product-description" style="margin-top:5px;">
+	            	<ul class="my-project-list">
+						<li><div class="my-product-info" style="padding-left:20px;font-size:14px;">进场人数:<h4 class="text-orange text-number pull-right" name="panel2_in_num">0 人</h4></div></li>
+						<li><div class="my-product-info" style="padding-left:20px;font-size:14px;">出场人数:<h4 class="text-orange text-number pull-right" name="panel2_out_num">0 人</h4></div></li>
+					</ul>
+	            </div>
+	         </div>
+	        </li>
+		{{~}}
+		{{??}}
+		<div class="my-no-data-panel">暂无数据</div>
+		{{?}}
+	</script>
+	<script th:inline="javascript" type="text/javascript">
+	/*<![CDATA[*/
+		var Panel2_dot_device_list_temp = null;
+		$(function(){
+			Panel2_dot_device_list_temp = doT.template($('#panel2_device_list_temp').html());
+			//获取项目考勤门禁设备列表
+			fnQueryAccDevicesPanel2();
+			//获取进出场统计
+			fnCountInoutPanel2();
+			//当前出入场情况统计
+			fnCountInoutChartPanel2();
+		});
+		
+		//获取进出场统计
+		function fnCountInoutPanel2(){
+			var projectInfoId = [[${projectInfo.id}]];
+			$.ajax({
+				url:CTX+'atte-infomation/count-inout',
+				type:'get',
+				dataType:'json',
+				data: {projectInfoId:projectInfoId,countType:24},//24小时前
+				timeout:10000,
+				success:function(json){
+					if(json){
+						$('#panel2_count_in_num').html(json.inNum+' 人');
+						$('#panel2_count_out_num').html(json.outNum+' 人');
+						$('#panel2_count_ing_num').html(json.bepresentNum+' 人');
+					}
+				}
+			});
+		}
+		
+		//获取项目考勤门禁设备列表
+		function fnQueryAccDevicesPanel2(){
+			var projectInfoId = [[${projectInfo.id}]];
+			$.ajax({
+				url:CTX+'acc-control-device/query-all',
+				type:'get',
+				dataType:'json',
+				timeout:10000,
+				data: {projectInfoId: projectInfoId},
+				success:function(json){
+					$('#panel2_acc_device_list').html(Panel2_dot_device_list_temp(json));
+					if(json){
+						if($('#panel2_acc_device_list li').length>0){
+							$('#panel2_acc_device_list li').each(function(){
+								var deviceId = $(this).attr('fieldid');
+								var deviceType = $(this).attr('fieldtype');
+								if(deviceId!=null&&deviceType!=null){
+									fnCountAccInoutPanel2(this,deviceId,deviceType);
+								}
+							});
+						}
+					}
+				},
+				error: function(){
+					$('#device_list_load').hide();
+					$('#device_list').html('<div class="no-data">请求超时或系统错误</div>');
+				}
+			});
+		}
+		//统计各个门禁出入情况
+		function fnCountAccInoutPanel2(_this,deviceId,deviceType){
+			var projectInfoId = [[${projectInfo.id}]];
+			$.ajax({
+				url:CTX+'atte-infomation/count-acc-inout',
+				type:'get',
+				dataType:'json',
+				timeout:10000,
+				data: {projectInfoId:projectInfoId,deviceId:deviceId,deviceType:deviceType,countType:24},//24小时前
+				success:function(json){
+					if(json){
+						$(_this).find("h4[name='panel2_in_num']").html(json.inNum+' 人');
+						$(_this).find("h4[name='panel2_out_num']").html(json.outNum+' 人');
+					}
+				}
+			});
+		}
+		
+		function fnCountInoutChartPanel2(){
+			var projectInfoId = [[${projectInfo.id}]];
+			$.ajax({
+				url:CTX+'gis/count-inout-chart',
+				type:'get',
+				dataType:'json',
+				timeout:10000,
+				data: {projectInfoId: projectInfoId},
+				success:function(json){
+					if(json){
+						var inArr = [],outArr = [];
+						$.each(json,function(i,data){
+							inArr.push(data.inNum);
+							outArr.push(data.outNum);
+						});
+						var myChart = echarts.init(document.getElementById('panel2_inout_chart'));
+						var option = {
+					        tooltip: {
+					            trigger: 'axis',
+					            axisPointer:{
+					            	lineStyle:{
+					            		color:'#fff'
+					            	}
+					            }
+					        },
+					        legend: {
+						        data:['入场', '出场'],
+						        right:'10',
+						        textStyle:{
+						        	color:'#fff'
+						        }
+						    },
+							grid: {
+								right:'0%',
+								left:'2%',
+								bottom:'13%',
+								top:'8%'
+							},
+							xAxis:  {
+						        type: 'category',
+						        axisLine: {
+					                lineStyle: {
+					                    color: '#fff'
+					                }
+					            },
+					            axisLabel:{
+					                textStyle:{color:'#fff'},
+					             	interval:0
+					            },
+						        data: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
+						    },
+						    yAxis:{
+								type: 'value',
+								show: false
+							},
+							color:['#00c0ef','#ff851b'],
+							calculable: true,
+							series:[{
+								name:'入场', 
+								type:'line',
+								smooth: true,
+								data: inArr,
+								markLine: {
+									animation:false,
+									label:{
+										normal:{
+											position:'middle',
+											formatter:'{c}人次'
+										}
+									},
+					                data: [{
+					                    yAxis: 200
+					                }, {
+					                    yAxis: 100
+					                }]
+					            }
+							},{ 
+								name:'出场', 
+								type:'line', 
+								smooth: true,
+								data: outArr,
+							}]
+						};
+						myChart.setOption(option);
+					}
+				},
+				error: function(){
+					document.getElementById('panel2_inout_chart').innerHTML = '<div style="background:url('+STATIC+'images/gis/nochart-1.png);width:100%;height:100%;font-size: 26px;padding-top: 15%;">网络错误或请求超时</div>';
+				}
+			});
+		}
+	/*]]>*/
+	</script>
+</body>
+</html>

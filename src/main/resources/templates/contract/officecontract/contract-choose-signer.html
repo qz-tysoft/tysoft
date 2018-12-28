@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+    <title>会签人</title>
+    <link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/select2/select2.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-validator/css/bootstrapValidator.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css}"/>
+    <!-- datetime picker -->
+    <link rel="stylesheet" th:href="@{/static/plugins/datetimepicker/css/bootstrap-datetimepicker.min.css}"/>
+    <!-- iCheck for checkboxes and radio inputs -->
+    <link rel="stylesheet" th:href="@{/static/plugins/iCheck/all.css}"/>
+    <!-- daterange picker -->
+    <link rel="stylesheet" th:href="@{/static/plugins/daterangepicker/daterangepicker.css}"/>
+    <!-- Theme style -->
+    <link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.css}"/>
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/datepicker/datepicker3.css}"/>
+    <style type="text/css">
+        html, body {
+            overflow-x: hidden;
+        }
+
+        body {
+            padding-top: 5px;
+        }
+
+        .up_icon img {
+            max-height: 100%;
+        }
+
+        .up_icon span {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            line-height: 20px;
+            background: #8e8e8e;
+            text-align: center;
+            color: #fff;
+            font-size: 12px;
+            border-radius: 0px 0px 6px 6px;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .col-sm-10 span {
+            word-break: break-all;
+            word-wrap: break-word;
+            white-space: normal;
+            display: block;
+            float: left;
+            height: 34px;
+            padding: 6px 12px 6px 0px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid" style="width:100%; height: 100%">
+
+    <form action="" method="post" id="approveForm">
+         <input type="hidden" name="contractId" id="contractId" th:value="${contractId}" />
+         <input type="hidden" name="taskId" id="taskId" th:value="${taskId}" />
+         <input type="hidden" name="taskName" id="taskName" th:value="${taskName}" />
+         <input type="hidden" name="signerList" id="signerList" th:value="${signerList}" />
+         <input type="hidden" name="signerIds" id="signerIds" th:value="${signerIds}" />
+         <input type="hidden" name="approveOpinion" id="approveOpinion" th:value="${approveOpinion}" />
+     </form>
+    <div>
+        <input type="hidden" id="now_user_lesseeId" name="lesseeId" th:value="${now_user_lesseeId}"/>
+        <input type="hidden" id="now_user_useunitId" name="useunitId" th:value="${now_user_useunitId}"/>
+        <input type="hidden" id="now_user_id" name="userId" th:value="${now_user_id}"/>
+        <!--角色选择成员条件表格-->
+        <form id="roleSysuserOrgFormSearch" type="hidden" class="form-horizontal">
+            <input type="hidden" name="sysuserId" th:value="${now_user_id}"/>
+            <input type="hidden" id="role_edit_sysuser_useunit" name="useunitId"/>
+        </form>
+    </div>
+    <!-- 左侧组织架构、角色树信息-->
+    <div class="col-sm-3">
+
+        <div class="row">
+            <div class="nav-tabs-custom">
+                <div class="tab-content no-padding">
+                    <!-- Morris chart - Sales -->
+                    <div class="tab-pane active" id="revenue-chart">
+                        <div>
+                            <div class="box-header with-border" style="background-color: #d2d6de;">
+                                <h3 class="box-title"><i class="fa fa-user"></i>&nbsp;&nbsp;组织架构</h3>
+                            </div>
+                        </div>
+                        <!-- 组织架构树-->
+                        <div class="" id="org_tree_content" style="overflow: auto">
+                            <div id="orgMenuTree" data-toggle="context" data-target="#org-context-menu"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 右侧组织架构、角色表格信息-->
+    <div class="col-sm-9">
+        <!-- 组织架构表格-->
+        <div id="orgTable">
+            <div class="box box-default collapsed-box box-solid" style="margin-bottom:5px;">
+                <div class="box-header with-border">
+                    <h3 class="box-title" id="orgName">组织架构</h3>
+                    <form id="formSearch" type="hidden" class="form-horizontal">
+                        <input type="hidden" id="orgId" name="useunit.id"/>
+                    </form>
+                </div>
+            </div>
+              <div id="toolbar" class="btn-group">
+                <button id="btn_add_signer_member" type="button" class="btn btn-default btn-primary"  onclick="goSingerSysuser()">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>编辑成员
+                </button>
+              </div>
+            <table id="orgTableContent"></table>
+        </div>
+      <br/>
+       <div style="text-align: center;margin-bottom: 10px;">
+		 <button type="button"  class="btn btn-primary" onclick="sureView()" style="margin-right: 25px;width: 80px;">确定</button> 
+		<button type="button"   class="btn btn-primary" onclick="closeView()"  style="margin-right: 25px;width: 80px;">关闭</button>
+			</div>
+    </div>
+    
+    
+    <!-- 编辑会签用户-->
+ <div class="modal fade" id="role_edit_sysuser_modalwin" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static"
+     aria-hidden="true">
+    <div class="modal-dialog" style="width:800px;">
+          <form  id="singerFormSearch"  class="form-horizontal">
+                            <input type="hidden" id="singerOrgId" name="useunit.id"/>
+                    </form>
+    
+        <div class="modal-content">
+            <div class="modal-header" style="text-align: center;background-color: #357ca5;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" style="color:white;">选择成员</h4>
+            </div>
+            <div class="modal-body" style="padding: 10px;">
+                <form class="form-horizontal" id="role_edit_sysuser_form">
+                    <input type="hidden" id="role_edit_sysuser_ids"/>
+                    <div class="box box-default box-solid" style="margin-bottom:5px; min-height: 100px">
+                        <div class="box-body" id="edit_singer_name"></div>
+                    </div>
+                    <div class="box box-default box-solid" style="margin-bottom:5px;">
+                        <div class="box-body">
+                            <div class="col-sm-6">
+                                <div id="role_edit_sysuser_orgtree"></div>
+                            </div>
+                            <div class="col-sm-6">
+                             <div class="box-header with-border">
+                </div>
+                              <div class="modal-footer">
+                              
+                <button type="button"  class="btn btn-primary" data-dismiss="modal">返回</button>
+               </div>
+                                <table id="singerContent"></table>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> 
+
+</div>
+</body>
+<script type="text/javascript" th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/select2/select2.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/bootstrap-contextmenu.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/prettify.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/attention/zDialog/zDrag.js}"></script>
+<!--<script type="text/javascript" th:src="@{/static/plugins/attention/zDialog/zDialog.js}"></script>-->
+<scriptm type="text/javascript" th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></scriptm>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/jQuery/jquery.serializejson.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/datepicker/bootstrap-datepicker.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/datepicker/locales/bootstrap-datepicker.zh-CN.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/tableExport.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+    var CTX = [[@{/}]];
+        var STATIC = [[@{/static/}]];
+</script>
+<script type="text/javascript" th:src="@{/static/modules/base/contract-organization-manage.js}"></script>
+</html>

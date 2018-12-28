@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+	<title>设备管理</title>
+	<!-- Bootstrap 3.3.7 -->
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+	<style type="text/css">
+		html,body{height:100%;margin:0;padding:0;background-color: #ecf0f5;overflow: hidden;}
+	</style>
+</head>
+<body>
+	<section class="content" style="padding:10px;">
+		<div class="nav-tabs-custom">
+	       <ul class="nav nav-tabs">
+	         <li class="active" field="acc"><a href="#tab_1" data-toggle="tab">门禁设备</a></li>
+	         <li field="att"><a href="#tab_2" data-toggle="tab">考勤设备</a></li>
+	         <li field="vidicon"><a href="#tab_3" data-toggle="tab">监控设备</a></li>
+	       </ul>
+	       <div class="tab-content" style="padding:0;">
+	         <div class="tab-pane active" id="tab_1">
+	         	<iframe id="acc_frame" style="width:100%;height:100%;border:0;"></iframe>
+	         </div>
+	         <div class="tab-pane" id="tab_2">
+	         	<iframe id="att_frame" style="width:100%;height:100%;border:0;"></iframe>
+	         </div>
+	         <div class="tab-pane" id="tab_3">
+	         	<iframe id="vidicon_frame" style="width:100%;height:100%;border:0;"></iframe>
+	         </div>
+	       </div>
+	       <!-- /.tab-content -->
+	     </div>
+	</section>
+</body>
+<script type="text/javascript" th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/dist/js/app.min.js}"></script>
+<script th:src="@{/static/js/common.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+	var CTX = [[@{/}]];
+	$(function(){
+		$('.tab-pane').height($(window).height()-$('.nav-tabs').height()-25);
+		$('#tab_1 iframe').attr('src',CTX+'acc-control-device/acc-device-manage.html');
+		$('.nav-tabs').on('click','li',function(){
+			var fhead = $(this).attr('field');
+			if($('#'+fhead+'_frame').attr('src')==null||$('#'+fhead+'_frame').attr('src')==undefined){
+				var url = CTX+'acc-control-device/acc-device-manage.html';
+				if(fhead=='att'){
+					url = CTX+'attendance-device/att-device-manage.html';
+				}
+				if(fhead=='vidicon'){
+					url = CTX+'vidicon/vidicon-manage.html';
+				}
+				$('#'+fhead+'_frame').attr('src',url);
+			}
+		});
+	});
+	$(window).resize(function() {
+		$('.tab-pane').height($(window).height()-$('.nav-tabs').height()-25);
+	});
+/*]]>*/	
+</script>	
+</html>

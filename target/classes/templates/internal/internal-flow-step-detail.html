@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--
+* @Copyright(c): 厦门路桥信息股份有限公司  版权所有
+* @author :XMRBI
+* @Description:内控流程步骤详情
+* @createDate:2018-11-10
+-->
+<head>
+	<meta charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+	<title th:text="${#strings.equals(opt, 'new')} ? ${'新增流程步骤'} : ${'流程步骤变更'}"></title>
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/select2/select2.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-validator/css/bootstrapValidator.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css}"/>
+    <!-- Theme style -->
+	<link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+	<!-- Bootstrap 3.3.7 -->
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.css}"/>
+	<link th:href="@{/static/plugins/bootstrap-fileinput/css/fileinput.css}" media="all" rel="stylesheet" type="text/css"/>
+	<link th:href="@{/static/plugins/bootstrap-fileinput/themes/explorer-fa/theme.css}" media="all" rel="stylesheet" type="text/css"/>
+	<!-- bootstrap datepicker -->
+  	<link rel="stylesheet" th:href="@{/static/plugins/datepicker/datepicker3.css}"/>
+	<style type="text/css">
+	.panel {
+	  margin-bottom: 0px;
+	}
+	.form-group {
+	  margin-bottom: 2px;
+	}
+	
+	</style>
+	<style type="text/css">
+        html, body {
+            overflow-x: hidden;
+        }
+        body {
+            padding-top: 5px;
+        }
+        .col-sm-10 span {
+            word-break: break-all;
+            word-wrap: break-word;
+            white-space: normal;
+            display: block;
+            float: left;
+            height: 34px;
+            padding: 6px 12px 6px 0px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #777;
+        }
+        .box.box-solid.box-default>.box-header {
+        	background-color: #F2F2F2;
+        	padding: 3px 10px;
+        }
+        .btn-link:HOVER {
+			text-decoration: none;
+		}
+		.modal-header{
+			background-color:#F4F6F8;
+			border-top-left-radius: 5px;
+			border-top-right-radius: 5px;
+		}
+		.container-fluid{
+			padding-right: 10px;
+			padding-left: 10px;
+		}
+		#head_div{
+			margin: 10px auto 5px;
+			border-color: #F2F2F2;
+			width: 1200px; 
+		}
+		.box-header>.btn-lg{
+			padding: 5px 8px;
+		}
+		#content_div{
+			width: 1200px;
+			border: 1px solid #F2F2F2;
+			margin: 1px auto;
+		}
+		h2{
+			text-align: center;
+			margin: 10px 0px 25px;
+		}
+		.input-group>.input-group-addon{
+			/* border-radius: 4px; */
+			border-top-left-radius: 4px;
+			border-bottom-left-radius: 4px;
+			background-color: #F2F2F2;
+		}
+		.form-control{
+			height: 36px;
+		}
+		.input-div{
+			padding: 5px 20px;
+		}
+		#content_table{
+			margin: 10px auto;
+			/* min-height: 500px; */
+			border: 1px silver solid;
+			width: 1170px;
+		}
+		#content_table>td{padding-bottom: 15px;}
+		.itemName{
+			/* width: 114px; */
+			height: 36px;
+			background-color: #F2F2F2;
+			padding: 6px 0px;
+			text-align: center;
+			border-radius: 4px;
+			border: 1px solid #d2d6de;
+		}
+		.select_a{
+			padding: 5px 8px;
+		}
+		.select_file{
+			padding: 5px 3px;
+		}
+		.table>tbody>tr>td{
+			padding: 3px;
+		}
+		#table_directory_tree ul li{
+            text-align: left;
+        }
+		#edit_useunit_orgtree ul li{
+            text-align: left;
+        }
+        .btn-file,.btn-files{
+        	padding: 8px 0px;
+        	margin-right: 10px;
+        	font-size: 14px;
+        }
+        .btn-remove-file{
+        	padding: 8px 0px;
+        	margin-right: 15px;
+        	font-size: 14px;
+        }
+        .a_workTable{
+        	text-decoration: underline;
+			color: #000;
+        }
+          
+    </style>
+</head>
+<body style="text-align: center;">
+	<input type="hidden" id="temp_workTableId" />
+	<input type="hidden" id="temp_workTableName" />
+	<input type="hidden" id="temp_useunitId" />
+	<input type="hidden" id="temp_useunitName" />
+
+	<input type="hidden" id="now_user_lesseeId" name="lesseeId" th:value="${now_user_lesseeId}"/>
+    <input type="hidden" id="now_user_useunitId" name="useunitId" th:value="${now_user_useunitId}"/>
+    <input type="hidden" id="now_user_id" name="userId" th:value="${now_user_id}"/>
+    <!--工作用表表格过滤条件 -->
+    <form id="workTableInfoFormSearch" class="form-horizontal">
+    	<input type="hidden" name="query_status" value="1"/>
+        <input type="hidden" id="work_table_directory_id" name="query_directoryId"/>
+    </form>
+    
+	<div class="container-fluid" style="width:100%; height: 100%" >
+		<div id="head_div" class="box box-default collapsed-box box-solid">
+		    <div class="box-header with-border" style="padding: 3px 8px;text-align: left;">
+	        	<a th:if="${#strings.equals(opt, 'new')}" class='btn btn-lg btn-link' id="btn_saveNew" style="color: blue;" onclick="fnSave(true);">保存并新增</a>
+	            <a class='btn btn-lg btn-link' id="btn_save" style="color: blue;" onclick="fnSave(false);">
+	            	<span th:text="${#strings.equals(opt, 'new')} ? ${'保存并关闭'} : ${'保存'}"></span>
+	            </a>
+	            <a class='btn btn-lg btn-link' id="btn_upload" style="color: black;" th:onclick="'fnUploadAnnex('+${anndexFolder.id}+',\''+${anndexFolder.folderName}+'\')'">上传附件</a>
+	            <a class='btn btn-lg btn-link' id="btn_close" style="color: red;" onclick="fnCloseWin();">关闭</a>
+	        </div>
+        </div>
+        <div id="content_div">
+        	<table id="content_table">
+        		<tr>
+        			<td valign="top" style="padding-top: 15px;padding-bottom: 15px;">
+			        	<form id="flowStep_form" class="form-horizontal">
+			        		<input name="id" type="hidden" th:value="${flowStep.id}" />
+			        		<input name="annexIds" th:value="${flowStep.annexIds}" type="hidden" />
+			        		<input name="annexNames" th:value="${flowStep.annexNames}" type="hidden" />
+			        		<input name="operateTime" th:value="${flowStep.operateTime}" type="hidden" />
+			        		<input name="internalControlFlow.id" th:value="${flowStep.internalControlFlow != null} ? ${flowStep.internalControlFlow.id} : ${''}" type="hidden" />
+			        		<input name="workTable.id" th:value="${flowStep.workTable != null} ? ${flowStep.workTable.id} : ${''}" type="hidden" />
+			        		<div class="col-md-12 input-div">
+		            			<div class="input-group">
+								  	<span class="input-group-addon">流程步骤<span style="color: red;">*</span></span>
+								  	<input type="text" class="form-control" name="stepName" th:value="${flowStep.stepName}"/>
+								</div>
+		            		</div>
+		            		
+		            		<div class="col-md-12 input-div">
+		            			<div class="col-md-5" style="padding-left: 0px;">
+		            				<div class="input-group">
+									  	<span class="input-group-addon">负责部门</span>
+									  	<input type="hidden" name="responsibilityDept.id" th:value="${flowStep.responsibilityDept != null} ? ${flowStep.responsibilityDept.id} : ${null}" />
+									  	<input type="text" disabled="disabled" class="form-control" id="responsibilityDeptName" th:value="${flowStep.responsibilityDept != null} ? ${flowStep.responsibilityDept.name} : ${null}"/>
+									</div>
+		            			</div>
+		            			<div class="col-md-1" style="height: 36px;padding: 0px;">
+		            				<a class="btn btn-lg btn-link select_a" title="点击选择" onclick="fnSelectUseunit(1);"><span class="glyphicon glyphicon-edit"></span></a>
+		            				<a class="btn btn-lg btn-link select_a" title="点击清空" onclick="fnCleanResponsibilityDept();"><span class="glyphicon glyphicon-remove"></span></a>
+		            			</div>
+		            			
+		            			<div class="col-md-6" style="padding-right: 0px;">
+		            				<div class="input-group">
+									  	<span class="input-group-addon">负责岗位</span>
+									  	<input type="text" class="form-control" name="responsibilityQuarter" th:value="${flowStep.responsibilityQuarter}"/>
+									</div>
+		            			</div>
+		            		</div>
+		            		
+		            		<div class="col-md-12 input-div">
+		            			<div class="col-md-11" style="padding-left: 0px;">
+		            				<div class="input-group">
+									  	<span class="input-group-addon">配合部门</span>
+									  	<input type="hidden" name="cooperateDeptIds" th:value="${flowStep.cooperateDeptIds}" />
+									  	<input type="text" disabled="disabled" class="form-control" id="cooperateDeptNames" name="cooperateDeptNames" th:value="${flowStep.cooperateDeptNames}"/>
+									</div>
+		            			</div>
+		            			<div class="col-md-1" style="height: 36px;padding: 0px;">
+		            				<a class="btn btn-lg btn-link select_a" title="点击选择" onclick="fnSelectUseunit(2);"><span class="glyphicon glyphicon-edit"></span></a>
+		            				<a class="btn btn-lg btn-link select_a" title="点击清空" onclick="fnCleanCooperateDept();"><span class="glyphicon glyphicon-remove"></span></a>
+		            			</div>
+		            		</div>
+		            		
+		            		<div class="col-md-12 input-div">
+		            			<div class="col-md-5" style="padding-left: 0px;">
+		            				<div class="input-group">
+									  	<span class="input-group-addon">工作参考文档</span>
+									  	<input type="hidden" name="consultFileId" th:value="${flowStep.consultFileId}" />
+									  	<input type="text"  disabled="disabled" class="form-control" id="consultFileName" name="consultFileName" th:value="${flowStep.consultFileName}"/>
+									</div>
+		            			</div>
+		            			<div class="col-md-1" style="height: 36px;padding: 0px;" id="consult_btn_div">
+		            				<a class="btn btn-lg btn-link select_file" title="上传相关文件" th:onclick="'fnUploadAnnex('+${anndexFolder.id}+',\''+${anndexFolder.folderName}+'\',1)'">
+		            					<span class="glyphicon glyphicon-file"></span>
+		            				</a>
+		            				<a class="btn btn-lg btn-link select_file" title="点击清空" onclick="fnCleanConsultFile();"><span class="glyphicon glyphicon-remove"></span></a>
+		            				<a id="view-consult" class="btn btn-lg btn-link select_file" title="预览" th:if="${!#strings.isEmpty(flowStep.consultFileId)}" th:onclick="'openCommonViewImgWin(\''+${flowStep.consultFileId}+'\')'">
+		            					<span class="glyphicon glyphicon-search"></span>
+		            				</a>
+		            			</div>
+		            			<div class="col-md-5" >
+		            				<div class="input-group">
+									  	<span class="input-group-addon">工作支持文档</span>
+									  	<input type="hidden" name="supportFileId" th:value="${flowStep.supportFileId}" />
+									  	<input type="text" class="form-control"  disabled="disabled" id="supportFileName" name="supportFileName" th:value="${flowStep.supportFileName}"/>
+									</div>
+		            			</div>
+		            			<div class="col-md-1" style="height: 36px;padding: 0px;" id="support_btn_div">
+		            				<a class="btn btn-lg btn-link select_file" title="上传相关文件" th:onclick="'fnUploadAnnex('+${anndexFolder.id}+',\''+${anndexFolder.folderName}+'\',2)'">
+		            					<span class="glyphicon glyphicon-file"></span>
+		            				</a>
+		            				<a class="btn btn-lg btn-link select_file" title="点击清空" onclick="fnCleanSupportFile();"><span class="glyphicon glyphicon-remove"></span></a>
+		            				<a id="view-support" class="btn btn-lg btn-link select_file" title="预览" th:if="${!#strings.isEmpty(flowStep.supportFileId)}" th:onclick="'openCommonViewImgWin(\''+${flowStep.supportFileId}+'\')'">
+		            					<span class="glyphicon glyphicon-search"></span>
+		            				</a>
+		            			</div>
+		            		</div>
+		            		
+		            		<div class="col-md-12 input-div">
+		            			<div class="input-group">
+								  	<span class="input-group-addon">管理要求</span>
+								  	<input type="text" class="form-control" name="requirement" th:value="${flowStep.requirement}"/>
+								</div>
+		            		</div>
+		            		
+		            		<div class="col-md-12 input-div" style="text-align: left;">
+		            			<div class="col-md-1 itemName">
+			            			工作使用表单
+		            			</div>
+		            			<div class="col-md-10">
+		            				<span id="workTableInfoName">
+		            					<a class="btn btn-lg btn-link btn-file a_workTable" th:if="${flowStep.workTable != null}" title="点击查看" th:onclick="'fnViewWorkTable(\''+${flowStep.workTable.id}+'\')'" th:text="${flowStep.workTable.name}"></a>
+		            				</span>
+		            				<a class="btn btn-lg btn-link select_a" title="重新关联工作用表" onclick="fnSelectWorkTable();"><span class="glyphicon glyphicon-edit"></span></a>
+		            			</div>
+		            			
+		            		</div>
+		            		
+		            		<div class="col-md-12 input-div" style="text-align: left;">
+		            			<div class="col-md-1 itemName" style="margin-left: 0px;">
+			            			相关附件上传
+		            			</div>
+		            			<div class="col-md-11" style="padding-right: 0px;padding-left: 10px;">
+		            				<a class="btn btn-lg btn-link btn-file" style="color: #000;text-decoration: underline;"
+		            					 title="点击上传附件" th:onclick="'fnUploadAnnex('+${anndexFolder.id}+',\''+${anndexFolder.folderName}+'\')'">上传相关附件</a>
+		            				<div id="annex_div">
+			            				<span th:each="annex : ${annexs}">
+				            				<a th:id="${'annex_'} + ${annex.id}" class="btn btn-lg btn-link btn-files" href="javascript:" title="点击下载" th:onclick="'openCommonViewImgWin(\''+${annex.id}+'\')'" th:text="${annex.name}+${'.'}+${annex.extendName}" ></a>
+				            				<a class="btn btn-lg btn-remove-file" th:title="${'删除附件：'} + ${annex.name}+${'.'}+${annex.extendName}"
+				            					th:onclick="'fnRemoveAnnex(\''+${annex.id}+'\',\''+${annex.name}+${'.'}+${annex.extendName}+'\')'"><span style="color: red;" class="glyphicon glyphicon-remove"></span></a>
+		            					</span>
+		            				</div>
+		            			</div>
+		            		</div>
+			        	</form>
+        			</td>
+        		</tr>
+        	</table>
+        </div>
+	</div>
+	
+	<!-- 选择部门 -->
+	<div class="modal fade" id="win_selectUseunit" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static"
+	     aria-hidden="true">
+	    <div class="modal-dialog" style="width:800px;">
+	        <div class="modal-content">
+	            <div class="modal-header" style="text-align: center;background-color: #357ca5;">
+	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	                <h4 class="modal-title" style="color:white;">选择部门</h4>
+	            </div>
+	            <div class="modal-body" style="padding: 10px;">
+	                <div class="box box-default box-solid" style="margin-bottom:5px; min-height: 40px">
+	                	<div class="box-body" id="useunit_name"></div>
+	                </div>
+	                <div class="box box-default box-solid" style="margin-bottom:5px;">
+	                    <div class="box-body">
+	                    	<div class="col-sm-12" id="useunitTree_div" style="overflow: auto;">
+	                        	<div id="edit_useunit_orgtree"></div>
+	                        </div>
+	                   	</div>
+	                </div>
+	            </div>
+	            <div class="modal-footer" style="text-align: center;">
+	                <button type="button" onclick="fnSetUseunit();" class="btn btn-primary">确定</button>
+	                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	
+	<!-- 选择工作用表  -->
+	<div class="modal fade" id="win_selectWorkTable" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static"
+	     aria-hidden="true">
+	    <div class="modal-dialog" style="width:1000px;">
+	        <div class="modal-content">
+	            <div class="modal-header" style="text-align: center;background-color: #357ca5;">
+	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	                <h4 class="modal-title" style="color:white;">工作用表关联</h4>
+	            </div>
+	            <div class="modal-body" style="padding: 10px;">
+	                <form class="form-horizontal" id="selectWorkTable_form">
+	                    <div class="box box-default box-solid" style="margin-bottom:5px; min-height: 40px">
+	                        <div class="box-body" id="work_table_name">
+	                        </div>
+	                    </div>
+	                    <div class="box box-default box-solid" style="margin-bottom:5px;">
+	                        <div class="box-body">
+	                            <div class="col-sm-6" id="table_directory_div" style="overflow: auto;">
+	                                <div id="table_directory_tree"></div>
+	                            </div>
+	                            <div class="col-sm-6">
+	                                <table id="work_table_info_table"></table>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </form>
+	            </div>
+	            <div class="modal-footer" style="text-align: center;">
+	                <button type="button" onclick="fnSetWorkTableId();" class="btn btn-primary">确定</button>
+	                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
+	<!-- 上传附件窗口 -->
+	<div class="modal fade modal-info" id="upload_annex_win" role="dialog" data-backdrop="false" aria-hidden="true">
+		<div class="modal-dialog" style="width:900px;">
+	      	<div class="modal-content" style="background-color:rgba(255, 255, 255, 0);">
+		        <div class="modal-header" style="padding:5px;">
+		          	<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top:0;">
+		            	<span aria-hidden="true">&times;</span>
+		            </button>
+		            <button type="button" class="close" style="margin-right:5px;margin-top: -1px;" onclick="fnMaxModalWin2(this)">
+		            	<i class="fa fa-square-o" style="font-size:16px;"></i>
+		            </button>
+		          	<h4 class="modal-title" style="text-align:center;"></h4>
+		        </div>
+		        <div class="modal-body" style="height: 450px;padding:0px;background-color: rgba(3, 51, 101, 0.9) !important;">
+		          	<iframe id="annexFrame" name="annexFrame" style="width: 100%;height:100%;border:0;"></iframe>
+		        </div>
+	      	</div>
+		</div>
+	</div>
+	
+	<!-- 通用查看图片窗口 -->
+	<div class="modal fade" id="common_viewimg_win" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" aria-hidden="true">
+		<div class="modal-dialog" style="width:800px;">
+			<div class="modal-content">
+				<div class="modal-header" style="padding:10px;">
+				 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">图片查看</h4>
+				</div>
+				<div class="modal-body" style="overflow: hidden; padding: 10px;">
+					
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+<!-- jQuery 2.2.3 -->
+<script th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/static/js/common.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/static/plugins/jQuery/jquery.serializejson.min.js}"></script>
+<script th:src="@{/static/plugins/datepicker/bootstrap-datepicker.js}"></script>
+<script th:src="@{/static/plugins/datepicker/locales/bootstrap-datepicker.zh-CN.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/bootstrap-contextmenu.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/prettify.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/attention/zDialog/zDrag.js}"></script>
+<!-- Slimscroll -->
+<script type="text/javascript" th:src="@{/static/plugins/slimScroll/jquery.slimscroll.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/dist/js/app.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/myModalDialogBR.js}"></script>
+<!-- bootstrap fileinput js -->
+<script th:src="@{/static/plugins/bootstrap-fileinput/js/plugins/sortable.min.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/bootstrap-fileinput/js/plugins/purify.min.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/bootstrap-fileinput/js/fileinput.min.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/bootstrap-fileinput/js/locales/fr.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/bootstrap-fileinput/js/locales/zh.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/bootstrap-fileinput/themes/explorer-fa/theme.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/bootstrap-fileinput/themes/fa/theme.js}" type="text/javascript"></script>
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+	var STATIC = [[@{/static/}]];
+	var CTX = [[@{/}]];
+	
+	var curType = 1;//1:负责部门or2:配合部门
+	var tempAnnexIds = $('#flowStep_form').find("input[name='annexIds']").val();
+	var tempAnnexNames = $('#flowStep_form').find("input[name='annexNames']").val();
+	
+	$(function () {
+		$('#table_directory_tree').height($(window).height()-320);
+		$('#table_directory_div').height($(window).height()-320);
+		$('#useunitTree_div').height($(window).height()-320);
+		
+		//初始化选择用户模态窗口关闭事件
+	    $('#win_selectWorkTable').on('hidden.bs.modal', function (e) {
+	    	//从展示框中移除
+    	    $('#selected_edit_sysuser').remove();
+	    	$('#edit_sysuser_orgusertable').bootstrapTable('uncheckAll');
+	    	
+	    	$('#temp_workTableId').val('');
+	    	$('#temp_workTableName').val('');
+	    });
+
+		//初始化选择部门模态窗口关闭事件
+	    $('#win_selectUseunit').on('hidden.bs.modal', function (e) {
+	    	//从展示框中移除
+    	    //$('#selected_edit_useunit').remove();
+	    	var useunitNameDiv = document.getElementById("useunit_name");
+	    	
+	    	useunitNameDiv.innerHTML = '';
+	    	
+    	    $('#temp_useunitId').val('');
+	    	$('#temp_useunitName').val('');
+	    });
+		
+		//表单校验
+	    $('#flowStep_form').bootstrapValidator({
+			message: '此处输入有误',
+	        excluded: [':disabled'],
+	        feedbackIcons: {
+	            valid: 'glyphicon glyphicon-ok',
+	            invalid: 'glyphicon glyphicon-remove',
+	            validating: 'glyphicon glyphicon-refresh'
+	        },
+	        fields:{
+	        	'stepName':{
+	        		message: '流程步骤输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '流程步骤不可为空'
+	                    }
+	                }
+	        	}
+	        }
+		});
+		
+	});
+	
+	//保存流程步骤
+	function fnSaveflowStep(flag){//true:保存并新增
+		$.ajax({  
+			url: CTX+'internal-flow-step/save',
+            type: 'POST',  
+            data:$('#flowStep_form').serialize(),// 序列化表单值  
+            dataType: 'json',//服务端接收的数据类型
+            async: false,
+            success:function(json) {  
+				if(json.success){
+					alert(json.msg);
+					if(flag){
+						fnCleanAllVal();//清空所有输入
+					}else{
+						fnCloseWin();
+					}
+				}else{
+					alert(json.msg);
+				}
+				loaded();
+            },  
+            error:function(json) {  
+            	alert('请求超时或系统出错!');
+				loaded();
+            }  
+        });
+	}
+	
+	//保存(并新增或关闭)
+	function fnSave(flag){
+		$('#flowStep_form').find("input[name='annexIds']").val(tempAnnexIds);
+		$('#flowStep_form').find("input[name='annexNames']").val(tempAnnexNames);
+		var result = $('#flowStep_form').data('bootstrapValidator');
+		result.validate();
+		if(result.isValid()){
+			loading('正在保存,请稍候...');
+			setTimeout(function(){
+				fnSaveflowStep(flag);
+			},200);
+			if(flag){
+				//新增
+				$('#flowStep_form').bootstrapValidator('resetForm');//重置表单校验
+			}
+		}
+	}
+
+	//关闭
+	function fnCloseWin(){
+		myReturnValueBR(1);
+		window.close();
+	}
+	
+	//清空负责部门
+	function fnCleanResponsibilityDept(){
+		$('#flowStep_form').find("input[name='responsibilityDept.id']").val('');
+		$('#responsibilityDeptName').val('');
+	}
+	
+	//清空配合部门
+	function fnCleanCooperateDept(){
+		$('#flowStep_form').find("input[name='cooperateDeptIds']").val('');
+		$('#cooperateDeptNames').val('');
+	}
+	
+	//清空工作参考文档
+	function fnCleanConsultFile(){
+		$('#flowStep_form').find("input[name='consultFileId']").val('');
+		$('#flowStep_form').find("input[name='consultFileName']").val('');
+	}
+
+	//清空工作支持文档
+	function fnCleanSupportFile(){
+		$('#flowStep_form').find("input[name='supportFileId']").val('');
+		$('#flowStep_form').find("input[name='supportFileName']").val('');
+	}
+	
+	//清空所有
+	function fnCleanAllVal(){
+		fnCleanResponsibilityDept();
+		fnCleanCooperateDept();
+		fnCleanConsultFile();
+		fnCleanSupportFile();
+		
+		$('.btn-files').remove();
+		$('#flowStep_form').find("input[name='id']").val('');
+		$('#flowStep_form').find("input[name='annexIds']").val('');
+		$('#flowStep_form').find("input[name='annexNames']").val('');
+		tempAnnexIds = '';
+		tempAnnexNames = '';
+		$('#flowStep_form').find("input[name='stepName']").val('');
+		$('#flowStep_form').find("input[name='responsibilityQuarter']").val('');
+		$('#flowStep_form').find("input[name='requirement']").val('');
+	}
+	
+	//选择部门
+	function fnSelectUseunit(flag){//1:负责部门;2:配合部门
+		curType = flag;
+		loading('正在加载数据,请稍候...');
+		var r = Math.random().toString().substring(5);
+        $.ajax({
+            url: CTX + 'organizationManage/query-all-org-tree?Mathnum=' + r,
+            method: 'GET',
+            dataType: 'json',
+            async: false,
+            data: {selectable:true},
+            success: function (json) {
+                $('#edit_useunit_orgtree').treeview({
+                    showTags: true,
+                    data:json,
+                    state: {
+                    	 checked: true
+                    },
+                    //showCheckbox: true,
+                    onNodeSelected: function (event, node) {
+                    	if(flag == 1){
+	                    	//从展示框中移除
+	    	        	    $('#selected_edit_useunit').remove();
+                    	}
+                        //选中
+                    	addUseunitShow(node.id, node.text);
+                    },
+                    onNodeUnSelected: function (event, node) {
+                        //取消选中
+                    	$('#selected_edit_useunit').remove();
+                    }
+                });
+                $("#win_selectUseunit").modal("toggle");
+                loaded();
+            },
+            error: function () {
+                loaded();
+                alert('请求超时或系统出错');
+            }
+        });
+        
+        //加载原配合部门
+        if(flag == 2){
+        	var r = Math.random().toString().substring(5);
+        	var useunitIds = $('#flowStep_form').find("input[name='cooperateDeptIds']").val();;
+            $.ajax({
+                url: CTX + 'useunit/query-useunit?Mathnum=' + r,
+                method: 'GET',
+                dataType: 'json',
+                data: {ids:useunitIds},
+                success: function (json) {
+                    for(var i = 0; i < json.length; i++){
+                        //展示框初始化
+                        addUseunitShow(json[i].id, json[i].name);
+                    }
+                },
+                error: function () {
+                    loaded();
+                    alert('请求超时或系统出错');
+                }
+            });
+        }
+	}
+	
+	//添加部门展示
+	function addUseunitShow(id, name) {
+		var useunit = document.getElementById('selected_edit_useunit_'+id);
+		if(useunit == null){
+			var htmlStr = '';
+		    htmlStr +=
+		        '<div id="selected_edit_useunit_' + id + '" class="allRoleSysuser" style="background-color:#3daae8;color:white;width:auto;hight:60px;float:left;margin:5px;">' +
+		        '	<input type="hidden" name="useunit_id" class="sysuserid" value="' + id + '"/>' +
+		        '   <spand style="padding-left: 5px;padding-right: 5px;" class="useunit_name">' + name + '</spand>' +
+		        '   <input type="button" class="closeDiv" onclick="removeUseunit(\'' + id + '\', \'' + name + '\')" value="X" style="background:transparent;border:none;"/>' +
+		        '</div>';
+		    $("#useunit_name").append(htmlStr);
+		    
+		    $('#temp_useunitId').val(id);
+		    $('#temp_useunitName').val(name);
+		}else{
+			$('#selected_edit_useunit_' + id).remove();
+		}
+	}
+	
+	//移除部门
+	function removeUseunit(id, name) {
+		/* $('#temp_useunitId').val('');
+	    $('#temp_useunitName').val(''); */
+	    
+	  	//从展示框中移除
+        $('#selected_edit_useunit_' + id).remove();
+	}
+	
+	//设置选中部门
+	function fnSetUseunit(){
+		if(curType == 1){
+			var useunitId = $('#temp_useunitId').val();
+			var useunitName =  $('#temp_useunitName').val();
+		    $('#flowStep_form').find("input[name='responsibilityDept.id']").val(useunitId);
+		    $('#responsibilityDeptName').val(useunitName);
+		}else if(curType == 2){
+			var useunits = document.getElementsByName('useunit_id');
+			var useunitNames = document.getElementsByClassName('useunit_name');
+			var ids = "";
+			var names = "";
+			for(var i=0; i < useunits.length; i++){
+				ids += "," + useunits[i].value;
+			}
+			for(var i=0; i < useunitNames.length; i++){
+				names += "," + useunitNames[i].innerText;
+			}
+			/* console.log("ids:"+ids);
+			console.log("names:"+names); */
+			if(useunits.length > 0){
+				ids = ids.substring(1);
+			}
+			if(useunitNames.length > 0){
+				names = names.substring(1);
+			}
+			$('#flowStep_form').find("input[name='cooperateDeptIds']").val(ids);
+			$('#flowStep_form').find("input[name='cooperateDeptNames']").val(names);
+			
+		}
+	    
+		$("#win_selectUseunit").modal('hide');
+	}
+	
+	//上传附件
+	function fnUploadAnnex(folderId,folderName,type){
+		//调用统一附件管理页面
+		openUploadAnnexWin({
+			folderId:folderId,
+			folderName:folderName/* ,
+			annexIds:annexIdStr */
+		},function(data){
+			//附件管理回调
+			if(data.length>0){
+				$.each(data,function(i,annex){
+					//展示附件
+					if(type == null){
+						fnAddAnnexShow(annex);
+					}else{
+						fnAddFilwShow(annex,type);
+					}
+				});
+			}
+			//单独保存附件字段
+		});
+	}
+	
+	//添加附件标签
+	function fnAddAnnexShow(annex){
+		tempAnnexIds += "," + annex.id;
+		tempAnnexNames += "," + annex.name + "." + annex.extendName;
+		var htmlStr = '';
+		htmlStr += "<span><a id='annex_"+annex.id+"' class=\"btn btn-lg btn-link btn-files\" href=\"javascript:\" title=\"点击下载\" onclick=\"openCommonViewImgWin(\'"+annex.id+"\')\">"
+    	+ annex.name + "." + annex.extendName +"</a>"
+    	+ "<a class=\"btn btn-lg btn-remove-file\" title=\"删除附件："+ annex.name + "." + annex.extendName 
+    	+ "\" onclick=\"fnRemoveAnnex(\'"+annex.id + "\',\'" + annex.name + "." + annex.extendName +"\')\">"
+    	+ "<span style=\"color: red;\" class=\"glyphicon glyphicon-remove\"></span></a></span>";
+	    	
+		$("#annex_div").append(htmlStr);
+	}
+	
+	//删除附件
+	function fnRemoveAnnex(annexId,annexName){
+		var annexIdArr = tempAnnexIds.split(",");
+		var annexNameArr = tempAnnexNames.split(",");
+		var newAnnexIds = "";
+		var newAnnexNames = "";
+		for(var i = 0; i < annexIdArr.length; i++){
+			if(annexIdArr[i] != annexId){
+				newAnnexIds += "," + annexIdArr[i];
+			}
+		}
+		tempAnnexIds = newAnnexIds;
+		tempAnnexNames = newAnnexNames;
+		var annex = document.getElementById("annex_"+annexId);
+		var parentSpan = annex.parentNode;
+		parentSpan.remove();
+		
+	}
+	
+	//添加工作文档展示
+	function fnAddFilwShow(annex,type){//1:工作参考文档;2:工作支持文档
+		//consultFileId
+		if(type == 1){
+			$('#flowStep_form').find("input[name='consultFileId']").val(annex.id);
+			$('#flowStep_form').find("input[name='consultFileName']").val(annex.name + '.' + annex.extendName);
+			
+			$('#view-consult').remove();
+			
+			var htmlStr = '';
+			htmlStr += "<a id=\"view-consult\" class=\"btn btn-lg btn-link select_file\" href=\"javascript:\" title=\"预览\" onclick=\"openCommonViewImgWin(\'"+annex.id+"\')\">"+
+		    	"<span class=\"glyphicon glyphicon-search\"></span></a>";
+			
+			$('#consult_btn_div').append(htmlStr);
+		}else if(type == 2){
+			$('#flowStep_form').find("input[name='supportFileId']").val(annex.id);
+			$('#flowStep_form').find("input[name='supportFileName']").val(annex.name + '.' + annex.extendName);
+			
+			$('#view-support').remove();
+			
+			var htmlStr = '';
+			htmlStr += "<a id=\"view-support\" class=\"btn btn-lg btn-link select_file\" href=\"javascript:\" title=\"预览\" onclick=\"openCommonViewImgWin(\'"+annex.id+"\')\">"+
+		    	"<span class=\"glyphicon glyphicon-search\"></span></a>";
+			
+			$('#support_btn_div').append(htmlStr);
+		}
+	}
+	
+	//关联工作用表
+	function fnSelectWorkTable(){
+		$("#win_selectWorkTable").modal("toggle");
+		//初始化工作用表目录树
+	    var r = Math.random().toString().substring(5);
+	    $.ajax({
+	        url: CTX + 'work-table-directory/query-tree?Mathnum=' + r,
+	        method: 'GET',
+	        dataType: 'json',
+	        async: false,
+	        data: {selectable:true},
+	        success: function (json) {
+	            $('#table_directory_tree').treeview({
+	                showTags: true,
+	                data: json,
+	                onNodeSelected: function (event, node) {
+	                    $('#work_table_directory_id').val(node.id);
+	                    $("#work_table_info_table").bootstrapTable('refresh');
+	                }
+	            });
+	        },
+	        error: function () {
+	            loaded();
+	            alert('请求超时或系统出错');
+	        }
+	    });
+	    
+    	setTimeout(function(){
+		    $('#table_directory_tree').treeview('selectNode', [ 0, { silent: true } ]);
+	    	var firstNode = $('#table_directory_tree').treeview('getNode', 0);
+	    	$('#work_table_directory_id').val(firstNode.id);
+    		//初始化工作用表表格
+            var tableInit = new WorkTableInfoTableInit();
+            tableInit.Init();
+    	},500);
+	    
+        loaded();
+	}
+	
+	//初始化工作用表
+	var WorkTableInfoTableInit = function () {
+	    var oTableInit = new Object();
+	  	//初始化Table
+	    oTableInit.Init = function () {
+	        $('#work_table_info_table').bootstrapTable({
+	            url: CTX + 'work-table-info/query-page',         //请求后台的URL（*）
+	            method: 'get',                      //请求方式（*）
+	            // toolbar: '#toolbar',                //工具按钮用哪个容器
+	            //toolbarAlign:'left',				//工具栏位置
+	            striped: true,                      //是否显示行间隔色
+	            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+	            pagination: true,                   //是否显示分页（*）
+	            sortable: true,                     //是否启用排序
+	            sortOrder: "asc",                   //排序方式
+	            queryParams: oTableInit.queryParams,//传递参数（*）
+	            sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+	            pageNumber: 1,                       //初始化加载第一页，默认第一页
+	            pageSize: 10,                       //每页的记录行数（*）
+	            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+	            queryParamsType: "a",
+	            search: true,                       //是否显示表格搜索
+	            strictSearch: true,
+	            showColumns: false,                  //是否显示所有的列
+	            showRefresh: true,                  //是否显示刷新按钮
+	            minimumCountColumns: 2,             //最少允许的列数
+	            clickToSelect: true,                //是否启用点击选中行
+	            singleSelect : true,
+	            height: $(window).height()-350,      //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+	            uniqueId: "id",                     //每一行的唯一标识，一般为主键列
+	            columns: [
+	                 {
+	                    field: 'name',
+	                    title: '表单名称',
+	                    align : 'center',
+	                    sortable: false
+	                },
+	                {
+	                    checkbox: true
+	                }
+	            ],
+	            onCheck:function(row){
+	            	//从展示框中移除
+	        	    $('#selected_work_table_info').remove();
+	        	    addTableInfoShow(row.id, row.name);
+	            },
+	            onUncheck:function(row){
+	            	//从展示框中移除
+	        	    $('#selected_work_table_info').remove();
+	            }
+	        });
+	        $('#work_table_info_table .search input').attr('placeholder', '姓名');
+	    };
+	    
+	  	//得到查询的参数
+	    oTableInit.queryParams = function (params) {
+	        var data = JSON.stringify($('#workTableInfoFormSearch').serializeJSON());
+	        var temp = {   //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+	            pageNum: params.pageNumber,//页码params.offset
+	            size: params.pageSize,//页面大小params.limit
+	            order: params.sortOrder,//排序 params.order
+	            ordername: params.sortName,//排序字段 params.sort
+	            searchForm: data,
+	            search: params.searchText
+	        };
+	        return temp;
+	    };
+	    return oTableInit;
+	}
+	
+	//添加用户展示
+	function addTableInfoShow(id, name) {
+	    var htmlStr = '';
+	    htmlStr +=
+	        '<div id="selected_work_table_info" class="allRoleSysuser" style="background-color:#3daae8;color:white;width:auto;hight:60px;float:left;margin:5px;">' +
+	        '	<input type="hidden" name="workTableInfoId" class="sysuserid" value="' + id + '"/>' +
+	        '   <spand style="padding-left: 5px;padding-right: 5px;">' + name + '</spand>' +
+	        '   <input type="button" class="closeDiv" onclick="removeWorkTableInfo(\'' + id + '\', \'' + name + '\')" value="X" style="background:transparent;border:none;"/>' +
+	        '</div>';
+	    $("#work_table_name").append(htmlStr);
+	    
+	    $('#temp_workTableId').val(id);
+	    $('#temp_workTableName').val(name);
+	}
+	
+	//移除工作用表
+	function removeWorkTableInfo(id, name) {
+	    //修改表格的复选框状态
+	    var index = -1;
+	    $('#work_table_info_table tr').each(function(){
+	        if($(this).attr('data-uniqueid')==id){
+	            index = $(this).attr('data-index');
+	        }
+	    });
+	    if(index!=-1){
+	        $('#work_table_info_table').bootstrapTable('uncheck',index);//根据下标index，修改选中状态
+	    }else{
+	        //从展示框中移除
+	        $('#selected_work_table_info').remove();
+	        
+	        $('#temp_workTableId').val('');
+		    $('#temp_workTableName').val('');
+	    }
+	}
+	
+	//设置工作用表id
+	function fnSetWorkTableId(){
+		var workTableId = $('#temp_workTableId').val();
+		var workTableName =  $('#temp_workTableName').val();
+	    $('#flowStep_form').find("input[name='workTable.id']").val(workTableId);
+	    
+	    var aStr = "<a class=\"btn btn-lg btn-link btn-file a_workTable\" title=\"点击查看\" onclick=\"fnViewWorkTable(\'"+workTableId+"\')\">"+workTableName+"</a>"
+	    $('#workTableInfoName').html(aStr);
+		$("#win_selectWorkTable").modal('hide');
+	}
+	
+	//查看工作用表
+	function fnViewWorkTable(dId){
+		var r = Math.random().toString().substring(5);
+		var url = CTX+'work-table-info/view?id='+dId+'&Mathnum='+r;
+		var name = "工作用表详情";
+		window.open(url,'_blank','width='+window.screen.width+',height='+window.screen.height);
+	}
+	
+	//初始化按钮
+	var ButtonInit = function () {
+	    var oInit = new Object();
+	    var postdata = {};
+
+	    oInit.Init = function () {
+	        //初始化页面上面的按钮事件
+	    };
+
+	    return oInit;
+	};
+		
+	/*]]>*/
+</script>
+<script type="text/javascript" th:src="@{/static/modules/internal/internal-file-upload.js}"></script>	
+</html>

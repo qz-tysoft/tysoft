@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Office</title>
+
+<script type="text/javascript">
+  		  
+  		  
+</script>
+
+
+<!-- 刷新 -->
+<script type="text/javascript">
+		function close() {
+			/* document.getElementById("PageOfficeCtrl1").WebSave(); */
+			POBrowser.closeWindow();//关闭POBrowser窗口
+		}
+		function ShowPrintDlg() {
+			document.getElementById("PageOfficeCtrl1").ShowDialog(4); //打印对话框
+		}
+		function SwitchFullScreen() {//全屏
+			document.getElementById("PageOfficeCtrl1").FullScreen = !document.getElementById("PageOfficeCtrl1").FullScreen;
+		}
+  		   
+</script>
+  		
+</head>
+<body>
+	<div id="pageofficeWord" style="width: 1200px; height: 1000px;"
+		th:utext="${pageoffice}"></div>
+
+</body>
+<script th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/static/js/common.js}"></script>
+<script
+	th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></script>
+<script
+	th:src="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script
+	th:src="@{/static/plugins/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/static/plugins/jQuery/jquery.serializejson.min.js}"></script>
+<script th:src="@{/static/plugins/datepicker/bootstrap-datepicker.js}"></script>
+<script
+	th:src="@{/static/plugins/datepicker/locales/bootstrap-datepicker.zh-CN.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.js}"></script>
+<script
+	th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/plugins/bootstrap-contextmenu/bootstrap-contextmenu.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/plugins/bootstrap-contextmenu/prettify.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/plugins/attention/zDialog/zDrag.js}"></script>
+<!-- Slimscroll -->
+<script type="text/javascript"
+	th:src="@{/static/plugins/slimScroll/jquery.slimscroll.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/dist/js/app.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
+<script type="text/javascript" src="pageoffice.js" id="po_js_main"></script>
+<script th:inline="javascript" type="text/javascript">
+	/*<![CDATA[*/	
+	var CTX = [[@{/}]];
+	$(function () {
+	
+	});
+	
+	function PageOffice(){
+	  	POBrowser.openWindowModeless(CTX+'/view-file','width=1240px;height=800px;');
+	}
+	
+	/*]]>*/	
+	</script>
+</html>

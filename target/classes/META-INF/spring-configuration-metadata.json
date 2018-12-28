@@ -1,0 +1,32 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.tysoft.common.OAJDBCUtils",
+      "name": "oaConfig",
+      "type": "com.tysoft.common.OAJDBCUtils"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "com.tysoft.common.OAJDBCUtils",
+      "name": "oaConfig.driver",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.tysoft.common.OAJDBCUtils",
+      "name": "oaConfig.password",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.tysoft.common.OAJDBCUtils",
+      "name": "oaConfig.url",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.tysoft.common.OAJDBCUtils",
+      "name": "oaConfig.user",
+      "type": "java.lang.String"
+    }
+  ]
+}

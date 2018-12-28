@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--
+* @Copyright(c): 厦门路桥信息股份有限公司  版权所有
+* @author :XMRBI
+* @Description:内控管理列表打印
+* @createDate:2018-11-12
+-->
+<head>
+	<meta charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+	<title>内控管理列表打印</title>
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/select2/select2.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-validator/css/bootstrapValidator.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css}"/>
+    <!-- Theme style -->
+	<link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+	<!-- Bootstrap 3.3.7 -->
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.css}"/>
+	<style type="text/css">
+	.panel {
+	  margin-bottom: 0px;
+	}
+	.form-group {
+	  margin-bottom: 2px;
+	}
+	
+	</style>
+	<style type="text/css">
+        html, body {
+            overflow-x: hidden;
+        }
+        body {
+            padding-top: 5px;
+        }
+        .btn-link:HOVER {
+			text-decoration: none;
+		}
+		.container-fluid{
+			padding-right: 10px;
+			padding-left: 10px;
+		}
+		.bootstrap-table{
+			margin: 0px 8px;
+		}
+		.a_tableName{
+        	font-weight: bold;
+			text-decoration: underline;
+			color: #000;
+		}
+          
+    </style>
+</head>
+<body id="print_body">
+	<div class="container-fluid" style="width:100%; height: 100%" >
+		<input type="hidden" id="pageNum" th:value="${pageNum}" />
+		<input type="hidden" id="size" th:value="${size}" />
+	    <form id="searchForm" class="form-horizontal">
+	    	<input name="query_directoryId" id="query_directoryId" type="hidden" th:value="${query_directoryId}" />
+	    	<input name="query_name" id="query_name" type="hidden" th:value="${query_name}" />
+	    	<input name="query_flowNum" id="query_flowNum" type="hidden" th:value="${query_flowNum}" />
+	    	<input name="query_controlWay" id="query_controlWay" type="hidden" th:value="${query_controlWay}" />
+	    	<input name="query_responsibilityDept" id="query_responsibilityDept" type="hidden" th:value="${query_responsibilityDept}" />
+	    	<input name="query_status" id="query_status" type="hidden" th:value="${query_status}" />
+	    	<input name="query_maintainer" id="query_maintainer" type="hidden" th:value="${query_maintainer}" />
+	    	<input name="query_processLeader" id="query_processLeader" type="hidden" th:value="${query_processLeader}" />
+	    </form>
+	    
+	    <table id="dataList"></table>
+	</div>
+</body>
+<!-- jQuery 2.2.3 -->
+<script th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/static/js/common.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/static/plugins/jQuery/jquery.serializejson.min.js}"></script>
+<script th:src="@{/static/plugins/datepicker/bootstrap-datepicker.js}"></script>
+<script th:src="@{/static/plugins/datepicker/locales/bootstrap-datepicker.zh-CN.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/bootstrap-contextmenu.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/prettify.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/attention/zDialog/zDrag.js}"></script>
+<!-- Slimscroll -->
+<script type="text/javascript" th:src="@{/static/plugins/slimScroll/jquery.slimscroll.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/dist/js/app.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/myModalDialogBR.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+	var CTX = [[@{/}]];
+	
+	$(function () {
+		//1.初始化Table
+	    var oTable = new TableInit();
+	    oTable.Init();
+		//2.初始化Button的点击事件
+	    var oButtonInit = new ButtonInit();
+	    oButtonInit.Init();
+	    
+	    setTimeout(function(){
+		    doPrint();
+	    },300);
+	});
+	
+	//初始化列表
+	var TableInit = function () {
+	    var oTableInit = new Object();
+	    //初始化Table
+	    oTableInit.Init = function () {
+	        $('#dataList').bootstrapTable({
+	        	url: CTX + 'internal-control-flow/query-page', //请求后台的URL（*）
+	            method: 'get',                      //请求方式（*）
+	            striped: false,                      //是否显示行间隔色
+	            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+	            pagination: true,                   //是否显示分页（*）
+	            sortable: false,                     //是否启用排序
+	            sortOrder: "asc",                   //排序方式
+	            queryParams: oTableInit.queryParams,//传递参数（*）
+	            sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+	            pageNumber: $('#pageNum').val(),                       //初始化加载第一页，默认第一页
+	            pageSize: $('#size').val(),                       //每页的记录行数（*）
+	            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+	            queryParamsType: "a",
+	            strictSearch: true,
+	            //showColumns: true,                  //是否显示所有的列
+	            minimumCountColumns: 2,             //最少允许的列数
+	            clickToSelect: true,                //是否启用点击选中行
+	            //height:$(window).height()-150,	    //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+	            uniqueId: "id",                     //每一行的唯一标识，一般为主键列
+	            //singleSelect: true,
+	            undefinedText: "",
+	            columns: [
+				{
+				    field: 'number',
+				    title:'序号',
+				    align : 'center',
+				    sortable:true,
+				    formatter:function(value,row,index){
+				    	var pageSize=$('#dataList').bootstrapTable('getOptions').pageSize;
+		                var pageNumber=$('#dataList').bootstrapTable('getOptions').pageNumber;
+		                return pageSize * (pageNumber - 1) + index + 1;
+				    }
+				},{
+				    field: 'flowNum',
+				    title:'流程编号',
+				    align : 'center',
+				    sortable:true
+				},{
+				    field: 'name',
+				    title:'流程名称',
+				    align : 'center',
+				    sortable:true,
+				    formatter:function(v,r,i){
+				    	return '<a class="a_tableName">'+ r.name +'</a>';
+	   				}
+				},{
+				    field: 'controlWay',
+				    title:'控制方式',
+				    align : 'center',
+				    sortable:true
+				},{
+				    field: 'responsibilityDept',
+				    title:'主责部门',
+				    align : 'center',
+				    sortable:true,
+				    formatter:function(useunit){
+				   		return useunit.name;
+				    }
+				},{
+				    field: 'maintainer',
+				    title:'维护责任人',
+				    align : 'center',
+				    sortable:true,
+				    formatter:function(user){
+				   		return user.name;
+				    }
+				},{
+				    field: 'processLeader',
+				    title:'流程负责人',
+				    align : 'center',
+				    sortable:true,
+				    formatter:function(user){
+				   		return user.name;
+				    }
+				},{
+				    field: 'versionNo',
+				    title:'版本号',
+				    align : 'center',
+				    sortable:true
+				},{
+				    field: 'status',
+				    title:'状态',
+				    align : 'center',
+				    sortable:true,
+				    formatter:function(value){
+				    	if(value == 1){
+				    	    return '启用';
+				    	}else if(value == 0){
+				    		return '停用';
+				    	}
+				    }
+				},],
+				formatShowingRows: function (pageFrom, pageTo, totalRows) {
+		            return '共 ' + totalRows + ' 条';
+		        },
+	        });
+	    };
+
+	    //得到查询的参数
+	    oTableInit.queryParams = function (params) {
+	    	var data = JSON.stringify($('#searchForm').serializeJSON());
+	        var temp = {   //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+	        	searchForm:data,
+	        	pageNum: params.pageNumber,//页码params.offset
+                size: params.pageSize//页面大小params.limit
+	        };
+	        return temp;
+	    };
+	    return oTableInit;
+	};
+	
+	//查询-刷新
+	function queryInfo(pageNo){
+		if(pageNo == null){
+			pageNo = $('#dataList').bootstrapTable('getOptions').pageNumber;
+		}
+		$('#dataList').bootstrapTable('refreshOptions',{pageNumber:pageNo,pageSize:10});
+	}
+	
+	function pagesetup_null() {
+		var hkey_root, hkey_path, hkey_key;
+		hkey_root = "HKEY_CURRENT_USER"
+			hkey_path = "\\Software\\Microsoft\\Internet Explorer\\PageSetup\\";
+		try {
+			var RegWsh = new ActiveXObject("WScript.Shell");
+			hkey_key = "header";
+			RegWsh.RegWrite(hkey_root + hkey_path + hkey_key, "");
+			hkey_key = "footer";
+			RegWsh.RegWrite(hkey_root + hkey_path + hkey_key, "");
+			/* hkey_key = "margin_bottom";
+				RegWsh.RegWrite(hkey_root + hkey_path + hkey_key, "0"); //0.39相当于把页面设置里面的边距设置为10 
+				hkey_key = "margin_left";
+				RegWsh.RegWrite(hkey_root + hkey_path + hkey_key, "0");
+				hkey_key = "margin_right";
+				RegWsh.RegWrite(hkey_root + hkey_path + hkey_key, "0");
+				hkey_key = "margin_top";
+				RegWsh.RegWrite(hkey_root + hkey_path + hkey_key, "0"); */
+		} catch (e) {
+			
+		}
+	}
+
+	function doPrint() {
+		var body = document.getElementById("print_body");
+		pagesetup_null();
+		//window.print();
+		CloseAfterPrint();
+	}
+
+	function CloseAfterPrint() {
+		if (tata = document.execCommand("print")) {
+			window.close();
+		}
+	}
+	
+	//初始化按钮
+	var ButtonInit = function () {
+	    var oInit = new Object();
+	    var postdata = {};
+
+	    oInit.Init = function () {
+	        //初始化页面上面的按钮事件
+	    };
+
+	    return oInit;
+	};
+		
+	/*]]>*/
+</script>	
+</html>

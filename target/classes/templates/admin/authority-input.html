@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+	<title>菜单权限编辑</title>
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/select2/select2.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.css}" />
+	<link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}" />
+	<link rel="stylesheet" th:href="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/bootstrap-validator/css/bootstrapValidator.min.css}"/>
+	<style type="text/css">
+		html,body {overflow-x:hidden;}
+		body {
+			padding-top:40px;
+		}
+		.navbar{padding: 0 10px;}
+		.bar_left {
+		    float: left;
+		    line-height: 49px;
+		}
+		.bar_right {
+		    float: right;
+		    line-height: 49px;
+		}
+		.page_title {
+		    width: 50%;
+		    position: absolute;
+		    left: 25%;
+		    font-weight: 400;
+		    text-align: center;
+		    color: #232528;
+		    font-size: 18px;
+		    overflow: hidden;
+		    white-space: nowrap;
+		    text-overflow: ellipsis;
+		    margin-top:none;
+		}
+		.logo_img {
+		    padding-top: 5px;
+		    height: 70px;
+		    width: 70px;
+		    display: inline-block;
+		    position: relative;
+		    -webkit-border-radius: 10%;
+		    -moz-border-radius: 10%;
+		    border-radius: 10%;
+		    -webkit-background-clip: padding-box;
+		    -moz-background-clip: padding-box;
+		    background-clip: padding-box;
+		}
+		.border_alpha {
+			text-align: center;
+		    border: 1px solid #eee;
+		    border-color: rgba(0,0,0,.1);
+		    -moz-background-clip: padding;
+		    -webkit-background-clip: padding;
+		    background-clip: padding-box;
+		}
+		.col-sm-10-span {
+		    word-break: break-all;
+		    word-wrap: break-word;
+		    white-space: normal;
+		    display: block;
+		    float: left;
+		    height: 34px;
+		    padding: 6px 12px 6px 0px;
+		    font-size: 14px;
+		    line-height: 1.42857143;
+		    color: #777;
+		}
+	</style>
+</head>
+<body>
+ 	<nav class="navbar navbar-fixed-top navbar-default">
+		<div class="bar_left"><button class="btn btn-default" type="button" onclick="fnGoBack()"><em class="glyphicon glyphicon-arrow-left"></em></button></div>
+	  	<h2 class="page_title" style="margin-top:15px;" th:text="${authority}!=null?${authority.name}:'新建主菜单'"></h2>
+	  	<div class="bar_right">
+	  		<button th:if="${authority}!=null and ${authority.id}!=null" class="btn btn-danger" type="button" onclick="goDel(this)">删除</button>
+	  		<button class="btn btn-primary" type="button" onclick="goSubmit(this)">保存</button>
+	  	</div>
+	</nav>
+	<div id="container" class="container">
+		<div class="row clearfix">
+			<div class="col-md-12 column">
+				<form id="saveForm" class="form-horizontal" role="form" style="margin-top: 20px;">
+					<input type="hidden" name="id" th:value="${authority}!=null?${authority.id}:''"/>
+					<input type="hidden" name="authorityType" th:value="${authority}!=null?${authority.authorityType}:'1'"/>
+					<div class="form-group">
+					 	<label for="wapp_icon" class="col-sm-2 control-label">主菜单图标</label>
+						<div class="col-sm-10">
+							<input type="hidden" name="icon" th:value="${authority}!=null?${authority.icon}:'fa fa-folder'" />
+							<a class="logo_img border_alpha" href="javascript:doSelectIcon()">
+								<i th:class="${authority}!=null?${authority.icon}:'fa fa-folder'" style="font-size:60px;"></i>
+							</a>
+						</div>
+					</div>
+					<div class="form-group">
+						 <label for="wapp_name" class="col-sm-2 control-label">菜单名称</label>
+						<div class="col-sm-10">
+							<input type="text" name="name" class="form-control" placeholder="6个字内" th:value="${authority}!=null?${authority.name}:''"/>
+						</div>
+					</div>
+					<div class="form-group">
+						 <label for="wapp_url" class="col-sm-2 control-label">URL地址</label>
+						<div class="col-sm-10">
+							<div class="input-group">
+				                <div class="input-group-btn">
+				                  	<button id="urlHeader_btn" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+				                  		<span th:text="${authority}!=null and ${authority.url}!=null?${#strings.substring(authority.url,0,#strings.indexOf(authority.url,':')+1)}:'frame:'"></span>
+			                    		<span class="fa fa-caret-down"></span>
+			                    	</button>
+				                  	<ul class="dropdown-menu">
+					                    <li><a href="javascript:fnSetUrlHead('frame:')">frame:</a></li>
+					                    <li><a href="javascript:fnSetUrlHead('window:')">window:</a></li>
+				                  	</ul>
+			                	</div>
+				                <input type="hidden" name="urlHeader" th:value="${authority}!=null and ${authority.url}!=null?${#strings.substring(authority.url,0,#strings.indexOf(authority.url,':')+1)}:'frame:'"/>
+				                <input type="text" name="url" class="form-control" placeholder="请输入主菜单首页地址" th:value="${authority}!=null and ${authority.url}!=null?${#strings.substring(authority.url,#strings.indexOf(authority.url,':')+1)}:''" />
+				              </div>
+						</div>
+					</div>
+					<div class="form-group">
+						 <label for="wapp_url" class="col-sm-2 control-label">默认显示</label>
+						<div class="col-sm-10">
+							<select id="roleType_selmenu" name="defaultRoleTypes" multiple="multiple" class="form-control">
+								<option value="sys" th:selected="${authority}!=null and ${authority.defaultRoleTypes}!=null and ${#strings.indexOf(authority.defaultRoleTypes,'sys')}>-1">系统管理员</option>
+								<option value="admin" th:selected="${authority}!=null and ${authority.defaultRoleTypes}!=null and ${#strings.indexOf(authority.defaultRoleTypes,'admin')}>-1">企业管理员</option>
+								<option value="normal" th:selected="${authority}!=null and ${authority.defaultRoleTypes}!=null and ${#strings.indexOf(authority.defaultRoleTypes,'normal')}>-1">普通角色</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						 <label for="wapp_authority" class="col-sm-2 control-label">左侧菜单配置</label>
+						<div class="col-sm-10">
+							<span class="col-sm-10-span" id="wapp_authority">该主菜单中所包含的可配置的左侧菜单权限</span>
+							<div class="btn-group pull-right">
+							    <button type="button" class="btn btn-link" onclick="goSetLeftAuth()">配&nbsp;&nbsp;&nbsp;置</button>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						 <label for="wapp_authority" class="col-sm-2 control-label">首页应用功能配置</label>
+						<div class="col-sm-10">
+							<span class="col-sm-10-span" id="wapp_authority">该主菜单中首页所显示的功能应用菜单</span>
+							<div class="btn-group pull-right">
+							    <button type="button" class="btn btn-link" onclick="goSetHomeAuth()">配&nbsp;&nbsp;&nbsp;置</button>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						 <label for="wapp_authority" class="col-sm-2 control-label">非菜单权限配置</label>
+						<div class="col-sm-10">
+							<span class="col-sm-10-span" id="wapp_authority">该主菜单中的非菜单权限</span>
+							<div class="btn-group pull-right">
+							    <button type="button" class="btn btn-link" onclick="goSetNoMenuAuth()">配&nbsp;&nbsp;&nbsp;置</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+	var CTX = [[@{/}]];
+	var STATIC = [[@{/static/}]];
+/*]]>*/		
+</script>
+<script type="text/javascript" th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/select2/select2.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/attention/zDialog/zDrag.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/attention/zDialog/zDialog.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+	$(function(){
+		$("#roleType_selmenu").select2({
+		    tags: true,
+		    placeholder: "选择角色类型",
+		    allowClear: true
+		});
+		
+		$('#saveForm').bootstrapValidator({
+			message: '此处输入有误',
+	        excluded: [':disabled'],
+	        feedbackIcons: {
+	            valid: 'glyphicon glyphicon-ok',
+	            invalid: 'glyphicon glyphicon-remove',
+	            validating: 'glyphicon glyphicon-refresh'
+	        },
+	        fields:{
+	        	'name':{
+	        		message: '菜单名称输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '菜单名称不可为空'
+	                    },
+	                    stringLength: {
+	                    	max:6,
+	                    	message: '6个字之内'
+	                    }
+	                }
+	        	},
+	        	'url':{
+	        		message: 'url地址输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: 'url地址不可为空'
+	                    }
+	                }
+	        	}
+	        }
+		});
+	});
+	
+	function fnSetUrlHead(txt){
+		$('#urlHeader_btn').html(txt+'<span class="fa fa-caret-down"></span>');
+		$("#saveForm input[name='urlHeader']").val(txt);
+	}
+	
+	//设置左侧菜单
+	function goSetLeftAuth(){
+		var id = $("#saveForm input[name='id']").val();
+		if(id==''){
+			alert('请先保存主菜单');
+			return;
+		}
+		window.location.href = CTX+"authority/set-left-auth.html?parentId="+id+"&authorityType=2&backPage=input";
+	}
+	//设置首页功能菜单
+	function goSetHomeAuth(){
+		var id = $("#saveForm input[name='id']").val();
+		if(id==''){
+			alert('请先保存主菜单');
+			return;
+		}
+		window.location.href = CTX+"authority/set-home-auth.html?authId="+id;
+	}
+	//设置非菜单权限
+	function goSetNoMenuAuth(){
+		var id = $("#saveForm input[name='id']").val();
+		if(id==''){
+			alert('请先保存主菜单');
+			return;
+		}
+		window.location.href = CTX+"authority/set-no-menu-auth.html?parentId="+id+"&authorityType=5&backPage=input";
+	}
+	
+	function doSelectIcon() {
+		var width = $(window.parent).width()*3/4;
+		var height = $(window.parent).height()-50;
+		var url = STATIC+"/modules/select-icon.html";
+		top.openCommonFrameWin(url,width,height,function(returnData){
+			$("#saveForm input[name='icon']").val(returnData);
+			$('.logo_img i').attr('class',returnData);
+		});
+	}
+	
+	function goDel(_this){
+		if(window.confirm('请确保子项已删除，确定要执行删除吗?')){
+			var oldTxt = $(_this).text();
+			$(_this).attr('disabled','disabled');
+			$(_this).html('删除中...');
+			$.ajax({  
+				url: CTX+'authority/delete-authority',
+	            type: 'POST',  
+	            data:{ids:$("#saveForm input[name='id']").val()},// 序列化表单值  
+	            dataType: 'json',
+	            success:function(json) {
+					if(json.success){
+						window.location.href = CTX+'admin-manage/authority-manage.html';
+					}else{
+		            	alert(json.msg);
+		            	$(_this).removeAttr('disabled');
+						$(_this).html(oldTxt);
+					}
+	            },  
+	            error:function(json) {  
+	            	alert('请求超时或系统出错!');
+	            	$(_this).removeAttr('disabled');
+					$(_this).html(oldTxt);
+	            }  
+	        }); 
+		}
+	}
+	
+	function goSubmit(_this){
+		var result = $('#saveForm').data('bootstrapValidator');
+		result.validate();
+		if(result.isValid()){
+			var oldTxt = $(_this).text();
+			$(_this).attr('disabled','disabled');
+			$(_this).html('保存中...');
+			$.ajax({  
+				url: CTX+'authority/save-authority',
+	            type: 'POST',  
+	            data:$('#saveForm').serialize(),// 序列化表单值  
+	            dataType: 'json',
+	            success:function(json) {
+	            	alert(json.msg);
+					$(_this).removeAttr('disabled');
+					$(_this).html(oldTxt);
+					if(json.success){
+						fnGoBack();
+					}
+	            },  
+	            error:function(json) {  
+	            	alert('请求超时或系统出错!');
+	            	$(_this).removeAttr('disabled');
+					$(_this).html(oldTxt);
+	            }  
+	        });  
+		}
+	}
+	
+	function fnGoBack(){
+		window.location.href = CTX+'admin-manage/authority-manage.html';
+	}
+/*]]>*/	
+</script>
+</html>

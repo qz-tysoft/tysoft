@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--
+* @Copyright(c): 厦门路桥信息股份有限公司  版权所有
+* @author :XMRBI
+* @Description:工作用表详情
+* @createDate:2018-10-29
+-->
+<head>
+	<meta charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+	<title th:if="${#strings.isEmpty(isNew)}" th:text="${'变更工作用表详情'}"></title>
+	<title th:if="${!#strings.isEmpty(isNew)}" th:text="${'新增工作用表详情'}"></title>
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/select2/select2.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-validator/css/bootstrapValidator.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css}"/>
+    <!-- Theme style -->
+	<link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+	<!-- Bootstrap 3.3.7 -->
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.css}"/>
+	<link th:href="@{/static/plugins/bootstrap-fileinput/css/fileinput.css}" media="all" rel="stylesheet" type="text/css"/>
+	<link th:href="@{/static/plugins/bootstrap-fileinput/themes/explorer-fa/theme.css}" media="all" rel="stylesheet" type="text/css"/>
+	<!-- bootstrap datepicker -->
+  	<link rel="stylesheet" th:href="@{/static/plugins/datepicker/datepicker3.css}"/>
+	<style type="text/css">
+	.panel {
+	  margin-bottom: 0px;
+	}
+	.form-group {
+	  margin-bottom: 2px;
+	}
+	
+	</style>
+	<style type="text/css">
+        html, body {
+            overflow-x: hidden;
+        }
+        body {
+            padding-top: 5px;
+        }
+        .col-sm-10 span {
+            word-break: break-all;
+            word-wrap: break-word;
+            white-space: normal;
+            display: block;
+            float: left;
+            height: 34px;
+            padding: 6px 12px 6px 0px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #777;
+        }
+        .box.box-solid.box-default>.box-header {
+        	background-color: #F2F2F2;
+        	padding: 3px 10px;
+        }
+        .btn-link:HOVER {
+			text-decoration: none;
+		}
+		.modal-header{
+			background-color:#F4F6F8;
+			border-top-left-radius: 5px;
+			border-top-right-radius: 5px;
+		}
+		.container-fluid{
+			padding-right: 10px;
+			padding-left: 10px;
+		}
+		#head_div{
+			margin: 10px auto 5px;
+			border-color: #F2F2F2;
+			width: 1200px; 
+		}
+		.box-header>.btn-lg{
+			padding: 5px 8px;
+		}
+		#content_div{
+			width: 1200px;
+			border: 1px solid #F2F2F2;
+			margin: 1px auto;
+		}
+		h2{
+			text-align: center;
+			margin: 10px 0px 25px;
+		}
+		.input-group>.input-group-addon{
+			/* border-radius: 4px; */
+			border-top-left-radius: 4px;
+			border-bottom-left-radius: 4px;
+			background-color: #F2F2F2;
+		}
+		.form-control{
+			height: 36px;
+		}
+		.input-div{
+			padding: 5px 20px;
+		}
+		#content_table{
+			margin: 10px auto;
+			/* min-height: 500px; */
+			border: 1px silver solid;
+			width: 1170px;
+		}
+		#content_table>td{padding-bottom: 15px;}
+		#itemName{
+			width: 114px;
+			height: 36px;
+			background-color: #F2F2F2;
+			padding: 6px 12px;
+			text-align: center;
+			border-radius: 4px;
+			border: 1px solid #d2d6de;
+		}
+		.select_a{
+			padding: 5px 8px;
+		}
+		.table>tbody>tr>td{
+			padding: 3px;
+		}
+		#edit_sysuser_orgtree ul li{
+            text-align: left;
+        }
+		#edit_useunit_orgtree ul li{
+            text-align: left;
+        }
+        .btn-file,.btn-files{
+        	padding: 8px 0px;
+        	margin-right: 5px;
+        	font-size: 14px;
+        }
+        .btn-remove-file{
+        	padding: 8px 0px;
+        	margin-right: 15px;
+        	font-size: 14px;
+        }
+          
+    </style>
+</head>
+<body style="text-align: center;">
+	<input type="hidden" id="temp_userId" />
+	<input type="hidden" id="temp_userName" />
+	<input type="hidden" id="temp_useunitId" />
+	<input type="hidden" id="temp_useunitName" />
+
+	<input type="hidden" id="now_user_lesseeId" name="lesseeId" th:value="${now_user_lesseeId}"/>
+    <input type="hidden" id="now_user_useunitId" name="useunitId" th:value="${now_user_useunitId}"/>
+    <input type="hidden" id="now_user_id" name="userId" th:value="${now_user_id}"/>
+    <!--用户表格过滤条件 -->
+    <form id="sysuserOrgFormSearch" class="form-horizontal">
+    	<input type="hidden" name="sysuserId" th:value="${now_user_id}"/>
+        <input type="hidden" id="edit_sysuser_useunit" name="useunitId"/>
+    </form>
+    
+	<div class="container-fluid" style="width:100%; height: 100%" >
+		<div id="head_div" class="box box-default collapsed-box box-solid">
+		    <div class="box-header with-border" style="padding: 3px 8px;text-align: left;">
+	        	<a th:if="${!#strings.isEmpty(isNew)}" class='btn btn-lg btn-link' id="btn_saveNew" style="color: blue;" onclick="fnSave(true);">保存并新增</a>
+	            <!-- <a th:if="${!#strings.isEmpty(isNew)}" class='btn btn-lg btn-link' id="btn_saveClose" style="color: blue;" onclick="">保存并关闭</a> -->
+	            <a class='btn btn-lg btn-link' id="btn_save" style="color: blue;" onclick="fnSave(false);">
+	            	<span th:text="${!#strings.isEmpty(isNew)} ? ${'保存并关闭'} : ${'保存'}"></span>
+	            </a>
+	            <a class='btn btn-lg btn-link' id="btn_print" style="color: blue;" onclick="fnPrint();">打印</a>
+	            <a class='btn btn-lg btn-link' id="btn_close" style="color: red;" onclick="fnCloseWin();">关闭</a>
+	        </div>
+        </div>
+        <div id="content_div">
+        	<table id="content_table">
+        		<tr>
+        			<td valign="top">
+			        	<h2 th:if="${!#strings.isEmpty(isNew)}">厦门轨道交通集团有限公司内控工作用表单</h2>
+			        	<h2 th:if="${#strings.isEmpty(isNew)}">厦门轨道交通集团有限公司内控工作用表变更单</h2>
+			        	<form id="tableInfo_form" class="form-horizontal">
+			        		<input name="oldId" th:value="${oldId}" type="hidden" />
+			        		<input name="id" type="hidden" />
+			        		<input name="annexIds" th:value="${tableInfo.annexIds}" type="hidden" />
+			        		<input name="version" th:value="${tableInfo.version}" type="hidden" />
+			        		<input name="versionNo" th:value="${tableInfo.versionNo}" type="hidden" />
+			        		<input name="status" th:value="${tableInfo.status}" type="hidden" />
+			        		<input name="directory.id" th:value="${tableInfo.directory != null} ? ${tableInfo.directory.id} : ${''}" type="hidden" />
+			        		<div class="col-md-12 input-div">
+		            			<div class="input-group">
+								  	<span class="input-group-addon">表单名称<span style="color: red;">*</span></span>
+								  	<input type="text" class="form-control" name="name" th:value="${tableInfo.name}"/>
+								</div>
+		            		</div>
+		            		
+			        		<div class="col-md-12 input-div">
+		            			<div class="input-group">
+								  	<span class="input-group-addon">适用范围</span>
+								  	<input type="text" class="form-control" title="使用 '、'隔开" name="applicationScope" th:value="${tableInfo.applicationScope}"/>
+								</div>
+		            		</div>
+		            		
+		            		<div class="col-md-12 input-div">
+		            			<div class="col-md-6" style="padding-left: 0px;">
+		            				<div class="input-group">
+									  	<span class="input-group-addon">表单编号<span style="color: red;">*</span></span>
+									  	<input type="text" class="form-control" name="serialNum" th:value="${tableInfo.serialNum}"/>
+									</div>
+		            			</div>
+		            			<div class="col-md-5">
+		            				<div class="input-group">
+									  	<span class="input-group-addon">主责部门<span style="color: red;">*</span></span>
+									  	<input type="hidden" name="responsibilityDept.id" th:value="${tableInfo.responsibilityDept != null} ? ${tableInfo.responsibilityDept.id} : ${null}" />
+									  	<input type="text" disabled="disabled" class="form-control" id="responsibilityDeptName" th:value="${tableInfo.responsibilityDept != null} ? ${tableInfo.responsibilityDept.name} : ${null}"/>
+									</div>
+		            			</div>
+		            			<div class="col-md-1" style="height: 36px;padding: 0px;">
+		            				<a class="btn btn-lg btn-link select_a" title="点击选择" onclick="fnSelectUseunit();"><span class="glyphicon glyphicon-edit"></span></a>
+		            				<a class="btn btn-lg btn-link select_a" title="点击清空" onclick="fnCleanResponsibilityDept();"><span class="glyphicon glyphicon-remove"></span></a>
+		            			</div>
+		            		</div>
+		            		
+		            		<div class="col-md-12 input-div">
+		            			<div class="col-md-5" style="padding-left: 0px;">
+		            				<div class="input-group">
+									  	<span class="input-group-addon">维护责任人<span style="color: red;">*</span></span>
+									  	<input type="hidden" name="maintainer.id" th:value="${tableInfo.maintainer != null} ? ${tableInfo.maintainer.id} : ${null}" />
+									  	<input type="text" disabled="disabled" class="form-control" id="maintainerName" th:value="${tableInfo.maintainer != null} ? ${tableInfo.maintainer.name} : ${null}"/>
+									</div>
+		            			</div>
+		            			<div class="col-md-1" style="height: 36px;padding: 0px;">
+		            				<a class="btn btn-lg btn-link select_a" title="点击选择" onclick="fnSelectUser(1);"><span class="glyphicon glyphicon-edit"></span></a>
+		            				<a class="btn btn-lg btn-link select_a" title="点击清空" onclick="fnCleanMaintainer();"><span class="glyphicon glyphicon-remove"></span></a>
+		            			</div>
+		            			<div class="col-md-5" >
+		            				<div class="input-group">
+									  	<span class="input-group-addon">流程负责人<span style="color: red;">*</span></span>
+									  	<input type="hidden" name="processLeader.id" th:value="${tableInfo.processLeader != null} ? ${tableInfo.processLeader.id} : ${null}" />
+									  	<input type="text" disabled="disabled" class="form-control" id="processLeaderName" th:value="${tableInfo.processLeader != null} ? ${tableInfo.processLeader.name} : ${null}"/>
+									</div>
+		            			</div>
+		            			<div class="col-md-1" style="height: 36px;padding: 0px;">
+		            				<a class="btn btn-lg btn-link select_a" title="点击选择" onclick="fnSelectUser(2);"><span class="glyphicon glyphicon-edit"></span></a>
+		            				<a class="btn btn-lg btn-link select_a" title="点击清空" onclick="fnCleanProcessLeader();"><span class="glyphicon glyphicon-remove"></span></a>
+		            			</div>
+		            		</div>
+		            		
+		            		<div class="col-md-12 input-div">
+		            			<div class="col-md-6" style="padding-left: 0px;">
+		            				<div class="input-group">
+									  	<span class="input-group-addon">申请人<span style="color: red;">*</span></span>
+									  	<input type="text" class="form-control" name="proposer" th:value="${tableInfo.proposer}"/>
+									</div>
+		            			</div>
+		            			<div class="col-md-6" style="padding-right: 0px;">
+		            				<div class="input-group">
+									  	<span class="input-group-addon">申请部门<span style="color: red;">*</span></span>
+									  	<input type="text" class="form-control" name="applicationDept" th:value="${tableInfo.applicationDept}"/>
+									</div>
+		            			</div>
+		            		</div>
+		            		
+		            		<div class="col-md-12 input-div">
+		            			<div class="col-md-6" style="padding-left: 0px;">
+		            				<div class="input-group">
+									  	<span class="input-group-addon">申请时间<span style="color: red;">*</span></span>
+									  	<input type="text" class="form-control datepicker" readonly="readonly" name="application_time" th:value="${tableInfo.applicationTime != null} ? ${#calendars.format(tableInfo.applicationTime,'yyyy-MM-dd')} : ${null}"/>
+									</div>
+		            			</div>
+		            			<div class="col-md-6" style="padding-right: 0px;">
+		            				<div class="input-group">
+									  	<span class="input-group-addon">关联制度<span style="color: red;">*</span></span>
+									  	<input type="text" class="form-control" name="associateSystem" th:value="${tableInfo.associateSystem}"/>
+									</div>
+		            			</div>
+		            		</div>
+		            		
+		            		<div class="col-md-12 input-div" style="text-align: left;">
+		            			<div class="col-md-1" style="width: 120px;padding: 0px;">
+			            			<div id="itemName">
+			            				工作使用表单
+			            			</div>
+		            			</div>
+		            			<div class="col-md-1" style="height: 36px;">
+		            				<a class="btn btn-lg btn-link btn-file" style="color: #000;text-decoration: underline;"
+		            					 title="点击上传附件" th:onclick="'fnUploadAnnex('+${anndexFolder.id}+',\''+${anndexFolder.folderName}+'\')'">上传相关附件</a>
+		            			</div>
+		            			<div class="col-md-9">
+		            				<div id="annex_div">
+		            					<span th:each="annex : ${annexs}">
+				            				<a th:id="${'annex_'} + ${annex.id}" class="btn btn-lg btn-link btn-files" href="javascript:" title="点击下载" th:onclick="'openCommonViewImgWin(\''+${annex.id}+'\')'" th:text="${annex.name}+${'.'}+${annex.extendName}" ></a>
+				            				<a class="btn btn-lg btn-remove-file" th:title="${'删除附件：'} + ${annex.name}+${'.'}+${annex.extendName}"
+				            					th:onclick="'fnRemoveAnnex(\''+${annex.id}+'\')'"><span style="color: red;" class="glyphicon glyphicon-remove"></span></a>
+		            					</span>
+		            				</div>
+		            			</div>
+		            		</div>
+			        	</form>
+			        	
+			        	<!-- 打印区域  -->
+			        	<div id="print_div" align="center" hidden="hidden">
+				        	<h2 th:if="${!#strings.isEmpty(isNew)}">厦门轨道交通集团有限公司内控工作用表单</h2>
+				        	<h2 th:if="${#strings.isEmpty(isNew)}">厦门轨道交通集团有限公司内控工作用表变更单</h2>
+				        	<table id="info_table" class="table" style="border: 1px solid #C9C9C9;">
+				        		<tr>
+				        			<td class="item_title">表单名称<span style="color: red;">*</span></td>
+				        			<td colspan="3"><span id="span_name"></span></td>
+				        		</tr>
+				        		<tr>
+				        			<td class="item_title">适用范围</td>
+				        			<td colspan="3"><span id="span_applicationScope"></span></td>
+				        		</tr>
+				        		<tr>
+				        			<td class="item_title">表单编号<span style="color: red;">*</span></td>
+				        			<td class="right_td"><span id="span_serialNum"></span></td>
+				        			<td class="item_title">主责部门<span style="color: red;">*</span></td>
+				        			<td class="right_td"><span id="span_responsibilityDept"></span></td>
+				        		</tr>
+				        		<tr>
+				        			<td class="item_title">维护责任人<span style="color: red;">*</span></td>
+				        			<td class="right_td"><span id="span_maintainer"></span></td>
+				        			<td class="item_title">流程负责人<span style="color: red;">*</span></td>
+				        			<td class="right_td"><span id="span_processLeader"></span></td>
+				        		</tr>
+				        		<tr>
+				        			<td class="item_title">申请人<span style="color: red;">*</span></td>
+				        			<td class="right_td"><span id="span_proposer"></span></td>
+				        			<td class="item_title">申请部门<span style="color: red;">*</span></td>
+				        			<td class="right_td"><span id="span_applicationDept"></span></td>
+				        		</tr>
+				        		<tr>
+				        			<td class="item_title">申请时间<span style="color: red;">*</span></td>
+				        			<td class="right_td">
+				        				<span id="span_applicationTime"></span>
+				        			</td>
+				        			<td class="item_title">关联制度<span style="color: red;">*</span></td>
+				        			<td class="right_td"><span id="span_associateSystem"></span></td>
+				        		</tr>
+				        		<tr>
+				        			<td class="item_title" style="vertical-align: middle;">工作使用表单</td>
+				        			<td colspan="3" id="span_annex">
+				        			</td>
+				        		</tr>
+				        	</table>
+				        </div>
+        			</td>
+        		</tr>
+        	</table>
+        </div>
+	</div>
+	
+	<!-- 选择部门 -->
+	<div class="modal fade" id="win_selectUseunit" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static"
+	     aria-hidden="true">
+	    <div class="modal-dialog" style="width:800px;">
+	        <div class="modal-content">
+	            <div class="modal-header" style="text-align: center;background-color: #357ca5;">
+	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	                <h4 class="modal-title" style="color:white;">选择部门</h4>
+	            </div>
+	            <div class="modal-body" style="padding: 10px;">
+	                <div class="box box-default box-solid" style="margin-bottom:5px; min-height: 40px">
+	                	<div class="box-body" id="useunit_name"></div>
+	                </div>
+	                <div class="box box-default box-solid" style="margin-bottom:5px;">
+	                    <div class="box-body">
+	                    	<div class="col-sm-12" id="useunitTree_div" style="overflow: auto;">
+	                        	<div id="edit_useunit_orgtree"></div>
+	                        </div>
+	                   	</div>
+	                </div>
+	            </div>
+	            <div class="modal-footer" style="text-align: center;">
+	                <button type="button" onclick="fnSetUseunit();" class="btn btn-primary">确定</button>
+	                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
+	<!-- 选择用户  -->
+	<div class="modal fade" id="win_selectUser" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static"
+	     aria-hidden="true">
+	    <div class="modal-dialog" style="width:1000px;">
+	        <div class="modal-content">
+	            <div class="modal-header" style="text-align: center;background-color: #357ca5;">
+	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	                <h4 class="modal-title" style="color:white;">选择用户</h4>
+	            </div>
+	            <div class="modal-body" style="padding: 10px;">
+	                <form class="form-horizontal" id="selectUser_form">
+	                    <div class="box box-default box-solid" style="margin-bottom:5px; min-height: 40px">
+	                        <div class="box-body" id="sysuser_user_name">
+	                        </div>
+	                    </div>
+	                    <div class="box box-default box-solid" style="margin-bottom:5px;">
+	                        <div class="box-body">
+	                            <div class="col-sm-6" id="orgtree_div" style="overflow: auto;">
+	                                <div id="edit_sysuser_orgtree"></div>
+	                            </div>
+	                            <div class="col-sm-6">
+	                                <table id="edit_sysuser_orgusertable"></table>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </form>
+	            </div>
+	            <div class="modal-footer" style="text-align: center;">
+	                <button type="button" onclick="fnSetUserId();" class="btn btn-primary">确定</button>
+	                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	
+	<!-- 上传附件窗口 -->
+	<div class="modal fade modal-info" id="upload_annex_win" role="dialog" data-backdrop="false" aria-hidden="true">
+		<div class="modal-dialog" style="width:900px;">
+	      	<div class="modal-content" style="background-color:rgba(255, 255, 255, 0);">
+		        <div class="modal-header" style="padding:5px;">
+		          	<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top:0;">
+		            	<span aria-hidden="true">&times;</span>
+		            </button>
+		            <button type="button" class="close" style="margin-right:5px;margin-top: -1px;" onclick="fnMaxModalWin2(this)">
+		            	<i class="fa fa-square-o" style="font-size:16px;"></i>
+		            </button>
+		          	<h4 class="modal-title" style="text-align:center;"></h4>
+		        </div>
+		        <div class="modal-body" style="height: 450px;padding:0px;background-color: rgba(3, 51, 101, 0.9) !important;">
+		          	<iframe id="annexFrame" name="annexFrame" style="width: 100%;height:100%;border:0;"></iframe>
+		        </div>
+	      	</div>
+		</div>
+	</div>
+	
+	<!-- 通用查看图片窗口 -->
+	<div class="modal fade" id="common_viewimg_win" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" aria-hidden="true">
+		<div class="modal-dialog" style="width:800px;">
+			<div class="modal-content">
+				<div class="modal-header" style="padding:10px;">
+				 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">图片查看</h4>
+				</div>
+				<div class="modal-body" style="overflow: hidden; padding: 10px;">
+					
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+<!-- jQuery 2.2.3 -->
+<script th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/static/js/common.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/static/plugins/jQuery/jquery.serializejson.min.js}"></script>
+<script th:src="@{/static/plugins/datepicker/bootstrap-datepicker.js}"></script>
+<script th:src="@{/static/plugins/datepicker/locales/bootstrap-datepicker.zh-CN.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/bootstrap-contextmenu.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/prettify.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/attention/zDialog/zDrag.js}"></script>
+<!-- Slimscroll -->
+<script type="text/javascript" th:src="@{/static/plugins/slimScroll/jquery.slimscroll.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/dist/js/app.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/myModalDialogBR.js}"></script>
+<!-- bootstrap fileinput js -->
+<script th:src="@{/static/plugins/bootstrap-fileinput/js/plugins/sortable.min.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/bootstrap-fileinput/js/plugins/purify.min.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/bootstrap-fileinput/js/fileinput.min.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/bootstrap-fileinput/js/locales/fr.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/bootstrap-fileinput/js/locales/zh.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/bootstrap-fileinput/themes/explorer-fa/theme.js}" type="text/javascript"></script>
+<script th:src="@{/static/plugins/bootstrap-fileinput/themes/fa/theme.js}" type="text/javascript"></script>
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+	var STATIC = [[@{/static/}]];
+	var CTX = [[@{/}]];
+	
+	var curType = 1;//标记维护责任人or流程负责人
+	var tempAnnexIds = $('#tableInfo_form').find("input[name='annexIds']").val();
+	
+	$(function () {
+		//初始化时间控件
+	    $('.datepicker').datepicker({
+	    	format:'yyyy-mm-dd',
+	    	language:'zh-CN',
+	      	autoclose: true,
+	      	startView: 'months', //开始视图层，为月视图层
+	    }).on('hide', function() {
+	        $('#tableInfo_form').data('bootstrapValidator').updateStatus('application_time', 'NOT_VALIDATED',null).validateField('application_time');
+	    });
+		
+		$('#orgtree_div').height($(window).height()-310);
+		$('#useunitTree_div').height($(window).height()-310);
+		
+		//初始化选择用户模态窗口关闭事件
+	    $('#win_selectUser').on('hidden.bs.modal', function (e) {
+	    	//从展示框中移除
+    	    $('#selected_edit_sysuser').remove();
+	    	$('#edit_sysuser_orgusertable').bootstrapTable('uncheckAll');
+	    	
+	    	$('#temp_userId').val('');
+	    	$('#temp_userName').val('');
+	    	
+	    	$('#tableInfo_form').data('bootstrapValidator').updateStatus('maintainer.id', 'NOT_VALIDATED',null).validateField('maintainer.id');
+	    	$('#tableInfo_form').data('bootstrapValidator').updateStatus('processLeader.id', 'NOT_VALIDATED',null).validateField('processLeader.id');
+	    });
+
+		//初始化选择部门模态窗口关闭事件
+	    $('#win_selectUseunit').on('hidden.bs.modal', function (e) {
+	    	//从展示框中移除
+    	    $('#selected_edit_useunit').remove();
+	    	
+    	    $('#temp_useunitId').val('');
+	    	$('#temp_useunitName').val('');
+	    	$('#tableInfo_form').data('bootstrapValidator').updateStatus('responsibilityDept.id', 'NOT_VALIDATED',null).validateField('responsibilityDept.id');
+	    });
+		
+		//表单校验
+	    $('#tableInfo_form').bootstrapValidator({
+			message: '此处输入有误',
+	        excluded: [':disabled'],
+	        feedbackIcons: {
+	            valid: 'glyphicon glyphicon-ok',
+	            invalid: 'glyphicon glyphicon-remove',
+	            validating: 'glyphicon glyphicon-refresh'
+	        },
+	        fields:{
+	        	'name':{
+	        		message: '表单名称输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '表单名称不可为空'
+	                    }
+	                }
+	        	},
+	        	'serialNum':{
+	        		message: '表单编号输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '表单编号不可为空'
+	                    }
+	                }
+	        	},
+	        	'responsibilityDept.id':{
+	        		message: '主责部门输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '主责部门不可为空'
+	                    }
+	                }
+	        	},
+	        	'maintainer.id':{
+	        		message: '维护责任人输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '维护责任人不可为空'
+	                    }
+	                }
+	        	},
+	        	'processLeader.id':{
+	        		message: '流程负责人输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '流程负责人不可为空'
+	                    }
+	                }
+	        	},
+	        	'proposer':{
+	        		message: '申请人输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '申请人不可为空'
+	                    }
+	                }
+	        	},
+	        	'applicationDept':{
+	        		message: '申请部门输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '申请部门不可为空'
+	                    }
+	                }
+	        	},
+	        	'application_time':{
+	        		message: '申请时间输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '申请时间不可为空'
+	                    }
+	                }
+	        	},
+	        	'associateSystem':{
+	        		message: '关联制度输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '关联制度不可为空'
+	                    }
+	                }
+	        	}
+	        }
+		});
+		
+	});
+	
+	//保存工作用表
+	function fnSaveTableInfo(flag){//true:新增
+		$.ajax({  
+			url: CTX+'work-table-info/save',
+            type: 'POST',  
+            data:$('#tableInfo_form').serialize(),// 序列化表单值  
+            dataType: 'json',//服务端接收的数据类型
+            async: false,
+            success:function(json) {  
+				if(json.success){
+					alert(json.msg);
+					if(flag){
+						fnCleanAllVal();//清空所有输入
+					}
+				}else{
+					alert(json.msg);
+				}
+				loaded();
+            },  
+            error:function(json) {  
+            	alert('请求超时或系统出错!');
+				loaded();
+            }  
+        });
+	}
+	
+	//保存(并新增或关闭)
+	function fnSave(flag){
+		$('#tableInfo_form').find("input[name='annexIds']").val(tempAnnexIds);
+		var result = $('#tableInfo_form').data('bootstrapValidator');
+		result.validate();
+		if(result.isValid()){
+			loading('正在保存,请稍候...');
+			setTimeout(function(){
+				fnSaveTableInfo(flag);
+				if(flag){
+					//新增
+					$('#tableInfo_form').bootstrapValidator('resetForm');//重置表单校验
+				}else if(!flag){
+					fnCloseWin();
+				}
+			},200);
+		}
+	}
+
+	//打印
+	function fnPrint(){
+		$('#span_name').html($('#tableInfo_form').find("input[name='name']").val());
+		$('#span_applicationScope').html($('#tableInfo_form').find("input[name='applicationScope']").val());
+		$('#span_serialNum').html($('#tableInfo_form').find("input[name='serialNum']").val());
+		$('#span_responsibilityDept').html($('#responsibilityDeptName').val());
+		$('#span_maintainer').html($('#maintainerName').val());
+		$('#span_processLeader').html($('#processLeaderName').val());
+		$('#span_proposer').html($('#tableInfo_form').find("input[name='proposer']").val());
+		$('#span_applicationDept').html($('#tableInfo_form').find("input[name='applicationDept']").val());
+		$('#span_applicationTime').html($('#tableInfo_form').find("input[name='application_time']").val());
+		$('#span_associateSystem').html($('#tableInfo_form').find("input[name='associateSystem']").val());
+		//$('#span_annex').append();
+		$('#span_annex').append($("#annex_div").html());
+		
+		
+		var p_html = $("#print_div").html();
+		var newWin = window.open('', '_blank', ''); //在当前页打开新的窗口
+		var tbStyle = 'h2 {text-align: center; margin: 10px 0px 25px; }'
+						+ '#content_table>td{padding-bottom: 15px;}'
+						+ '#info_table{ width: 1100px; }'
+						+ '#info_table>tbody>tr>td{ border: 1px solid #C9C9C9; min-height: 32px; padding: 4px; margin:0px; font-size: 14px; }'
+						+ 'table {border-collapse: collapse; padding:2px; border-spacing: 0;}'
+						+ '.item_title{ text-align: center; vertical-align: middle; background-color: #E4E4E4; width: 205px; }'
+						+ '.right_td{ width: 345px; }'
+						+ 'a{ color: #000; text-decoration: underline; margin-right: 8px; }';
+		newWin.document.write("<head><style>#print-content{font-size:14px}"+tbStyle+"</style></head>"); //向新窗口添加css样式
+		newWin.document.write(p_html);
+		newWin.print();
+		var userAgent = navigator.userAgent;
+		if (userAgent.indexOf("Chrome") != -1) {
+			newWin.close();
+		} else {
+			if (tata = newWin.document.execCommand("print")) {
+				newWin.close();
+			}
+		}
+		//newWin.location.reload(); //重新加载使窗口恢复到打印前状态l
+	}
+	
+	//关闭
+	function fnCloseWin(){
+		myReturnValueBR(1);
+		window.close();
+	}
+	
+	//清空主责部门
+	function fnCleanResponsibilityDept(){
+		$('#tableInfo_form').find("input[name='responsibilityDept.id']").val('');
+		$('#responsibilityDeptName').val('');
+	}
+	
+	//清空维护责任人
+	function fnCleanMaintainer(){
+		$('#tableInfo_form').find("input[name='maintainer.id']").val('');
+		$('#maintainerName').val('');
+	}
+	
+	//清空流程负责人
+	function fnCleanProcessLeader(){
+		$('#tableInfo_form').find("input[name='processLeader.id']").val('');
+		$('#processLeaderName').val('');
+	}
+	
+	//清空所有
+	function fnCleanAllVal(){
+		fnCleanResponsibilityDept();
+		fnCleanMaintainer();
+		fnCleanProcessLeader();
+		
+		$('.btn-files').remove();
+		$('#tableInfo_form').find("input[name='id']").val('');
+		$('#tableInfo_form').find("input[name='annexIds']").val('');
+		tempAnnexIds = '';
+		$('#tableInfo_form').find("input[name='name']").val('');
+		$('#tableInfo_form').find("input[name='applicationScope']").val('');
+		$('#tableInfo_form').find("input[name='serialNum']").val('');
+		$('#tableInfo_form').find("input[name='proposer']").val('');
+		$('#tableInfo_form').find("input[name='applicationDept']").val('');
+		$('#tableInfo_form').find("input[name='application_time']").val('');
+		$('#tableInfo_form').find("input[name='associateSystem']").val('');
+		//移除附件
+	}
+	
+	//选择主责部门
+	function fnSelectUseunit(){
+		loading('正在加载数据,请稍候...');
+		var r = Math.random().toString().substring(5);
+        $.ajax({
+            url: CTX + 'organizationManage/query-all-org-tree?Mathnum=' + r,
+            method: 'GET',
+            dataType: 'json',
+            async: false,
+            data: {selectable:true},
+            success: function (json) {
+                $('#edit_useunit_orgtree').treeview({
+                    showTags: true,
+                    data:json,
+                    state: {
+                    	 checked: true
+                    },
+                    //showCheckbox: true,
+                    onNodeSelected: function (event, node) {
+                    	//从展示框中移除
+    	        	    $('#selected_edit_useunit').remove();
+                        //选中
+                    	addUseunitShow(node.id, node.text);
+                    },
+                    onNodeUnSelected: function (event, node) {
+                        //取消选中
+                    	$('#selected_edit_useunit').remove();
+                    }
+                });
+                $("#win_selectUseunit").modal("toggle");
+                loaded();
+            },
+            error: function () {
+                loaded();
+                alert('请求超时或系统出错');
+            }
+        });
+	}
+	
+	//选择用户
+	function fnSelectUser(type){//1:维护责任人;2:流程负责人
+		curType = type;
+		loading('正在加载数据,请稍候...');
+		var sysuserId = $('#now_user_id').val();
+	    var lesseeId = $('#now_user_lesseeId').val();
+	    $("#win_selectUser").modal("toggle");
+	  	//初始化组织结构树
+	    var r = Math.random().toString().substring(5);
+	    $.ajax({
+	        url: CTX + 'organizationManage/query-user-sub-org-tree?Mathnum=' + r,
+	        method: 'GET',
+	        dataType: 'json',
+	        async: false,
+	        data: {sysuserId: sysuserId,isRoot: true},
+	        success: function (json) {
+	            $('#edit_sysuser_orgtree').treeview({
+	                showTags: true,
+	                data: json,
+	                onNodeSelected: function (event, node) {
+	                    $('#edit_sysuser_useunit').val(node.id);
+	                    $("#edit_sysuser_orgusertable").bootstrapTable('refresh');
+	                }
+	            });
+	        },
+	        error: function () {
+	            loaded();
+	            alert('请求超时或系统出错');
+	        }
+	    });
+	    
+    	setTimeout(function(){
+		    $('#edit_sysuser_orgtree').treeview('selectNode', [ 0, { silent: true } ]);
+	    	var firstNode = $('#edit_sysuser_orgtree').treeview('getNode', 0);
+	    	$('#edit_sysuser_useunit').val(firstNode.id);
+    		//初始化用户表格
+            var orgTableInit = new SysuserOrgTableInit();
+            orgTableInit.Init();
+    	},500);
+	    
+        loaded();
+	}
+	
+	//初始化用户表
+	var SysuserOrgTableInit = function () {
+	    var oTableInit = new Object();
+	  	//初始化Table
+	    oTableInit.Init = function () {
+	        $('#edit_sysuser_orgusertable').bootstrapTable({
+	            url: CTX + 'organizationManage/query-sub-sysuser',         //请求后台的URL（*）
+	            method: 'get',                      //请求方式（*）
+	            // toolbar: '#toolbar',                //工具按钮用哪个容器
+	            //toolbarAlign:'left',				//工具栏位置
+	            striped: true,                      //是否显示行间隔色
+	            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+	            pagination: true,                   //是否显示分页（*）
+	            sortable: true,                     //是否启用排序
+	            sortOrder: "asc",                   //排序方式
+	            queryParams: oTableInit.queryParams,//传递参数（*）
+	            sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+	            pageNumber: 1,                       //初始化加载第一页，默认第一页
+	            pageSize: 10,                       //每页的记录行数（*）
+	            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+	            queryParamsType: "a",
+	            search: true,                       //是否显示表格搜索
+	            strictSearch: true,
+	            showColumns: false,                  //是否显示所有的列
+	            showRefresh: true,                  //是否显示刷新按钮
+	            minimumCountColumns: 2,             //最少允许的列数
+	            clickToSelect: true,                //是否启用点击选中行
+	            singleSelect : true,
+	            height: $(window).height()-350,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+	            uniqueId: "id",                     //每一行的唯一标识，一般为主键列
+	            columns: [
+	                 {
+	                    field: 'name',
+	                    title: '姓名',
+	                    align : 'center',
+	                    sortable: false
+	                },
+	                {
+	                    checkbox: true
+	                }
+	            ],
+	            onCheck:function(row){
+	            	//从展示框中移除
+	        	    $('#selected_edit_sysuser').remove();
+	            	addSysuserShow(row.id, row.name);
+	            },
+	            onUncheck:function(row){
+	            	//从展示框中移除
+	        	    $('#selected_edit_sysuser').remove();
+	            }
+	        });
+	        $('#edit_sysuser_orgusertable .search input').attr('placeholder', '姓名');
+	    };
+	    
+	  	//得到查询的参数
+	    oTableInit.queryParams = function (params) {
+	        var data = JSON.stringify($('#sysuserOrgFormSearch').serializeJSON());
+	        var temp = {   //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+	            pageNum: params.pageNumber,//页码params.offset
+	            size: params.pageSize,//页面大小params.limit
+	            order: params.sortOrder,//排序 params.order
+	            ordername: params.sortName,//排序字段 params.sort
+	            from: data,
+	            search: params.searchText
+	        };
+	        return temp;
+	    };
+	    return oTableInit;
+	
+	}
+	
+	//添加用户展示
+	function addSysuserShow(id, name) {
+	    var htmlStr = '';
+	    htmlStr +=
+	        '<div id="selected_edit_sysuser" class="allRoleSysuser" style="background-color:#3daae8;color:white;width:auto;hight:60px;float:left;margin:5px;">' +
+	        '	<input type="hidden" name="sysuserid" class="sysuserid" value="' + id + '"/>' +
+	        '   <spand style="padding-left: 5px;padding-right: 5px;">' + name + '</spand>' +
+	        '   <input type="button" class="closeDiv" onclick="removeSysuser(\'' + id + '\', \'' + name + '\')" value="X" style="background:transparent;border:none;"/>' +
+	        '</div>';
+	    $("#sysuser_user_name").append(htmlStr);
+	    
+	    $('#temp_userId').val(id);
+	    $('#temp_userName').val(name);
+	}
+	
+	//移除用户
+	function removeSysuser(id, name) {
+	    //修改表格的复选框状态
+	    var index = -1;
+	    $('#edit_sysuser_orgusertable tr').each(function(){
+	        if($(this).attr('data-uniqueid')==id){
+	            index = $(this).attr('data-index');
+	        }
+	    });
+	    if(index!=-1){
+	        $('#edit_sysuser_orgusertable').bootstrapTable('uncheck',index);//根据下标index，修改选中状态
+	    }else{
+	        //从展示框中移除
+	        $('#selected_edit_sysuser').remove();
+	        
+	        $('#temp_userId').val('');
+		    $('#temp_userName').val('');
+	    }
+	}
+	
+	//添加部门展示
+	function addUseunitShow(id, name) {
+	    var htmlStr = '';
+	    htmlStr +=
+	        '<div id="selected_edit_useunit" class="allRoleSysuser" style="background-color:#3daae8;color:white;width:auto;hight:60px;float:left;margin:5px;">' +
+	        '	<input type="hidden" name="sysuserid" class="sysuserid" value="' + id + '"/>' +
+	        '   <spand style="padding-left: 5px;padding-right: 5px;">' + name + '</spand>' +
+	        '   <input type="button" class="closeDiv" onclick="removeUseunit(\'' + id + '\', \'' + name + '\')" value="X" style="background:transparent;border:none;"/>' +
+	        '</div>';
+	    $("#useunit_name").append(htmlStr);
+	    
+	    $('#temp_useunitId').val(id);
+	    $('#temp_useunitName').val(name);
+	}
+	
+	//移除部门
+	function removeUseunit(id, name) {
+		$('#temp_useunitId').val('');
+	    $('#temp_useunitName').val('');
+	    
+	    $('#edit_useunit_orgtree').treeview('unselectNode', [ id, { silent: true } ]);
+	}
+	
+	//设置用户id
+	function fnSetUserId(){
+		var userId = $('#temp_userId').val();
+		var userName =  $('#temp_userName').val();
+		if(curType == 1){
+	    	$('#tableInfo_form').find("input[name='maintainer.id']").val(userId);
+	    	$('#maintainerName').val(userName);
+	    }else if(curType == 2){
+	    	$('#tableInfo_form').find("input[name='processLeader.id']").val(userId);
+	    	$('#processLeaderName').val(userName);
+	    }
+		$("#win_selectUser").modal('hide');
+	}
+	
+	//设置选中部门
+	function fnSetUseunit(){
+		var useunitId = $('#temp_useunitId').val();
+		var useunitName =  $('#temp_useunitName').val();
+	    $('#tableInfo_form').find("input[name='responsibilityDept.id']").val(useunitId);
+	    $('#responsibilityDeptName').val(useunitName);
+		$("#win_selectUseunit").modal('hide');
+	}
+	
+	//上传附件
+	function fnUploadAnnex(folderId,folderName){
+		//调用统一附件管理页面
+		openUploadAnnexWin({
+			folderId:folderId,
+			folderName:folderName/* ,
+			annexIds:annexIdStr */
+		},function(data){
+			//附件管理回调
+			if(data.length>0){
+				$.each(data,function(i,annex){
+					//展示附件
+					fnAddAnnexShow(annex);
+				});
+			}
+			//单独保存附件字段
+		});
+	}
+	
+	//添加附件标签
+	function fnAddAnnexShow(annex){
+		tempAnnexIds += "," + annex.id;
+		var htmlStr = '';
+		htmlStr += "<span><a id='annex_"+annex.id+"' class=\"btn btn-lg btn-link btn-files\" href=\"javascript:\" title=\"点击下载\" onclick=\"openCommonViewImgWin(\'"+annex.id+"\')\">"
+	    	+ annex.name + "." + annex.extendName +"</a>"
+	    	+ "<a class=\"btn btn-lg btn-remove-file\" title=\"删除附件："+ annex.name + "." + annex.extendName + "\" onclick=\"fnRemoveAnnex(\'"+annex.id+"\')\">"
+	    	+ "<span style=\"color: red;\" class=\"glyphicon glyphicon-remove\"></span></a></span>";
+	    	
+		$("#annex_div").append(htmlStr);
+	}
+	
+	//删除附件
+	function fnRemoveAnnex(annexId){
+		var annexIdArr = tempAnnexIds.split(",");
+		var newAnnexIds = "";
+		for(var i = 0; i < annexIdArr.length; i++){
+			if(annexIdArr[i] != annexId){
+				newAnnexIds += "," + annexIdArr[i];
+			}
+		}
+		tempAnnexIds = newAnnexIds;
+		var annex = document.getElementById("annex_"+annexId);
+		var parentSpan = annex.parentNode;
+		parentSpan.remove();
+		
+		//alert('删除后附件ids:'+newAnnexIds);
+	}
+	
+	//初始化按钮
+	var ButtonInit = function () {
+	    var oInit = new Object();
+	    var postdata = {};
+
+	    oInit.Init = function () {
+	        //初始化页面上面的按钮事件
+	    };
+
+	    return oInit;
+	};
+		
+	/*]]>*/
+</script>
+<script type="text/javascript" th:src="@{/static/modules/internal/internal-file-upload.js}"></script>	
+</html>

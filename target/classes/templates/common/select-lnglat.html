@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+	<title>地图标注</title>
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+	<style type="text/css">
+		html,body{height:100%;min-height:100%;}
+		.top-bar{
+			width: 100%;
+		    position: absolute;
+		    left: 0;
+		    top: 0;
+		    right: 0;
+		    z-index: 100000;
+		    padding: 5px;
+		    background: rgba(67, 142, 185, 0.6);
+		    color: #fff;
+		    text-align:right;
+		}
+		.top-bar label,.top-bar input,.top-bar button{
+			display: inline-block;
+		}	
+	</style>
+</head>
+<body>
+	<div class="top-bar">
+		<label>经纬度：</label>
+		<input type="text" class="form-control" style="width:200px;" id="lngLat" readonly="readonly" th:value="${lngLat}"/>
+		<button type="button" onclick="fnSaveLngLat()" class="btn btn-primary">确定坐标点</button>
+	</div>
+	<div id="mapDiv" style="width:100%; height:100%;"></div>
+</body>
+<script type="text/javascript" th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<!-- 高德地图api -->
+<script type="text/javascript" th:src="@{http://webapi.amap.com/maps(v=1.4.6,key=866d7d4dc9ada15d724aa2858fb45f2c)}"></script>
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+	var map = null;
+	var marker = null;
+	var PCITY = [[${rootUseunit.pcity}]];
+	$(function(){
+	 	var lngLat = $('#lngLat').val();
+		var cityStr = null;
+		var	pcity = PCITY!=null?PCITY.split(','):null;
+		if(pcity!=null){
+			cityStr = pcity.length>1?pcity[1]:pcity[0];
+		}
+		map = new AMap.Map('mapDiv',{
+            resizeEnable: true
+        });
+		if(cityStr!=null&&lngLat==''){
+			map.setCity(cityStr);
+		}
+	 	map.on('click', function(e) {
+	 		if(marker==null){
+ 			 	marker = new AMap.Marker({
+	 	            icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+	 	            position: e.lnglat
+	 	        });
+	 	        marker.setMap(map);
+	 	       $('#lngLat').val(e.lnglat.getLng()+','+e.lnglat.getLat());
+	 		}else{
+	 			marker.setPosition(e.lnglat);
+	 			$('#lngLat').val(e.lnglat.getLng()+','+e.lnglat.getLat());
+	 		}
+	    });
+	 	
+		if(lngLat!=null&&lngLat!=''){
+			lngLat = lngLat.split(',');
+			if(marker==null){
+				marker = new AMap.Marker({
+	 	            icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+	 	            position: [Number(lngLat[0]),Number(lngLat[1])]
+	 	        });
+	 	        marker.setMap(map);
+				
+        	}else{
+        		marker.setPosition(new AMap.LngLat(Number(lngLat[0]),Number(lngLat[1])));
+        	}
+			map.setZoomAndCenter(15,marker.getPosition());
+		}
+	});
+	
+	function fnSaveLngLat(){
+		var lngLat = $('#lngLat').val();
+		if(lngLat==null||lngLat==''){
+			alert('请先选择坐标点');
+			return;
+		}
+		top.closeCommonFrameWin(lngLat);
+		//top.returnData = lngLat;
+		//top.Dialog.close();
+	}
+/*]]>*/	
+</script>
+</html>

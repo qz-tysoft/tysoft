@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--
+* @Copyright(c): 厦门路桥信息股份有限公司  版权所有
+* @author :XMRBI
+* @Description:工程项目
+* @createDate:2018-5-22
+-->
+<head>
+	<meta charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+	<title>项目信息管理</title>
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/select2/select2.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-validator/css/bootstrapValidator.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css}"/>
+    <!-- Theme style -->
+	<link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+	<!-- Bootstrap 3.3.7 -->
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.css}"/>
+	<style type="text/css">
+	.panel {
+	  margin-bottom: 0px;
+	}
+	.form-group {
+	  margin-bottom: 2px;
+	}
+	
+	</style>
+	<style type="text/css">
+        html, body {
+            overflow-x: hidden;
+        }
+
+        body {
+            padding-top: 5px;
+        }
+
+        .up_icon {
+            width: 80px;
+            height: 80px;
+            float: left;
+            position: relative;
+            text-align: center;
+            cursor: pointer;
+            background: #ddd;
+            border-radius: 5px;
+        }
+
+        .up_icon img {
+            max-height: 100%;
+        }
+
+        .up_icon span {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            line-height: 20px;
+            background: #8e8e8e;
+            text-align: center;
+            color: #fff;
+            font-size: 12px;
+            border-radius: 0px 0px 6px 6px;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .col-sm-10 span {
+            word-break: break-all;
+            word-wrap: break-word;
+            white-space: normal;
+            display: block;
+            float: left;
+            height: 34px;
+            padding: 6px 12px 6px 0px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #777;
+        }
+        
+          #MenuTree ul li:first-child{
+          background-color:#d2d6de;
+          font-size:16px;
+          }
+        
+
+    </style>
+</head>
+<body>
+<div class="container-fluid" style="width:100%; height: 100%" >
+    <!-- 左侧单位列表-->
+    <div class="col-sm-3">
+        <!-- 项目列表树-->
+         <div class="row">
+             <div id="MenuTree" data-toggle="context" data-target="#context-menu"></div>
+         </div>
+    </div>
+    
+     <!-- 右侧信息-->
+  	<div class="col-sm-9">
+  	<div class="box box-default collapsed-box box-solid" style="margin-bottom:5px;">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><span id="projectGroupName">项目列表</span></h3>
+                    <form id="formSearch" class="form-horizontal">
+                        <input type="hidden" id="projectGroupId" name="projectGroup.id" value=""/>
+                    </form>
+                </div>
+            </div>
+  	 <div id="toolbar" class="btn-group" >
+             <button id="btn_add" type="button" class="btn btn-default btn-primary" disabled="disabled" onclick="fnAddProjectInfo()">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增工程
+            </button>
+            <button id="btn_edit" type="button" class="btn btn-default btn-warning" disabled="disabled" onclick="fnEditProjectInfo()">
+                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>编辑工程
+            </button>
+            <button id="btn_delete" type="button" class="btn btn-default btn-danger" disabled="disabled" onclick="deleteProjectInfo()">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除工程
+            </button>
+        </div>
+        <table id="dataList"></table>
+    </div>
+     <!-- 右键菜单-->
+    <div id="context-menu">
+        <ul class="dropdown-menu" role="menu">
+            <li><a tabindex="-1" id="addProjectArea"><em id="addProjectArea" class="glyphicon glyphicon-plus"></em>添加区域</a>
+            </li>
+            <li><a tabindex="-1" id="editProjectArea"><em id="editProjectArea" class="glyphicon glyphicon-pencil"></em>编辑区域</a>
+            </li>
+            <li><a tabindex="-1" id="addProjectGroup"><em id="addProjectGroup" class="glyphicon glyphicon-plus"></em>添加项目</a>
+            </li>
+            <li><a tabindex="-1" id="deleteProjectArea"><em id="deleteProjectArea" class="glyphicon glyphicon-remove"></em>删除区域</a>
+            </li>
+            <li><a tabindex="-1" id="addProjectInfo"><em id="addProjectInfo" class="glyphicon glyphicon-plus"></em>添加工程</a>
+            </li>
+            <li><a tabindex="-1" id="editProjectGroup"><em id="editProjectGroup" class="glyphicon glyphicon-pencil"></em>编辑项目</a>
+            </li>
+            <li><a tabindex="-1" id="deleteProjectGroup"><em id="deleteProjectGroup" class="glyphicon glyphicon-remove"></em>删除项目</a>
+            </li>
+        </ul>
+    </div>
+ </div>
+ 	<!-- 新增区域  模态框 -->
+    <div class="modal fade" id="addAreaModal" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" aria-hidden="true">
+		<div class="modal-dialog" role="document" >
+			<div class="modal-content">
+				<div class="modal-header">
+				 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">新增区域</h4>
+				</div>
+				<div class="modal-body" style="overflow: hidden; padding: 10px;">
+				<form id="myform_area" class="form-horizontal">
+                    <input name="id" type="hidden"/>
+					 <div class="col-md-6">
+            			<div class="form-group">
+		                  	<label class="col-sm-4 control-label"><i style="color:red;">*</i>&nbsp;区域:</label>
+		                  	<div class="col-sm-8">
+	                    	 <input type="text" class="form-control" name="areaName" value="" />
+		                  	</div>
+		                </div>
+            		</div>
+            		<div class="col-md-6">
+            			<div class="form-group">
+		                  	<label class="col-sm-4 control-label">&nbsp;&nbsp;备注:</label>
+		                  	<div class="col-sm-8">
+	                    	 <input type="text" class="form-control" name="remark" value="" />
+		                  	</div>
+		                </div>
+            		</div>
+					  
+				</form>
+				</div>
+				<div class="modal-footer" style="text-align: center;">
+					 <button type="button" class="btn btn-default" data-dismiss="modal" style="width:80px;">关闭</button> 
+					 <button id="btnSubmit" type="button" onclick="doSaveArea()" class="btn btn-primary" style="width:80px;">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<!-- jQuery 2.2.3 -->
+<script th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/static/js/common.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/static/plugins/jQuery/jquery.serializejson.min.js}"></script>
+<script th:src="@{/static/plugins/datepicker/bootstrap-datepicker.js}"></script>
+<script th:src="@{/static/plugins/datepicker/locales/bootstrap-datepicker.zh-CN.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/bootstrap-contextmenu.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/prettify.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/attention/zDialog/zDrag.js}"></script>
+<!-- Slimscroll -->
+<script type="text/javascript" th:src="@{/static/plugins/slimScroll/jquery.slimscroll.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/dist/js/app.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+	var CTX = [[@{/}]];
+	
+	$(function () {
+	    //1.初始化Table
+	    var oTable = new TableInit();
+	    oTable.Init();
+	    //2.初始化Button的点击事件
+	    var oButtonInit = new ButtonInit();
+	    oButtonInit.Init();
+	    //初始化时间控件
+	    $(".datepicker").datepicker({
+	        language: "zh-CN",
+	        autoclose: true,//选中之后自动隐藏日期选择框
+	        clearBtn: true,//清除按钮
+	        todayBtn: "linked",//今日按钮
+	        format: "yyyy-mm-dd"//日期格式
+		});
+	    
+	    $('#myform_area').bootstrapValidator({
+			message: '此处输入有误',
+	        excluded: [':disabled'],
+	        feedbackIcons: {
+	            valid: 'glyphicon glyphicon-ok',
+	            invalid: 'glyphicon glyphicon-remove',
+	            validating: 'glyphicon glyphicon-refresh'
+	        },
+	        fields:{
+	        	'areaName':{
+	        		message: '区域输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '单区域名称不可为空'
+	                    }
+	                }
+	        	}
+	        }
+		});
+	    
+	});
+	
+	//初始化列表
+	var TableInit = function () {
+	    var oTableInit = new Object();
+	    //初始化Table
+	    oTableInit.Init = function () {
+	        $('#dataList').bootstrapTable({
+	        	url: CTX + 'project-info-area/query-project-info-page', //请求后台的URL（*）
+	            method: 'get',                      //请求方式（*）
+	            toolbar: '#toolbar',                //工具按钮用哪个容器
+	            //toolbarAlign:'left',				//工具栏位置
+	            striped: true,                      //是否显示行间隔色
+	            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+	            pagination: true,                   //是否显示分页（*）
+	            sortable: false,                     //是否启用排序
+	            sortOrder: "asc",                   //排序方式
+	            queryParams: oTableInit.queryParams,//传递参数（*）
+	            sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+	            pageNumber:1,                       //初始化加载第一页，默认第一页
+	            pageSize: 10,                       //每页的记录行数（*）
+	            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+	            queryParamsType: "a",
+	            search: true,                       //是否显示表格搜索
+	            strictSearch: true,
+	            showColumns: true,                  //是否显示所有的列
+	            showRefresh: true,                  //是否显示刷新按钮
+	            minimumCountColumns: 2,             //最少允许的列数
+	            clickToSelect: true,                //是否启用点击选中行
+	            height:$(window).height()-80,	    //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+	            uniqueId: "id",                     //每一行的唯一标识，一般为主键列
+	            showToggle:true,                    //是否显示详细视图和列表视图的切换按钮
+	            cardView: false,                    //是否显示详细视图
+	            detailView: false,                  //是否显示父子表
+	            showExport: false,                     //是否显示导出
+	            exportDataType: "basic",              //basic', 'all', 'selected'.
+	            exportTypes:[ 'excel','doc', 'xml','csv','json'],  //导出文件类型
+	            exportOptions:{  
+	                ignoreColumn: [0],  //忽略某一列的索引 ,如 [0,1]
+	                fileName: '参建单位导出',  //文件名称设置  
+	                worksheetName: '信息',  //表格工作区名称  
+	                tableName: '参建单位导出文件'
+	            },
+	            columns: [
+				{
+	            	checkbox:true
+		        },{
+				    field: 'projectLicence',
+				    title:'施工许可证',
+				    align : 'center',
+				    sortable:true
+				},{
+				    field: 'projectName',
+				    title:'工程名称',
+				    align : 'center',
+				    sortable:true
+				},{
+				    field: 'conAmount',
+				    title:'合同金额',
+				    align : 'center',
+				    sortable:true
+				},{
+				    field: 'startDate',
+				    title:'开工日期',
+				    align : 'center',
+				    sortable:true,
+				    formatter:function(v){
+				    	if(v==null||v==''){return null;}
+				    	return new Date(v).Format('yyyy-MM-dd');
+				    }
+				},{
+				    field: 'planEndDate',
+				    title:'计划竣工日期',
+				    align : 'center',
+				    sortable:true,
+				    formatter:function(v){
+				    	if(v==null||v==''){return null;}
+				    	return new Date(v).Format('yyyy-MM-dd');
+				    }
+				},{
+				    field: 'projectNature',
+				    title:'项目性质',
+				    align : 'center',
+				    sortable:true
+				},{
+				    field: 'projectStatus',
+				    title:'项目状态',
+				    align : 'center',
+				    sortable:true,
+				    formatter:function(value){
+				    	if(value == 0){
+				    	    return '开工';
+				    	}else if(value == 1){
+				    		return '停工';
+				    	}else if(value==2)
+				    		return '复工';
+				    	 else if(value==3)
+				    		return '结束';
+				    	else
+				    		return null;
+				    }
+				},]
+	        });
+	        $('.search input').attr('placeholder','工程名称');
+	    };
+
+	    //得到查询的参数
+	    oTableInit.queryParams = function (params) {
+	    	var data = JSON.stringify($('#formSearch').serializeJSON());
+	        var temp = {   //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+	    		pageNum: params.pageNumber,//页码params.offset
+                size: params.pageSize,//页面大小params.limit
+                order: params.sortOrder,//排序 params.order
+                ordername: params.sortName,//排序字段 params.sort
+	            search:params.searchText,
+	            contentprojectGroupId:$("#formSearch input[id=projectGroupId]").val()
+	        };
+	        return temp;
+	    };
+	    return oTableInit;
+	};
+	
+	//初始化按钮
+	var ButtonInit = function () {
+	    var oInit = new Object();
+	    var postdata = {};
+
+	    oInit.Init = function () {
+	        //初始化页面上面的按钮事件
+	    };
+
+	    return oInit;
+	};
+	
+	//查询-刷新
+	var queryInfo = function(){
+		var data = JSON.stringify($('#formSearch').serializeJSON());
+		var queryData = {from: data};
+		$('#dataList').bootstrapTable('refresh',{pageNumber:1,pageSize:10,query:queryData});
+	}
+	
+	 $(function () {
+	        //初始化项目列表树
+	        initMenuTree();
+	    });
+	    //初始化项目列表树
+	    function initMenuTree() {
+	    	var r = Math.random().toString().substring(5);
+	        $.ajax({
+	            url: CTX + 'project-info-area/query-ProjectArea-tree?Mathnum=' + r,
+	            method: 'GET',
+	            dataType: 'json',
+	            success: function (json) {
+	            	var treedata = [{
+						id:0,
+				    	text: "项目列表",
+				    	treeCode:'0',
+				    	enable: true,
+				    	icon:"fa fa-align-left",
+				    	selectable:false,
+				    	nodeType:"typeProject",
+				    	nodes:json
+				  	}];
+	                $('#MenuTree').treeview({
+	                    showTags: true,
+	                    data:treedata,
+	                    onNodeSelected: function(event, node) {
+	                        clickAreaTree(event, node);
+	                    }
+	                });
+	                //$('#MenuTree').treeview('expandAll');
+	                initMenuTreeContextmenu();
+	                loaded();
+	            },
+	            error: function () {
+	                loaded();
+	                alert('请求超时或系统出错');
+	            }
+	        });
+	    }
+	    
+	  //项目组选中事件
+	    function clickAreaTree(event, node) {
+	        $("#projectGroupId").val(node.id);
+	        $("#projectGroupName").html(node.text);
+	        $("#dataList").bootstrapTable('refresh');
+	        $("#btn_add,#btn_edit,#btn_delete").attr('disabled',false); //激活按钮
+	    }
+	  
+	 	 //初始化树右键菜单
+	    function initMenuTreeContextmenu() {
+	        $('#MenuTree').contextmenu({
+	            target: '#context-menu',
+	            before: function (e, context) {
+	                var nodeId = e.target.getAttribute("data-nodeid");
+	                var node = $('#MenuTree').treeview('getNode', nodeId);
+	                currentNode = node;
+	                $('#addProjectArea, #addProjectGroup, #deleteProjectArea，#addProjectInfo,#editProjectGroup').hide();
+	                //根据类型显示菜单
+	                if (currentNode.nodeType == 'typeProject') {
+	                	 $('#addProjectArea').show();
+	                	 $('#addProjectGroup,#addProjectInfo,#deleteProjectGroup,#deleteProjectArea,#editProjectArea').hide();
+	                }else if (currentNode.nodeType == 'typeProjectArea') {
+	                	 $('#addProjectGroup,#editProjectArea').show();/*  $('#addProjectGroup,#deleteProjectArea').show(); */
+	                	 $('#addProjectInfo,#deleteProjectArea,#deleteProjectGroup').hide();
+	                }else if(currentNode.nodeType == 'typeProjectGroup'){
+	                	 $('#addProjectInfo,#editProjectGroup,#deleteProjectGroup').show();
+	                	 $('#addProjectGroup,#deleteProjectArea,#editProjectArea').hide();
+	                }
+	            },
+	            onItem: function (context, e) {
+	                var operId = e.target.getAttribute('id');
+	                if(operId == 'addProjectArea'  || operId == 'editProjectArea'){
+	                	addProjectArea(operId);
+	                }
+	                if (operId == 'addProjectGroup') {
+	                	addProjectGroup();
+	                }
+	                if (operId == 'deleteProjectArea') {
+	                	//deleteProjectArea();
+	                }
+	                if (operId == 'addProjectInfo') {
+	                	addProjectInfo();
+	                }
+	                if (operId == 'editProjectGroup') {
+	                	editProjectGroup();
+	                }
+	                if(operId == 'deleteProjectGroup'){
+                        removeProjectGroup();
+	                }
+	            }
+	        });
+	    }
+	 	 
+	   //添加区域
+	    function addProjectArea(operId) {
+            $('#myform_area')[0].reset();//清空表单
+            $('#myform_area').bootstrapValidator('resetForm');//重置表单校验:
+	    	if(operId == 'addProjectArea'){
+                $('#addAreaModal').find('.modal-title').html('新增区域');
+                $('#addAreaModal').modal('toggle');
+            }else if(operId == 'editProjectArea'){
+                $('#addAreaModal').find('.modal-title').html('编辑区域');
+                $('#addAreaModal').modal('toggle');
+	    	    var projectAreaId = currentNode.id;
+	    	    var r = Math.random().toString().substring(5);
+                $.ajax({
+                    url: CTX + 'project-info-area/get-project-area?Mathnum=' + r,
+                    method: 'get',
+                    dataType: 'json',
+                    data: {projectAreaId:projectAreaId},
+                    success: function (json) {
+                        $('#myform_area').find('input[name="id"]').val(json.id);
+                        $('#myform_area').find('input[name="areaName"]').val(json.areaName);
+                        $('#myform_area').find('input[name="remark"]').val(json.remark);
+                    },
+                    error: function () {
+                        alert('请求超时或系统出错!');
+                    }
+                });
+            }
+
+	    }
+	   
+		//保存区域
+		function doSaveArea(){
+			var result = $('#myform_area').data('bootstrapValidator');
+			result.validate();
+			if(result.isValid()){
+				loading('正在保存,请稍后...');
+			$.ajax({  
+				url: CTX+'project-info-area/save-project-area',
+	            type: 'POST',  
+	            data:$('#myform_area').serialize(),// 序列化表单值  
+	            dataType: 'json',//服务端接收的数据类型
+	            success:function(json) {  
+	            	loaded();
+					if(json.success){
+						alert(json.msg);
+						$("#addAreaModal").modal('hide');
+				        initMenuTree();//初始化项目列表树
+					}else{
+						alert(json.msg);
+					}
+	            },  
+	            error:function(json) {  
+	            	alert('请求超时或系统出错!');
+					loaded();
+	            }  
+	        });  
+			}
+		}
+		
+		//删除区域
+    	function deleteProjectArea() {
+			console.log(currentNode.id)//当前节点id
+			var projectAreaId=currentNode.id;
+			$.ajax({  
+				url: CTX+'project-info-area/delete-project-area',
+	            type: 'POST',  
+	            data:{projectAreaId:projectAreaId},// 序列化表单值  
+	            dataType: 'json',//服务端接收的数据类型
+	            success:function(json) {  
+	            	loaded();
+					if(json.success){
+						alert(json.msg);
+				        initMenuTree();//初始化项目列表树
+					}else{
+						alert(json.msg);
+					}
+	            },  
+	            error:function(json) {  
+	            	alert('请求超时或系统出错!');
+					loaded();
+	            }  
+	        });
+    	}
+    	//新增项目组
+    	function addProjectGroup() {
+			fnAddProjectGroup(currentNode.id);
+    	}
+    	//编辑项目组
+    	function editProjectGroup() {
+			fnEditProjectGroup(currentNode.id);
+    	}
+
+    	//删除项目
+        function removeProjectGroup() {
+            var projectGroupId = currentNode.id;
+            $.ajax({
+                url: CTX + 'project-group/delete-project-group-by-id',
+                method: 'post',
+                dataType: 'json',
+                data: {projectGroupId:projectGroupId},
+                success: function (json) {
+                    alert(json.msg);
+                    if (json.success) {
+                        //刷新项目列表
+                        initMenuTree();
+                    }
+                },
+                error: function () {
+                    alert('请求超时或系统出错!');
+                }
+            });
+        }
+    	//新增工程
+    	function addProjectInfo() {
+			console.log(currentNode.id)//当前节点id
+			fnAddProjectInfo(currentNode.id);
+    	}
+    	
+    	//新增工程
+    	function fnAddProjectInfo(projectGroupId){
+    		if(projectGroupId==undefined){
+    		var projectGroupId=$("#formSearch input[id=projectGroupId]").val();
+    		}
+    		var url = CTX+'project-info/project-info-input.html?projectGroupId='+projectGroupId;
+    		window.parent.openCommonFrameWin(url,1000,$(window).height()-55,function(result){
+    			if(result){
+    			  queryInfo();
+    			}
+    		});
+    	}
+    	//编辑工程
+    	function fnEditProjectInfo(){
+    		var seldatas = $('#dataList').bootstrapTable('getSelections');
+    		if(seldatas.length==0){
+    			alert('请选择一项来编辑');
+    			return;
+    		}
+    		if(seldatas.length>1){
+    			alert('只会编辑所选的第一项');
+    		}
+    		var selData = seldatas[0];
+    		var projectInfoId=selData.id;
+    		var url = CTX+'project-info/project-info-input.html?id='+projectInfoId;
+    		window.parent.openCommonFrameWin(url,1000,$(window).height()-55,function(result){
+    			if(result){
+    				 queryInfo();
+    			}
+    		});
+    	}
+    	//删除工程
+        function deleteProjectInfo() {
+            var seldatas = $('#dataList').bootstrapTable('getSelections');
+            if(seldatas.length==0){
+                alert('请选择一项来删除');
+                return;
+            }
+            if(seldatas.length>1){
+                alert('只会删除所选的第一项');
+            }
+            var selData = seldatas[0];
+            var projectInfoId=selData.id;
+            $.ajax({
+                url: CTX + 'project-info/delete-project',
+                method: 'post',
+                dataType: 'json',
+                data: {projectInfoId:projectInfoId},
+                success: function (json) {
+                    alert(json.msg);
+                    if (json.success) {
+                        //刷新工程列表
+                        $('#dataList').bootstrapTable('refresh');
+                    }
+                },
+                error: function () {
+                    alert('请求超时或系统出错!');
+                }
+            });
+        }
+    	//新增项目
+    	function fnAddProjectGroup(projectAreaId){
+    		var url = CTX+'project-group/project-group-input.html?projectAreaId='+projectAreaId;
+    		window.parent.openCommonFrameWin(url,1000,$(window).height()-55,function(result){
+    			if(result){
+    			initMenuTree();
+    			}
+    		});
+    	}
+    	
+    	//编辑项目
+    	function fnEditProjectGroup(projectGroupId){
+    		var url = CTX+'project-group/project-group-input.html?id='+projectGroupId;
+    		window.parent.openCommonFrameWin(url,1000,$(window).height()-55,function(result){
+    			if(result){
+    				initMenuTree();
+    			}
+    		});
+    	}
+		
+		
+	/*]]>*/
+</script>	
+</html>

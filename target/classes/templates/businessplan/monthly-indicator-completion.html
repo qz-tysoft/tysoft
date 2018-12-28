@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--
+* @Copyright(c): 厦门路桥信息股份有限公司  版权所有
+* @author :XMRBI
+* @Description:月度经营指标完成情况
+* @createDate:2018-7-23
+-->
+<head>
+	<meta charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+	<title>月度经营指标完成情况</title>
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/select2/select2.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-validator/css/bootstrapValidator.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css}"/>
+    <!-- Theme style -->
+	<link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+	<!-- Bootstrap 3.3.7 -->
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.css}"/>
+	<!-- bootstrap datepicker -->
+  	<link rel="stylesheet" th:href="@{/static/plugins/datepicker/datepicker3.css}"/>
+	<style type="text/css">
+	.panel {
+	  margin-bottom: 0px;
+	}
+	.form-group {
+	  margin-bottom: 2px;
+	}
+	
+	</style>
+	<style type="text/css">
+        html, body {
+            overflow-x: hidden;
+        }
+
+        body {
+            padding-top: 5px;
+        }
+        
+        .box.box-solid.box-default>.box-header {
+        	background-color: #DEF2FF;
+        }
+        
+        .box.box-solid>.box-header .btn.btn-default{    
+			background-color: #4A90E2;
+		  	border-color: #4A90E2;
+		  	color:#fff;
+		}
+
+        .col-sm-10 span {
+            word-break: break-all;
+            word-wrap: break-word;
+            white-space: normal;
+            display: block;
+            float: left;
+            height: 34px;
+            padding: 6px 12px 6px 0px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #777;
+        }
+        
+		.search_div{
+			padding: 0px;
+			font-family: serif;
+			/* line-height: 34px;
+			margin-bottom: 0px; */
+		}
+		
+		.list-group-item{
+			padding: 5px 5px;
+		}
+		
+		#search_div{
+			padding: 0px;
+			margin: 10px 0px;
+		}
+		
+		#search_div .btn.btn-default{
+			background-color: #fff;
+		  	border-color: gray;
+		  	color:#000;
+		}
+		
+		.modal-header{
+			background-color:#F4F6F8;
+			border-top-left-radius: 5px;
+			border-top-right-radius: 5px;
+		}
+		
+		a{
+			font-weight: bold;
+			color: #000;
+		}
+        
+    </style>
+</head>
+<body>
+	<div class="container-fluid" style="width: 100%; height: 100%">
+		<!-- <div class="col-sm-12"> -->
+			<div class="box box-default collapsed-box box-solid" style="margin-bottom: 5px;border-color: #DEF2FF;">
+				<div class="box-header with-border">
+				<form id="formSearch" class="form-horizontal">
+			        <div id="search_div" class="col-md-12">
+		                <div class="col-md-4" style="padding-right: 0px;">
+	            			<div class="form-group">
+			                  	<label class="col-sm-3 control-label search_div" style="width: 40px;">标题:</label>
+			                  	<div class="col-sm-9 search_div" style="width: 260px;">
+		                    	 	<input type="text" class="form-control" id="reportTitle" name="reportTitle" value="" />
+			                  	</div>
+			                </div>
+	            		</div>
+		                <div class="col-md-5" style="padding: 0px;">
+	            			<div class="form-group">
+			                  	<label class="col-sm-3 control-label search_div" style="width: 75px;">快报月份:</label>
+			                  	<div class="col-sm-4 search_div" style="width: 150px;">
+			                  	<div class="input-group date">
+		                    	 	<input type="text" class="form-control datepicker" id="reportMonth_s" name="reportMonth_s"/>
+		                    	 	<div class="input-group-addon">
+				                    	<i class="fa fa-calendar"></i>
+				                  	</div>
+				                  	</div>
+			                  	</div>
+			                  	<label class="col-sm-1 control-label" style="width: 26px;align-content: center;">~</label>
+			                  	<div class="col-sm-4 search_div" style="width: 150px;">
+			                  		<div class="input-group date">
+			                    	 	<input type="text" class="form-control datepicker" id="reportMonth_e" name="reportMonth_e"/>
+			                    	 	<div class="input-group-addon">
+					                    	<i class="fa fa-calendar"></i>
+					                  	</div>
+					                </div>
+			                  	</div>
+			                </div>
+	            		</div>
+	            		<div class="col-md-3 btn-group" style="padding: 0px;">
+					    	<button id="btn_add" type="button" class="btn btn-default" onclick="queryInfo();">
+					        	<span class="glyphicon glyphicon-search" aria-hidden="true" style="color: #18A689"></span>查询
+					        </button>
+					        <button id="btn_edit" type="button" class="btn btn-default" onclick="resetParams();">
+					            <span class="glyphicon glyphicon-repeat" aria-hidden="true" style="color: #EC4758"></span>重置
+					        </button>
+					        <!-- <button id="btn_add" type="button" class="btn btn-default" onclick="queryInfo();">
+					        	<span class="fa fa-file-excel-o" aria-hidden="true" style="color: #18A689"></span>导出
+					        </button>
+					        <button id="btn_edit" type="button" class="btn btn-default" onclick="resetParams();">
+					            <span class="fa fa-print" aria-hidden="true" ></span>打印
+					        </button> -->
+	            		</div>
+			        </div>
+			    </form>
+				</div>
+			</div>
+
+			<table id="dataList"></table>
+		<!-- </div> -->
+	</div>
+	
+</body>
+<!-- jQuery 2.2.3 -->
+<script th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/static/js/common.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/static/plugins/jQuery/jquery.serializejson.min.js}"></script>
+<script th:src="@{/static/plugins/datepicker/bootstrap-datepicker.js}"></script>
+<script th:src="@{/static/plugins/datepicker/locales/bootstrap-datepicker.zh-CN.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/bootstrap-contextmenu.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/prettify.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/attention/zDialog/zDrag.js}"></script>
+<!-- Slimscroll -->
+<script type="text/javascript" th:src="@{/static/plugins/slimScroll/jquery.slimscroll.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/dist/js/app.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+	var CTX = [[@{/}]];
+	
+	$(function () {
+	    //1.初始化Table
+	    var oTable = new TableInit();
+	    oTable.Init();
+	    //2.初始化Button的点击事件
+	    var oButtonInit = new ButtonInit();
+	    oButtonInit.Init();
+	    //初始化时间控件
+	    $('.datepicker').datepicker({
+	    	format:'yyyy-mm',
+	    	language:'zh-CN',
+	      	autoclose: true,
+	      	startView: 'months', //开始视图层，为月视图层
+	        maxViewMode:'years', //最大视图层，为年视图层
+	        minViewMode:'months', //最小视图层，为月视图层
+	        clearBtn: true
+	    }).on('hide',function(){
+			
+		});
+	    
+	});
+	
+	//初始化列表
+	var TableInit = function () {
+	    var oTableInit = new Object();
+	    //初始化Table
+	    oTableInit.Init = function () {
+	        $('#dataList').bootstrapTable({
+	        	url: CTX + 'business-report/query-business-report-page', //请求后台的URL（*）
+	            method: 'get',                      //请求方式（*）
+	            striped: true,                      //是否显示行间隔色
+	            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+	            pagination: true,                   //是否显示分页（*）
+	            sortable: false,                     //是否启用排序
+	            sortOrder: "asc",                   //排序方式
+	            queryParams: oTableInit.queryParams,//传递参数（*）
+	            sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+	            pageNumber:1,                       //初始化加载第一页，默认第一页
+	            pageSize: 10,                       //每页的记录行数（*）
+	            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+	            queryParamsType: "a",
+	            strictSearch: true,
+	            minimumCountColumns: 2,             //最少允许的列数
+	            height:$(window).height()-85,	    //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+	            uniqueId: "id",                     //每一行的唯一标识，一般为主键列
+	            undefinedText: "",
+	            columns: [
+				{
+					checkbox: true
+				},{
+				    field: 'number',
+				    title:'序号',
+				    align : 'center',
+				    sortable:true,
+				    formatter:function(value,row,index){
+				    	var pageSize=$('#dataList').bootstrapTable('getOptions').pageSize;
+		                var pageNumber=$('#dataList').bootstrapTable('getOptions').pageNumber;
+		                return pageSize * (pageNumber - 1) + index + 1;
+				    }
+				},{
+				    field: 'reportTitle',
+				    title:'标题',
+				    align : 'center',
+				    sortable:true,
+				    formatter:function(v,r,i){
+						return '<a href="javascript:fnFillReport(\'' + r.id + '\')">'+ r.reportTitle +'汇总</a>';
+	   				}
+				},{
+				    field: 'issuedDate',
+				    title:'下发时间',
+				    align : 'center',
+				    sortable:true
+				},{
+				    field: 'reportMonth',
+				    title:'快报月份',
+				    align : 'center',
+				    sortable:true
+				},]
+	        });
+	    };
+
+	    //得到查询的参数
+	    oTableInit.queryParams = function (params) {
+	        var temp = {   //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+	    		isParent: 1,
+	        	pageNum: params.pageNumber,//页码params.offset
+                size: params.pageSize,//页面大小params.limit
+                reportTitle: $("#reportTitle").val(),
+                reportMonth_s: $("input[name='reportMonth_s']").val(),
+                reportMonth_e: $("input[name='reportMonth_e']").val(),
+                status: 1				//已完成的经营快报 TODO
+	        };
+	        return temp;
+	    };
+	    return oTableInit;
+	};
+	
+	//初始化按钮
+	var ButtonInit = function () {
+	    var oInit = new Object();
+	    var postdata = {};
+
+	    oInit.Init = function () {
+	        //初始化页面上面的按钮事件
+	    };
+
+	    return oInit;
+	};
+	
+	//查询-刷新
+	var queryInfo = function(){
+		var data = JSON.stringify($('#formSearch').serializeJSON());
+		var queryData = {from: data};
+		$('#dataList').bootstrapTable('refreshOptions',{pageNumber:1,pageSize:10,query:queryData});
+	}
+	
+	//重置参数
+	function resetParams(){
+		$("input[name=reportTitle]").val('');
+		$("input[name=reportMonth_s]").val('');
+		$("input[name=reportMonth_e]").val('');
+	}
+	
+	//查看经济指标完成情况
+	function fnFillReport(id){
+		var url = CTX+'business-report/view?id=' + id + "&operate=view&sumDisplay=true&showFinal=true";
+		window.parent.openCommonFrameWin(url,1000,$(window).height()-55,function(result){
+			if(result){
+				queryInfo();
+			}
+		});
+	}
+	    
+	/*]]>*/
+</script>	
+</html>

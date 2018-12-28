@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+	<title th:text="${vidicon.name}+'-视频播放器'"></title>
+	<style type="text/css">
+		html,body{
+			height:100%;min-height:100%;
+			overflow: hidden;
+			margin:0;
+			padding:0;
+		}
+	</style>
+</head>
+<body>
+	<object id="DPSDK_OCX" classid="CLSID:D3E383B6-765D-448D-9476-DFD8B499926D" style="width: 100%; height: 100%" th:codebase="@{/localstatic/video/dh/DpsdkOcx.cab#version=1.0.0.0}"></object>
+</body>
+<script type="text/javascript" th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+	var initDHOcxHandle = false;
+	var DH_SmartWndId = null;
+	var DH_LoginHandle = -1;
+	var DH_PlayHandle = -1;
+	var DH_serverId = -1;
+	var Vidicon = [[${vidicon}]];
+	$(window).unload(function(){
+		//大华
+		DPSDK_Logout();
+	});
+	$(function(){
+		if(Vidicon==null){
+			alert('摄像机信息不存在');
+			return;
+		}
+		if(!initDHOcxHandle){
+			DPSDK_Init();
+		}
+		if(!initDHOcxHandle){
+			return;
+		}
+		var playocx = document.getElementById("DPSDK_OCX");
+		//如果未登录平台则先登录平台
+		if(DH_LoginHandle!=0){
+			DH_SmartWndId = playocx.DPSDK_CreateSmartWnd(0, 0, 100, 100);
+			playocx.DPSDK_SetWndCount(DH_SmartWndId,1);//设置单个窗口
+			playocx.DPSDK_SetSelWnd(DH_SmartWndId,0);	//选中一个窗口
+			playocx.DPSDK_SetWndStyle(1);				//窗口定制风格
+			DPSDK_Login(Vidicon.serverOutIp,Vidicon.serverOutPort,Vidicon.userName,Vidicon.userPwd);
+		}
+		if(DH_LoginHandle!=0){return;}
+		DPSDK_PlayVideo(Vidicon.vidiconId);
+	});
+	
+	
+	function DPSDK_Init(){
+		try{
+			var obj = new ActiveXObject("DPSDK_OCX.DPSDK_OCXCtrl.1");
+			initDHOcxHandle = true;
+		}catch(e){
+			alert("大华控件未注册或浏览器不支持，请先注册控件，用IE打开！");
+		}
+	}
+	/**
+	 * 登录大华平台
+	 * @param ip
+	 * @param port
+	 * @param user
+	 * @param pwd
+	 * @returns
+	 */
+	function DPSDK_Login(ip,port,user,pwd){
+		var playocx = document.getElementById("DPSDK_OCX");
+		DH_LoginHandle = playocx.DPSDK_Login(ip, port, user, pwd);
+		if(DH_LoginHandle != 0){
+			alert('登录视频服务器失败!');
+		}
+	}
+	/**
+	 * 登出大华平台
+	 * @returns
+	 */
+	function DPSDK_Logout(){
+		if(DH_LoginHandle != -1){
+			var playocx = document.getElementById("DPSDK_OCX");
+			if(DH_PlayHandle != -1){
+				DPSDK_StopRealplayByWndNo();
+			}
+			playocx.DPSDK_Logout();
+			DH_LoginHandle = -1;
+		}
+	}
+	
+	/**
+	 * 播放视频
+	 * @param cameraId
+	 * @returns
+	 */
+	function DPSDK_PlayVideo(cameraId){
+		var playocx = document.getElementById("DPSDK_OCX");
+		var nWndNo = playocx.DPSDK_GetSelWnd(DH_SmartWndId);
+		// 开始预览 
+		DH_PlayHandle = playocx.DPSDK_StartRealplayByWndNo(DH_SmartWndId, nWndNo, cameraId, 1, 1, 1);
+		if(DH_PlayHandle!=0){
+			alert('播放视频失败,错误码:'+DH_PlayHandle);
+		}
+	}
+	/**
+	 * 停止播放视频
+	 * @returns
+	 */
+	function DPSDK_StopRealplayByWndNo(){
+		if(DH_PlayHandle != -1){
+			var playocx = document.getElementById("DPSDK_OCX");
+			// 获取当前活动窗口号, 其中m_nSmartWndId由DPSDK_CreateSmartWnd创建的窗口控件id
+		    var nWndNo = playocx.DPSDK_GetSelWnd(DH_SmartWndId);
+		    // 停止预览
+		    playocx.DPSDK_StopRealplayByWndNo(DH_SmartWndId,nWndNo);
+		    DH_PlayHandle = -1;
+		}
+	}
+	
+/*]]>*/
+</script>
+</html>

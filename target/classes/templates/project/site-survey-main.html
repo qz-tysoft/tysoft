@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+	<title>工地概览主页</title>
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css}"/>
+	<!-- Theme style -->
+	<link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.css}"/>
+	<style type="text/css">
+		.header-toolbar{height:65px;line-height: 32px;}
+		.btn-item{text-align: center;vertical-align: middle;color: white;font-size: 30px;padding: 8px 5px;min-width: 70px;}
+		.btn-item:HOVER{cursor: pointer;background:#367fa9;}
+		.btn-item-text{font-size: 14.25px;margin-top:5px;display: block;} 
+		.header-toolbar .with-divider{border-left: 1px solid #fff;padding-left: 10px;}
+		.main-sidebar, .left-side{padding-top:65px;}
+		.actived{background: #367fa9;}
+		.my-box {
+		    border-top: 3px solid rgb(244, 246, 248);
+		    background-color: rgb(244, 246, 248);
+		    position: relative;
+		    border-radius: 3px;
+		    margin-bottom: 20px;
+		    width: 100%;
+		    box-shadow: -1px 0px 1px rgba(0, 0, 0, 0.2);
+		}
+		.skin-blue .sidebar a {
+		    color: #777;
+		}
+		.skin-blue .sidebar-menu>li.header{
+			background: rgb(244, 246, 248);
+		    color: #3c8dbc;
+    		font-size: 16px;
+		}
+		.skin-blue .sidebar-menu>li.active>a {
+		    color: #3c8dbc;
+		    background: #f4f6f8;
+		    border-left-color: #3c8dbc;
+		}
+		.skin-blue .sidebar-menu>li>.treeview-menu {
+		    margin: 0 1px;
+		    background: #f4f6f8;
+		}
+		.sidebar-menu .treeview-menu>li>a {
+		    padding: 8px 8px 5px 15px;
+		    color: #777;
+		}
+		
+		.skin-blue .sidebar-menu>li>a:hover{
+			background: #00adff;
+			color:#fff;
+		}
+		
+		.info-box{min-height:0;}
+		.info-box-icon{
+			font-size: 40px;
+			height: 60px;
+    		line-height: 60px;
+		}
+		.info-box-content {
+		    padding: 11px 10px;
+		}
+		.progress-description, .info-box-text{font-size:12px;}
+		.info-box-number{font-size:14px;}
+		.blue{padding:8px 0;}
+		.products-list .product-info{margin-left:50px;}
+		.products-list .product-img img {width: 40px;height: 40px;}
+		.time-label{color:#777;padding-right:0;}
+		.product-img i{font-size:20px;}
+		.products-list .acc-img img{width:90px;height:auto;}
+		.products-list>.item{padding:8px 0;}
+		.img-thumbnail{width:60px;}
+		.wapp-icon{border: 0 !important;cursor: pointer;}
+		.my-sidebar-menu{
+		    white-space: nowrap;
+    		overflow: hidden;
+   		    list-style: none;
+   	 		margin: 0;
+    		padding: 0;
+		}
+		.my-sidebar-menu>li {
+		    position: relative;
+		    margin: 0;
+		    padding: 0;
+		}
+		.my-sidebar-menu>li.header {
+		    color: #00c0ef;
+		    overflow: hidden;
+    		text-overflow: clip;
+    		white-space: nowrap;
+   		    padding: 10px 25px 10px 15px;
+    		font-size: 12px;
+		}
+		.my-sidebar-menu>li>a {
+			position: relative;
+		    border-left: 3px solid transparent;
+		    padding: 12px 5px 12px 5px;
+    		display: block;
+    		color:#777;
+    		overflow: hidden;
+    		white-space: nowrap;
+    		text-overflow: ellipsis;
+		}
+		.my-sidebar-menu>li>a:hover {
+			background: #00c0ef;
+			color:#fff;
+		}
+		.active a{
+			background: #00c0ef;
+			color:#fff !important;
+		}
+		.no-data{
+			width:100%;background: #fff;overflow: hidden;
+			display: -webkit-flex;
+		    display: flex;
+		    -webkit-justify-content:center;
+		    justify-content:center;
+		    align-items:center;
+		    -webkit-align-items: center;
+	    	width:100%;
+	    	height:100%;
+	    	text-align:center;
+	    	color:#777;
+		}
+		.modal-dialog{margin:8px auto;box-shadow: rgb(66, 62, 62) 0px 0px 5px 1px;}
+	</style>
+</head>
+<body class="hold-transition skin-blue">
+	<div class="wrapper">
+		<aside class="main-sidebar" style="background: rgb(244, 246, 248);padding-top:0;">
+		    <section class="sidebar" style="height:auto;">
+		    	<div class="my-box">
+	              <div class="box-body box-profile" id="userBox">
+	                <img class="profile-user-img img-responsive img-circle" alt="User profile picture" th:src="@{/static/dist/img/avatar5.png}"/>
+	                <div class="text-center">
+                  		<div class="btn-group">
+		                    <button class="btn btn-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+		                      <b th:text="${userinfo.name}"></b>
+		                      <span class="fa fa-caret-down"></span>
+		                    </button>
+		                    <ul class="dropdown-menu">
+		                      <li><a href="javascript:goEditPwd()">修改密码</a></li>
+		                      <li><a href="#">意见反馈</a></li>
+		                      <li class="divider"></li>
+		                      <li><a href="javascript:goLoginout()">退出</a></li>
+		                    </ul>
+	                  	</div>
+	                  	<p class="text-muted text-center" th:text="${userinfo.useunit}!=null?${userinfo.useunit.name}:''"></p>
+	                  	<p class="text-muted text-center" th:text="${roleName}"></p>
+	                </div>
+	              </div>
+           		</div>
+           		<ul class="my-sidebar-menu">
+           			<li class="header">现场工地</li>
+           			<li th:each="pi : ${projectInfos}" th:class="${piStat.index}==0?'menu-item active':'menu-item'">
+           				<a href="javascript:" th:attr="fieldid=${pi.id}">
+           					<i class="fa fa-circle-o text-red"></i>
+           					<span th:text="${pi.projectName}"></span>
+           				</a>
+           			</li>
+           		</ul>
+		    </section>
+	  	</aside>
+	  	<div class="content-wrapper" style="position: relative;background: rgb(244, 246, 248);padding:10px;">
+	  		<div class="row">
+	  			<div class="col-md-5" style="padding-right:0;">
+	  				<div class="box box-widget">
+			            <div class="box-header with-border">
+			            	<h3 class="box-title">项目简介</h3>
+			              	<!-- /.user-block -->
+			              	<div class="box-tools">
+			              		<button type="button" class="btn btn-box-tool" onclick="fnEditProjectInfo()"><i class="fa fa-edit"></i></button>
+			                	<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+			              	</div>
+			              	<!-- /.box-tools -->
+			            </div>
+			            <!-- /.box-header -->
+			            <div class="box-body" style="height:218px;" id="project_info">
+			            
+			            </div>
+			            <div id="project_info_load" class="overlay" style="display: none;">
+			              	<i class="fa fa-refresh fa-spin"></i>
+			            </div>
+		          	</div>
+	  			</div>
+	  			<div class="col-md-7">
+	  				<div class="box box-widget">
+			            <div class="box-header with-border">
+			            	<h3 class="box-title">应用功能</h3>
+			              	<!-- /.user-block -->
+			              	<div class="box-tools">
+			                	<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+			              	</div>
+			              	<!-- /.box-tools -->
+			            </div>
+			            <!-- /.box-header -->
+			            <div class="box-body" style="height:218px;">
+							<div class="row" th:if="!${#sets.isEmpty(deskTopAuths)}">
+								<div class="col-md-4 col-sm-6 col-xs-12" th:each="auth:${deskTopAuths}">
+									<div class="thumbnail">
+										<a th:href="'javascript:goOpenBusiness(\''+${auth.url}+'\')'" class="btn btn-block btn-social wapp-btn">
+				               	  			<img class="img-polaroid wapp-icon handle" th:src="@{/static/wapp/icons/}+${auth.icon}"/>
+				            				<span th:text="${auth.name}"></span>
+				           		  		</a>
+									</div>
+								</div>
+							</div>
+							<div class="no-data" th:if="${#sets.isEmpty(deskTopAuths)}">暂无功能权限</div>
+			            </div>
+		          	</div>
+	  			</div>
+	  		</div>
+	  		
+	  		<div class="row">
+	  			<div class="col-md-5" style="padding-right:0;">
+	  				<div class="box box-widget">
+		      			<div class="box-header with-border">
+		      				<h3 class="box-title">工地劳务情况</h3>
+		      				<div class="box-tools pull-right">
+		      					<button type="button" class="btn btn-box-tool" onclick="fnQueryWorkChart()"><i class="fa fa-refresh"></i></button>
+				                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+			              	</div>
+		      			</div>
+		      			<div class="box-body" style="height:230px;">
+		      				<div class="row">
+		      					<div class="col-md-7">
+		      						<p style="margin:0;text-align:center;">在场工种分布情况</p>
+		      						<div id="work_type_chart" style="height:200px;"></div>
+		      					</div>
+		      					<div class="col-md-5">
+		      						<div class="small-box bg-aqua">
+		      							<div class="inner">
+		      								<h4>劳务单位：<span id="project_company_num">0</span></h4>
+		      								<h4>劳务班组：<span id="project_team_num">0</span></h4>
+		      							</div>
+		      							
+		      						</div>
+		      						<div class="small-box bg-yellow">
+		      							<div class="inner">
+			      							<h4>在职人员：<span id="project_personnel_num">0</span></h4>
+			      							<h4>在场人数：<span id="project_bepresent_num">0</span></h4>
+		      							</div>
+		      						</div>
+		      					</div>
+		      				</div>
+		      			</div>
+		      			<div id="work_type_chart_load" class="overlay" style="display: none;">
+			              	<i class="fa fa-refresh fa-spin"></i>
+			            </div>
+		      		</div>
+	  			</div>
+	  			<div class="col-md-7">
+	  				<div class="box box-widget">
+	      				<div class="box-header with-border">
+		      				<h3 class="box-title">实时通行记录</h3>
+		      				<div class="box-tools pull-right">
+			              		<button type="button" class="btn btn-box-tool" onclick="fnMoreAtteInfomation()">more</button>
+				                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+			              	</div>
+		      			</div>
+		      			<div id="inout_list" class="box-body" style="padding:0 10px 10px 10px;height:230px;">
+		      			
+		      			</div>
+		      			<div id="inout_list_load" class="overlay" style="display: none;">
+			              	<i class="fa fa-refresh fa-spin"></i>
+			            </div>
+		      		</div>
+	  			</div>
+	  		
+	  		
+		     	<!-- <div class="col-md-3 col-sm-6">
+		     		<div class="box box-widget">
+		      			<div class="box-header with-border">
+		      				<h3 class="box-title">门禁统计</h3>
+		      				<div class="box-tools pull-right">
+				                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+			              	</div>
+		      			</div>
+		      			<div class="box-body" style="padding: 10px 10px 0 10px;height:230px;">
+		      				<div class="info-box">
+					            <span class="info-box-icon bg-aqua"><i class="ion ion-ios-people-outline"></i></span>
+					            <div class="info-box-content">
+					              <span class="info-box-text">进场人数</span>
+					              <span id="count_in_num" class="info-box-number">0</span>
+					            </div>
+					            /.info-box-content
+				          	</div>
+				          	<div class="info-box">
+					            <span class="info-box-icon bg-green"><i class="ion ion-ios-people-outline"></i></span>
+					            <div class="info-box-content">
+					              <span class="info-box-text">出场人数</span>
+					              <span id="count_out_num" class="info-box-number">0</span>
+					            </div>
+					            /.info-box-content
+				          	</div>
+				          	<div class="info-box" style="margin-bottom:10px;">
+					            <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
+					            <div class="info-box-content">
+					              <span class="info-box-text">在场人数</span>
+					              <span id="count_ing_num" class="info-box-number">0</span>
+					            </div>
+					            /.info-box-content
+				          	</div>
+		      			</div>
+		      		</div>
+		     	</div> -->
+	     	</div>
+	  		
+	  		<div class="row" style="padding:0 15px;">
+	     		<div class="box box-widget">
+	      			<div class="box-header with-border">
+	      				<h3 class="box-title">门禁详情</h3>
+	      				<div class="box-tools pull-right">
+	      					<button type="button" class="btn btn-box-tool" onclick="fnQueryAccControlDevice()"><i class="fa fa-refresh"></i></button>
+			                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+		              	</div>
+	      			</div>
+	      			<div id="device_list" class="box-body">
+	      				
+	      			</div>
+	      			<div id="device_list_load" class="overlay" style="display: none;">
+		              	<i class="fa fa-refresh fa-spin"></i>
+		            </div>
+	      		</div>
+	     	</div>
+	  	</div>
+	</div>
+	
+	<!-- frame窗口信息 -->
+	<div class="modal fade modal-primary" id="common_frame_win" role="dialog" data-backdrop="false" aria-hidden="true">
+		<div class="modal-dialog" style="width:1024px;">
+	      	<div class="modal-content" style="background-color:rgba(255, 255, 255, 0);">
+		        <div class="modal-header" style="padding:5px;">
+		          	<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top:0;">
+		            	<span aria-hidden="true">&times;</span>
+		            </button>
+		            <button type="button" class="close max-btn" style="margin-right:5px;margin-top: -1px;" onclick="fnMaxModalWin(this)">
+		            	<i class="fa fa-square-o" style="font-size:16px;"></i>
+		            </button>
+		          	<h4 class="modal-title" style="text-align:left;"></h4>
+		        </div>
+		        <div class="modal-body" style="height: 550px;padding:0px;background-color: rgba(3, 51, 101, 0.9) !important;">
+		          	<iframe style="width: 100%;height:100%;border:0;"></iframe>
+		        </div>
+	      	</div>
+		</div>
+	</div>
+</body>
+<script id="project_info_temp" type="text/template">
+{{? it!=null}}
+	<ul id="project_info" class="products-list product-list-in-box">
+		<li class="item">
+		   	<h4 style="margin-top:0;">{{=it.projectName}}</h4>
+			<div class="product-img">
+				{{?it.picUrl!=null}}
+				<img src="{{=it.picUrl}}" onerror="this.src='{{=it.errorUrl}}';" style="width:180px;height:auto;"/>
+				{{??}}
+				<img th:src="@{/static/images/noPicture.jpg}" style="width:180px;height:auto;"/>
+				{{?}}
+			</div>
+			<div class="product-info" style="margin-left: 190px;">
+				<span class="product-description" style="padding: 5px 0;">施工许可证：{{=it.projectLicence}}</span>
+				<span class="product-description" style="padding: 5px 0;">开工日期：{{=it.startDate}}</span>
+				<span class="product-description" style="padding: 5px 0;">计划竣工日期：{{=it.planEndDate}}</span>
+				<span class="product-description" style="padding: 5px 0;">
+					剩余&nbsp;<span class="lead text-aqua">{{=it.days}}</span>&nbsp;天
+				</span>
+			</div>
+		</li>
+	</ul>
+	{{??}}
+	<div class="no-data">暂无数据</div>
+{{?}}
+</script>
+<script id="inout_list_temp" type="text/template">
+	{{? it.length>0}}
+	<ul class="products-list product-list-in-box">
+		{{~it:data}}
+		<li class="item">
+			<div class="product-img">
+				<img th:src="@{/static/images/u10353.png}"/>
+			</div>
+			/*<![CDATA[*/
+			<div class="product-info">
+				{{?data.userType==='02'}}
+				<a href="javascript:void(0)" class="product-title text-yellow">
+					{{=data.userName}}&nbsp;&nbsp;{{=data.workType}}&nbsp;&nbsp;{{=data.projectTeamName}}
+					<span class="label pull-right time-label">{{=data.swipeTime}}</span>
+				</a>
+				{{??}}
+				<a href="javascript:void(0)" class="product-title text-yellow">
+					{{=data.userName}}&nbsp;&nbsp;{{=data.adminType}}
+					<span class="label pull-right time-label">{{=data.swipeTime}}</span>
+				</a>
+				{{?}}
+				<span class="product-description">
+			    	{{?data.accControlDevice===null && data.attendanceDevice===null}}
+					无设备记录
+					{{??data.accControlDevice!=null && data.attendanceDevice===null}}
+					{{=data.accControlDevice}}
+					{{??data.accControlDevice===null && data.attendanceDevice!=null}}
+					{{=data.attendanceDevice}}
+					{{?}}
+					<span class="label {{?data.swipeStatus=='进场'}}label-info{{??}}label-success{{?}} pull-right">{{=data.swipeStatus}}</span>
+				</span>
+			</div>
+			/*]]>*/	
+		</li>
+		{{~}}
+	</ul>
+	{{??}}
+	<div class="no-data">暂无数据</div>
+	{{?}}
+</script>
+<script id="device_list_temp" type="text/template">
+{{?it.length>0}}
+<div class="row">
+	{{~it:data}}
+	<div class="col-md-3 col-sm-6">
+		<div class="box" style="border-top:0;">
+			<div class="box-header with-border">
+				<h3 class="box-title">{{=data.deviceName}}</h3>
+				<div class="box-tools pull-right acc-device-status-list" fieldId="{{=data.id}}">
+					{{?data.status=='1'}}
+					<label class="text-green">在线</label>
+					{{??}}
+					<label class="text-red">离线</label>
+					{{?}}
+				</div>
+			</div>
+			<div class="box-body">
+				<ul class="products-list product-list-in-box acc-device-list" fieldType="{{=data.deviceType}}" fieldId="{{=data.id}}">
+					<li class="item">
+						<div class="product-img acc-img">
+							{{?data.deviceType=='acc'}}
+						    <img th:src="@{/static/images/acc-device.png}" alt="Product Image"/>
+							{{??}}
+							<img th:src="@{/static/images/att-device.png}" alt="Product Image"/>
+							{{?}}
+						</div>
+						<div class="product-info" style="margin-left:100px;">
+							<div class="info-box">
+								<span class="info-box-icon bg-aqua" style="width:45px;"><i class="ion ion-ios-people-outline"></i></span>
+								<div class="info-box-content" style="margin-left:40px;">
+									<span class="info-box-text">进场人数</span>
+									<span name="in_num" class="info-box-number">0</span>
+								</div>
+							</div>
+							<div class="info-box">
+								<span class="info-box-icon bg-green" style="width:45px;"><i class="ion ion-ios-people-outline"></i></span>
+								<div class="info-box-content" style="margin-left:40px;">
+									<span class="info-box-text">出场人数</span>
+									<span name="out_num" class="info-box-number">0</span>
+								</div>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	{{~}}
+</div>
+{{??}}
+	<div class="no-data">暂无数据</div>
+{{?}}
+</script>
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+	var CTX = [[@{/}]];
+	var STATIC = [[@{/static/}]];
+/*]]>*/	
+</script>
+<script type="text/javascript" th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/dist/js/app.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/doT.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/echarts/echarts.min.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+	var websocket = null;
+	//判断当前浏览器是否支持WebSocket
+	if('WebSocket' in window){
+		var host = window.location.host;
+	    websocket = new WebSocket("ws://"+host+CTX+"websocket");
+	}
+	else{
+	    alert('浏览器不支持websocket,请更换IE10+, 火狐34+, Chrome 31+');
+	}
+	//发送消息
+	function send(message){
+	    websocket.send(message);
+	}
+	//监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+	window.onbeforeunload = function(){
+	    websocket.close();
+	}
+	//接收到消息的回调方法
+	websocket.onmessage = function(event){
+	    operMessage(event.data);
+	}
+	//连接发生错误的回调方法
+    websocket.onerror = function(){
+		console.log('发生错误');
+    	websocket.close();
+    };
+	//消息处理
+	function operMessage(data){
+		var json = eval('(' + data + ')');
+		//如果考勤消息
+		if(json.infoType=='atteInfo' && CUR_PROJECTID == json.projectInfoId){
+			//刷新门禁统计信息
+			//fnCountInout();
+			//刷新实时通行记录
+			fnQueryInout(true);
+			//刷新在场劳务工种
+			fnQueryWorkChart(true);
+			var deviceId = null;
+			var deviceType = null;
+			if(json.accId){
+				deviceId = json.accId;
+				deviceType = 'acc';
+			}
+			if(json.attId){
+				deviceId = json.attId;
+				deviceType = 'att';
+			}
+			//刷新某个设备通行记录
+			if($('.acc-device-list').length>0){
+				$('.acc-device-list').each(function(){
+					var fieldId = $(this).attr('fieldId');
+					if(deviceId == fieldId){
+						fnCountAccInout($(this),deviceId,deviceType);
+					}
+				});
+			}
+		}
+		//如果是上下线报警信息
+		if(json.infoType=='alarm' && CUR_PROJECTID == json.projectInfoId){
+			var deviceId = null;
+			if(json.accId){
+				deviceId = json.accId;
+			}
+			if(json.attId){
+				deviceId = json.attId;
+			}
+			//刷新某个设备状态
+			if($('.acc-device-status-list').length>0){
+				$('.acc-device-status-list').each(function(){
+					var fieldId = $(this).attr('fieldId');
+					if(deviceId == fieldId){
+						if(json.status=='1'){
+							$(this).html('<label class="text-success">在线</label>');
+						}else{
+							$(this).html('<label class="text-red">离线</label>');
+						}
+					}
+				});
+			}
+		}
+	}
+	
+	var CUR_PROJECTID = [[${curPro}!=null?${curPro.id}:null]];
+	var dot_project_info_temp = null,dot_inout_list_temp = null,dot_device_list_temp = null;
+	$(function(){
+		dot_project_info_temp = doT.template($('#project_info_temp').html());
+		dot_inout_list_temp = doT.template($('#inout_list_temp').html());
+		dot_device_list_temp = doT.template($('#device_list_temp').html());
+		var hasProject = false;
+		if(CUR_PROJECTID!=null&&CUR_PROJECTID!=''){
+			hasProject = true;
+			//加载主页项目信息
+			fnLoadMainData();
+			if($('.menu-item').length>0){
+				$('.menu-item').removeClass('active');
+				$('.menu-item').each(function(){
+					if($(this).find('a').attr('fieldid')==CUR_PROJECTID){
+						$(this).addClass('active');
+					}
+				});
+			}
+		}else{
+			if($('.menu-item').length>0){
+				$('.menu-item').each(function(){
+					$(this).addClass('active');
+					hasProject = true;
+					var projectInfoId = $(this).find('a').attr('fieldid');
+					fnSetProjectSession(projectInfoId);
+					return false;
+				});
+			}
+		}
+		if(!hasProject){
+			$('#project_info').html('<div class="no-data">暂无数据</div>');
+			$('#inout_list').html('<div class="no-data">暂无数据</div>');
+			$('#work_type_chart').html('<div class="no-data">暂无数据</div>');
+			$('#device_list').html('<div class="no-data">暂无数据</div>');
+		}
+		//项目列表点击事件
+		$('.my-sidebar-menu').on('click','.menu-item',function(){
+			if($(this).hasClass('active')){return;}
+			$('.menu-item').removeClass('active');
+			$(this).addClass('active');
+			var projectInfoId = $(this).find('a').attr('fieldid');
+			fnSetProjectSession(projectInfoId);
+		});
+		
+		//初始化通用frame弹窗关闭事件
+		$('#common_frame_win').on('hidden.bs.modal',function(){
+			$('#common_frame_win iframe').removeAttr('src');
+			//还原窗口大小
+			$('#common_frame_win').css({'overflow-y':'auto'});
+			$('#common_frame_win').find('.modal-dialog').css({width:oldWinW+'px',margin:'8px auto'});
+			$('#common_frame_win').find('.modal-body').css({height:oldWinH+'px'});
+			$('#common_frame_win .max-btn').find('i').removeClass('fa-clone');
+			$('#common_frame_win .max-btn').find('i').addClass('fa-square-o');
+		});
+		$('#common_frame_win').on('show.bs.modal',function(){
+			if(oldWinH>($(window).height()-80)){
+				oldWinH = $(window).height()-80;
+				$('#common_frame_win .modal-body').height(oldWinH);
+			}
+		});
+		$('#common_frame_win').find('iframe').on('load',function(){
+			$('#common_frame_win .modal-title').html($(this).contents().attr("title"));
+		});
+	});
+	
+	function fnSetProjectSession(projectInfoId){
+		loading('加载中...');
+		$.ajax({
+			url: CTX+'main/set-project-session',
+			type: 'POST',
+			dataType: 'json',
+			data: {projectInfoId:projectInfoId},
+			success:function(json){
+				loaded();
+				if(json.code==0){
+					CUR_PROJECTID = projectInfoId;
+					//加载主页项目信息
+					fnLoadMainData();
+				}
+			},
+			error:function(){
+				loaded();
+				alert('请求超时或系统错误');
+			}
+		});
+	}
+	
+	function fnLoadMainData(){
+		//获取项目基本信息
+		fnLoadBaseInfo();
+		//获取门禁统计信息
+		//fnCountInout();
+		//实时通行记录
+		fnQueryInout(false);
+		//获取门禁设备详情
+		fnQueryAccControlDevice();
+		//获取工地劳务情况图表
+		fnQueryWorkChart(false);
+	}
+	
+	//获取项目基本信息
+	function fnLoadBaseInfo(){
+		$('#project_info_load').show();
+		$.ajax({
+			url: CTX+'project-info/find-project-info',
+			type: 'GET',
+			dataType: 'json',
+			timeout:10000,
+			success:function(json){
+				$('#project_info_load').hide();
+				if(json){
+					if(json.picId!=null&&json.picId!=''){
+						json.picUrl = CTX+'annex/get-file-stream?annexId='+json.picId;
+					}else{
+						json.picUrl = STATIC+'images/noPicture.jpg';
+					}
+					json.errorUrl = STATIC+'images/noPicture.jpg';
+					if(json.planEndDate!=null){
+						json.days = parseInt((json.planEndDate - (new Date()).getTime())/(24*3600*1000));
+						json.days = json.days<0?0:json.days;
+					}else{
+						json.days = 0;
+					}
+					json.startDate = json.startDate!=null?(new Date(json.startDate)).Format('yyyy-MM-dd'):'';
+					json.planEndDate = json.planEndDate!=null?(new Date(json.planEndDate)).Format('yyyy-MM-dd'):'';
+				}
+				$('#project_info').html(dot_project_info_temp(json));
+			},
+			error:function(){
+				$('#project_info_load').hide();
+				$('#project_info').html('<div class="no-data">请求超时或系统错误</div>');
+			}
+		});
+	}
+	//实时通行记录
+	function fnQueryInout(isRefresh){
+		if(!isRefresh){
+			$('#inout_list_load').show();
+		}
+		$.ajax({
+			url:CTX+'atte-infomation/query-inout-page',
+			type:'get',
+			dataType:'json',
+			timeout:10000,
+			data: {pageNum:1,size:4,projectInfoId:CUR_PROJECTID},
+			success:function(json){
+				$('#inout_list_load').hide();
+				$('#inout_list').html(dot_inout_list_temp(json.rows));
+			},
+			error: function(){
+				$('#inout_list_load').hide();
+				$('#inout_list').html('<div class="no-data">请求超时或系统错误</div>');
+			}
+		});
+	}
+	//获取门禁设备详情
+	function fnQueryAccControlDevice(){
+		$('#device_list_load').show();
+		$.ajax({
+			url:CTX+'acc-control-device/query-all',
+			type:'get',
+			dataType:'json',
+			timeout:10000,
+			success:function(json){
+				$('#device_list_load').hide();
+				$('#device_list').html(dot_device_list_temp(json));
+				if(json){
+					if($('.acc-device-list').length>0){
+						$('.acc-device-list').each(function(){
+							var deviceId = $(this).attr('fieldId');
+							var deviceType = $(this).attr('fieldType');
+							fnCountAccInout($(this),deviceId,deviceType);
+						});
+					}
+				}
+			},
+			error: function(){
+				$('#device_list_load').hide();
+				$('#device_list').html('<div class="no-data">请求超时或系统错误</div>');
+			}
+		});
+	}
+	
+	//统计各个门禁出入情况
+	function fnCountAccInout(_this,deviceId,deviceType){
+		$.ajax({
+			url:CTX+'atte-infomation/count-acc-inout',
+			type:'get',
+			dataType:'json',
+			timeout:10000,
+			data: {deviceId:deviceId,deviceType:deviceType},
+			success:function(json){
+				if(json){
+					$(_this).find("span[name='in_num']").hide();
+					$(_this).find("span[name='in_num']").html(json.inNum);
+					$(_this).find("span[name='in_num']").fadeIn('fast');
+					$(_this).find("span[name='out_num']").hide();
+					$(_this).find("span[name='out_num']").html(json.outNum);
+					$(_this).find("span[name='out_num']").fadeIn('fast');
+				}
+			}
+		});
+	}
+	var WorkTypeChart = null;
+	//获取工地劳务情况
+	function fnQueryWorkChart(isRefresh){
+		if(!isRefresh){
+			$('#work_type_chart_load').show();
+		}
+		$.ajax({
+			url:CTX+'project-info/count-project-work-info',
+			type:'get',
+			dataType:'json',
+			timeout:10000,
+			success: function(json){
+				$('#work_type_chart_load').hide();
+				if(json){
+					$('#project_company_num').html(json.partCompanyNum);
+					$('#project_team_num').html(json.projectTeamNum);
+					$('#project_personnel_num').html(json.personneNum);
+					$('#project_bepresent_num').html(json.bepresentNum);
+					if(json.workTypeCounts!=null&&json.workTypeCounts.length>0){
+						var legendData = [];
+						var seriesData = [];
+						$.each(json.workTypeCounts,function(i,wc){
+							legendData.push(wc.workTypeName);
+							seriesData.push({name: wc.workTypeName, value: wc.personnelNum});
+						});
+						var data = {};
+						data.legendData = legendData;
+						data.seriesData = seriesData;
+						// 基于准备好的dom，初始化echarts实例
+						if(WorkTypeChart!=null){
+							if(WorkTypeChart!=null){
+								$('#work_type_chart').empty();
+								$('#work_type_chart').removeAttr('style');
+								$('#work_type_chart').removeAttr('_echarts_instance_');
+								$('#work_type_chart').height(200);
+							}
+						}
+			        	WorkTypeChart = echarts.init(document.getElementById('work_type_chart'));
+						var options = {
+						    tooltip : {
+						        trigger: 'item',
+						        formatter: "{a} <br/>{b} : {c} ({d}%)"
+						    },
+						    legend: {
+						        type: 'scroll',
+						        orient: 'vertical',
+						        align:'right',
+						        right: 0,
+						        top: 20,
+						        bottom: 0,
+						        data: data.legendData
+						    },
+						    series : [
+						        {
+						            name: '工种',
+						            type: 'pie',
+						            radius : '60%',
+						            center: ['35%', '45%'],
+						            data: data.seriesData,
+						            label: {
+						                normal: {
+						                    show: false,
+						                    position: 'center'
+						                }
+						            },
+						            itemStyle: {
+						                emphasis: {
+						                    shadowBlur: 10,
+						                    shadowOffsetX: 0,
+						                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+						                }
+						            }
+						        }
+						    ]
+						};
+						WorkTypeChart.setOption(options);
+					}else{
+						$('#work_type_chart').html('<div class="no-data">暂无数据</div>');
+					}
+				}
+			},
+			error:function(){
+				$('#work_type_chart_load').hide();
+				$('#work_type_chart').html('<div class="no-data">请求超时或系统错误</div>');
+			}
+		});
+	}
+	
+	function fnEditProjectInfo(){
+		if(CUR_PROJECTID==null){
+			alert('请先选中工地');
+			return;
+		}
+		var url = CTX+'project-info/project-info-input.html?id='+CUR_PROJECTID;
+		openCommonFrameWin(url,1000,$(window).height(),function(result){
+			if(result){
+				fnLoadBaseInfo();
+			}
+		});
+	}
+	
+	//查看更多进出场信息
+	function fnMoreAtteInfomation(){
+		var url = CTX+'main/atte-infomation-manage.html';
+		openCommonFrameWin(url,null,null);
+	}
+	
+	//打开功能窗口
+	function goOpenBusiness(url){
+		if(CUR_PROJECTID==null){
+			alert('请先选中工地');
+			return;
+		}
+		url = url.substring(url.indexOf(":")+1);
+		url = CTX+url;
+		openMaxCommonFrameWin(url);
+	}
+	
+	function goEditPwd(){
+		window.parent.goEditPwd();
+	}
+	
+	function goLoginout(){
+		window.parent.goLoginout();
+	}
+	
+	var COMMON_CALLBACK = null;
+	function openCommonFrameWin(url,width,height,callback){
+		if(width!=null){
+			oldWinW = width;
+		}
+		if(height!=null){
+			oldWinH = height;
+		}
+		$('#common_frame_win .modal-dialog').width(oldWinW);
+		$('#common_frame_win .modal-body').height(oldWinH);
+		$('#common_frame_win').modal('toggle');
+		window.setTimeout(function(){
+			$('#common_frame_win iframe').attr('src',url);	
+		},300);
+		COMMON_CALLBACK = callback;
+	}
+	
+	//最大化打开modal窗口
+	function openMaxCommonFrameWin(url,callback){
+		$('#common_frame_win').modal('toggle');
+		//执行最大化窗口
+		var _this = $('#common_frame_win .max-btn');
+		_this.parent().parent().parent().parent().css({'overflow-y':'hidden'});
+		_this.parent().parent().parent().css({width:$(window).width()+'px',margin:'0px auto'});
+		_this.parent().next().css({height:($(window).height()-$(_this).parent().outerHeight())+'px'});
+		_this.find('i').removeClass('fa-square-o');
+		_this.find('i').addClass('fa-clone');
+		window.setTimeout(function(){
+			$('#common_frame_win iframe').attr('src',url);	
+		},300);
+		COMMON_CALLBACK = callback;
+	}
+	//供子页面调用的关闭通用窗口函数
+	function closeCommonFrameWin(returnData){
+		$('#common_frame_win').modal('toggle');
+		//如果有回调则调用回调
+		if(COMMON_CALLBACK){
+			COMMON_CALLBACK(returnData);
+		}
+		COMMON_CALLBACK = null;
+	}
+	/**
+	 * 最大最小化modal窗口
+	 * @param _this
+	 * @returns
+	 */
+	var oldWinW = window.screen.availWidth-100,oldWinH = window.screen.availHeight-100;
+	function fnMaxModalWin(_this){
+		if($(_this).find('i').hasClass('fa-square-o')){
+			//执行最大化窗口
+			$(_this).parent().parent().parent().parent().css({'overflow-y':'hidden'});
+			$(_this).parent().parent().parent().css({width:$(window).width()+'px',margin:'0px auto'});
+			$(_this).parent().next().css({height:($(window).height()-$(_this).parent().outerHeight())+'px'});
+			$(_this).find('i').removeClass('fa-square-o');
+			$(_this).find('i').addClass('fa-clone');
+		}else{
+			//还原窗口大小
+			$(_this).parent().parent().parent().parent().css({'overflow-y':'auto'});
+			$(_this).parent().parent().parent().css({width:oldWinW+'px',margin:'8px auto'});
+			$(_this).parent().next().css({height:oldWinH+'px'});
+			$(_this).find('i').removeClass('fa-clone');
+			$(_this).find('i').addClass('fa-square-o');
+		}
+	}
+/*]]>*/	
+</script>
+</html>

@@ -1,0 +1,72 @@
+##上传文件目录
+web: 
+  upload-path: D:/segs/
+##合同正文保存路径
+  upload-contract-path: d:/Contract_Text
+  
+pageOffice-posyspath: d:/lic/
+pageOffice-popassword: 111111
+
+  
+spring: 
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${web.upload-path}
+  # datasource
+  datasource: 
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/gmmsgd?characterEncoding=utf8
+#    url: jdbc:mysql://localhost:3306/xmmetro_segs?characterEncoding=utf8
+    username: root
+    password: 123456
+#    url: jdbc:mysql://10.4.173.134/xmmetro_ic?characterEncoding=utf8
+#    username: root
+#    password: gmmsxmrbi
+    # 初始化大小，最小，最大
+#    initialSize: 5
+#    maxIdle: 20
+#    minIdle: 5
+#    maxActive: 50
+#    #是否自动回收超时连接
+#    removeAbandoned: true
+#    #超时时间(以秒数为单位)
+#    removeAbandonedTimeout: 18000
+#    #超时等待时间以毫秒为单位 6000毫秒/1000等于60秒
+#    maxWait: 100000
+#    testWhileIdle: true
+#    #检测数据库的查询语句
+#    validationQuery: select 1 from dual
+#    testOnBorrow: true
+#    #每隔五分钟检测空闲超过10分钟的连接
+#    minEvictableIdleTimeMillis: 600000
+#    timeBetweenevictionRunsMillis: 300000
+    
+  jpa:
+    database: MYSQL
+    show-sql: true
+    ## Hibernate ddl auto (validate|create|create-drop|update)
+    hibernate:
+      ddl-auto: update
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region.factory_class: org.hibernate.cache.ehcache.EhCacheRegionFactory
+          
+
+## t-io 网络配置
+tio-config: 
+  secret: fb49e26b1014935f380e26360d917063
+  serverIp: 127.0.0.1
+  serverPort: 6789
+  serverTimeout: 10000
+
+
+#管理中心配置
+segs-center: 
+  isOpen: false
+  #上传数据地址
+  syndata:
+    url: http://localhost:8008/segs-center/syndata/

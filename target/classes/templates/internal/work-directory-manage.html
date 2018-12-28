@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--
+* @Copyright(c): 厦门路桥信息股份有限公司  版权所有
+* @author :XMRBI
+* @Description:工作用表目录树维护
+* @createDate:2018-10-22
+-->
+<head>
+	<meta charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+	<title>工作用表目录树维护</title>
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/select2/select2.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-validator/css/bootstrapValidator.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css}"/>
+    <!-- Theme style -->
+	<link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+	<!-- Bootstrap 3.3.7 -->
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.css}"/>
+	<style type="text/css">
+	.panel {
+	  margin-bottom: 0px;
+	}
+	.form-group {
+	  margin-bottom: 2px;
+	}
+	
+	</style>
+	<style type="text/css">
+        html, body {
+            overflow-x: hidden;
+        }
+
+        body {
+            padding-top: 5px;
+        }
+
+        .col-sm-10 span {
+            word-break: break-all;
+            word-wrap: break-word;
+            white-space: normal;
+            display: block;
+            float: left;
+            height: 34px;
+            padding: 6px 12px 6px 0px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #777;
+        }
+        
+        #MenuTree ul li:first-child{
+            background-color:#d2d6de;
+          	font-size:16px;
+        }
+        
+        .btn{
+        	font-size: 16px;
+        	padding: 3px 12px;
+        }
+        
+        .btn-link:HOVER {
+			text-decoration: none;
+		}
+		
+		.modal-header{
+			background-color:#F4F6F8;
+			border-top-left-radius: 5px;
+			border-top-right-radius: 5px;
+		}
+		
+		.container-fluid{
+			padding-right: 10px;
+			padding-left: 10px;
+		}
+		
+		.list-group-item{
+			padding: 8px 5px;
+		}
+          
+    </style>
+</head>
+<body>
+	<div class="container-fluid" style="width:100%; height: 100%" >
+	    <!-- 左侧单位列表-->
+	    <div class="col-sm-3">
+	        <!-- 项目列表树-->
+	         <div class="row" id="menuTreePanel" style="overflow: auto;">
+	             <div id="MenuTree" data-toggle="context" data-target="#context-menu"></div>
+	         </div>
+	    </div>
+	    
+	     <!-- 右侧信息-->
+	  	<div class="col-sm-9">
+	  		<div class="col-sm-12" style="border-bottom: 1px silver solid;padding: 0px;height: 30px;margin: 5px 0px;vertical-align: middle;">
+	  			<label style="font-size: 18px;color: gray;margin: 0px;">目录维护</label>
+	  		</div>
+	  		<label style="margin-right: 15px;">目录：</label>
+	  	 	<div id="toolbar" class="btn-group" style="margin-bottom: 5px;">
+	             <button id="btn_add" type="button" class="btn btn-link" onclick="fnAddNode()">
+	                	新建
+	            </button>
+	            <button id="btn_addchild" type="button" class="btn btn-link" onclick="fnAddPeerNode()">
+	                	新建同级节点
+	            </button>
+	            <button id="btn_addchild" type="button" class="btn btn-link" onclick="fnAddChildNode()">
+	                	新建子节点
+	            </button>
+	            <button id="btn_edit" type="button" class="btn btn-link" onclick="fnEditNode()">
+	                	编辑
+	            </button>
+	            <button id="btn_invalid" type="button" class="btn btn-link" onclick="setStatus(1)">
+	                	启用
+	            </button>
+	            <button id="btn_isvalid" type="button" class="btn btn-link" onclick="setStatus(0)">
+	                	停用
+	            </button>
+	        </div>
+	        <table id="dataList"></table>
+	    </div>
+	    
+	    <!-- 右键菜单 -->
+	    <div id="context-menu">
+	        <ul class="dropdown-menu" role="menu">
+	            <li><a tabindex="-1" id="addNode"><em id="" class="glyphicon glyphicon-plus"></em>新建</a>
+	            </li>
+	            <li><a tabindex="-1" id="editNode"><em id="" class="glyphicon glyphicon-pencil"></em>编辑</a>
+	            </li>
+	            <li><a tabindex="-1" id="addChildNode"><em id="" class="glyphicon glyphicon-plus"></em>新建子节点</a>
+	            </li>
+	        </ul>
+	    </div>
+	</div>
+
+	<div class="modal fade" id="directoryModal" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" aria-hidden="true">
+		<div class="modal-dialog" role="document" >
+			<div class="modal-content">
+				<div class="modal-header">
+				 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 id="modal_title" class="modal-title" style="text-align: center;color: blue;">编辑目录信息</h4>
+				</div>
+				<input id="parentId" type="hidden"/>
+				<div class="modal-body" style="overflow: hidden; padding: 10px;">
+					<form id="myform_directory" class="form-horizontal">
+	                    <input name="id" type="hidden"/>
+	                    <input name="parentId" type="hidden"/>
+	                    
+	                    <div class="col-md-12" id="parent_div" >
+	            			<div class="form-group">
+			                  	<label class="col-sm-3 control-label">&nbsp;父级节点:</label>
+			                  	<div class="col-sm-9">
+		                    	 <input type="text" class="form-control" disabled="disabled" id="parentName" value="" />
+			                  	</div>
+			                </div>
+	            		</div>
+						<div class="col-md-12">
+	            			<div class="form-group">
+			                  	<label class="col-sm-3 control-label"><i style="color:red;">*</i>&nbsp;节点名称:</label>
+			                  	<div class="col-sm-9">
+		                    	 <input type="text" class="form-control" name="name" value="" />
+			                  	</div>
+			                </div>
+	            		</div>
+						<div class="col-md-12">
+	            			<div class="form-group">
+			                  	<label class="col-sm-3 control-label"><i style="color:red;">*</i>&nbsp;节点编码:</label>
+			                  	<div class="col-sm-9">
+		                    	 <input type="text" class="form-control" name="code" value="" />
+			                  	</div>
+			                </div>
+	            		</div>
+						<div class="col-md-12">
+	            			<div class="form-group">
+			                  	<label class="col-sm-3 control-label"><i style="color:red;">*</i>&nbsp;是否启用:</label>
+			                  	<div class="col-sm-9">
+		                    	<div id="node_status" class="btn-group">
+									<button value="0" style="font-size: 14px;padding: 5px 12px;" class="btn btn-default" type="button" id="invalid">&emsp;&emsp;停用&emsp;&emsp;</button> 
+									<button value="1" style="font-size: 14px;padding: 5px 12px;" class="btn btn-default btn-primary" type="button" id="isvalid">&emsp;&emsp;启用&emsp;&emsp;</button> 
+								</div>
+								<input type="hidden" name="status" value="1" id="status"/>
+			                  	</div>
+			                </div>
+	            		</div>
+					</form>
+				</div>
+				<div class="modal-footer" style="text-align: center;">
+					 <button id="btnSubmit" type="button" onclick="doSaveNode()" class="btn btn-primary" style="width:80px;">保存</button>
+					 <button type="button" class="btn btn-default" data-dismiss="modal" style="width:80px;">取消</button> 
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<!-- jQuery 2.2.3 -->
+<script th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/static/js/common.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/static/plugins/jQuery/jquery.serializejson.min.js}"></script>
+<script th:src="@{/static/plugins/datepicker/bootstrap-datepicker.js}"></script>
+<script th:src="@{/static/plugins/datepicker/locales/bootstrap-datepicker.zh-CN.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.js}"></script>
+<script th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/bootstrap-contextmenu.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/prettify.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/attention/zDialog/zDrag.js}"></script>
+<!-- Slimscroll -->
+<script type="text/javascript" th:src="@{/static/plugins/slimScroll/jquery.slimscroll.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/dist/js/app.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+	var CTX = [[@{/}]];
+	
+	$(function () {
+		
+		//1.初始化Table
+	    var oTable = new TableInit();
+	    oTable.Init();
+		//2.初始化Button的点击事件
+	    var oButtonInit = new ButtonInit();
+	    oButtonInit.Init();
+		
+		//是否启用
+	    $('#node_status button').on('click',function(){
+			$('#node_status button').removeClass('btn-primary');
+			$(this).addClass('btn-primary');
+			var enable = $(this).attr('value');
+			$("input[name='status']").val(enable);
+		});
+		
+	  	//模态窗口关闭事件
+		$('#directoryModal').on('hidden.bs.modal', function (e) {
+			$("input[name='id']").val('');
+			$("input[name='parentId']").val('');
+			$("input[name='name']").val('');
+			$("input[name='code']").val('');
+			
+			$("#status").val('1');
+			$('#node_status button').removeClass('btn-primary');
+			$('#isvalid').addClass('btn-primary');
+			
+			$("#parentName").val('');
+			
+			$('#myform_directory').bootstrapValidator('resetForm');//重置表单校验:
+		});
+	  	
+	  	//表单校验
+		$('#myform_directory').bootstrapValidator({
+			message: '此处输入有误',
+	        excluded: [':disabled'],
+	        feedbackIcons: {
+	            valid: 'glyphicon glyphicon-ok',
+	            invalid: 'glyphicon glyphicon-remove',
+	            validating: 'glyphicon glyphicon-refresh'
+	        },
+	        fields:{
+	        	'name':{
+	        		message: '节点名称输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '节点名称不可为空'
+	                    }
+	                }
+	        	},
+	        	'code':{
+	        		message: '节点编码输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '节点编码不可为空'
+	                    }
+	                }
+	        	},
+	        	'status':{
+	        		message: '节点状态输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '节点状态不可为空'
+	                    }
+	                }
+	        	}
+	        }
+		});
+	  	
+	    //初始化项目列表树
+		$('#menuTreePanel').height($(window).height()-20);
+	    initMenuTree();
+	});
+	
+	//初始化列表
+	var TableInit = function () {
+	    var oTableInit = new Object();
+	    //初始化Table
+	    oTableInit.Init = function () {
+	        $('#dataList').bootstrapTable({
+	        	url: CTX + 'work-table-directory/query-page', //请求后台的URL（*）
+	            method: 'get',                      //请求方式（*）
+	            striped: true,                      //是否显示行间隔色
+	            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+	            pagination: true,                   //是否显示分页（*）
+	            sortable: false,                     //是否启用排序
+	            sortOrder: "asc",                   //排序方式
+	            queryParams: oTableInit.queryParams,//传递参数（*）
+	            sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+	            pageNumber:1,                       //初始化加载第一页，默认第一页
+	            pageSize: 10,                       //每页的记录行数（*）
+	            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+	            queryParamsType: "a",
+	            strictSearch: true,
+	            //showColumns: true,                  //是否显示所有的列
+	            minimumCountColumns: 2,             //最少允许的列数
+	            clickToSelect: true,                //是否启用点击选中行
+	            height:$(window).height()-80,	    //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+	            uniqueId: "id",                     //每一行的唯一标识，一般为主键列
+	            //singleSelect: true,
+	            undefinedText: "",
+	            columns: [
+				{
+	            	checkbox:true
+		        },{
+				    field: 'number',
+				    title:'序号',
+				    align : 'center',
+				    sortable:true,
+				    formatter:function(value,row,index){
+				    	var pageSize=$('#dataList').bootstrapTable('getOptions').pageSize;
+		                var pageNumber=$('#dataList').bootstrapTable('getOptions').pageNumber;
+		                return pageSize * (pageNumber - 1) + index + 1;
+				    }
+				},{
+				    field: 'code',
+				    title:'目录编码',
+				    align : 'center',
+				    sortable:true
+				},{
+				    field: 'name',
+				    title:'目录名称',
+				    align : 'center',
+				    sortable:true
+				},{
+				    field: 'status',
+				    title:'状态',
+				    align : 'center',
+				    sortable:true,
+				    formatter:function(value){
+				    	if(value == 1){
+				    	    return '已启用';
+				    	}else{
+				    		return '已停用';
+				    	}
+				    }
+				},]
+	        });
+	    };
+
+	    //得到查询的参数
+	    oTableInit.queryParams = function (params) {
+	        var temp = {   //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+	        	parentId: $("#parentId").val(),
+	        	pageNum: params.pageNumber,//页码params.offset
+                size: params.pageSize//页面大小params.limit
+	        };
+	        return temp;
+	    };
+	    return oTableInit;
+	};
+	
+	//查询-刷新
+	function queryInfo(pageNo){
+		if(pageNo == null){
+			pageNo = $('#dataList').bootstrapTable('getOptions').pageNumber;
+		}
+		$('#dataList').bootstrapTable('refreshOptions',{pageNumber:pageNo,pageSize:10});
+	}
+	
+	//初始化项目树
+	function initMenuTree() {
+    	var r = Math.random().toString().substring(5);
+        $.ajax({
+            url: CTX + 'work-table-directory/query-tree?Mathnum=' + r,
+            method: 'GET',
+            dataType: 'json',
+            data: {selectable:true},
+            success: function (json) {
+            	var treedata = [{
+					id:0,
+			    	text: "项目目录",
+			    	treeCode:'0',
+			    	enable: true,
+			    	icon:"",
+			    	selectable:true,
+			    	nodeType:"typeProject",
+			    	nodes:json
+			  	}];
+                $('#MenuTree').treeview({
+                    showTags: true,
+                    data:treedata,
+                    //showCheckbox: true,
+                    onNodeSelected: function(event, node) {
+                        $("#parentId").val(node.id);
+                        console.log(node.id);
+                        queryInfo(1);
+                    }
+                });
+                $('#MenuTree').treeview('expandAll');
+                initMenuTreeContextmenu();
+                loaded();
+            },
+            error: function () {
+                loaded();
+                alert('请求超时或系统出错');
+            }
+        });
+    }
+	
+	//初始化树右键菜单
+    function initMenuTreeContextmenu() {
+        $('#MenuTree').contextmenu({
+            target: '#context-menu',
+            before: function (e, context) {
+                var nodeId = e.target.getAttribute("data-nodeid");
+                var node = $('#MenuTree').treeview('getNode', nodeId);
+                currentNode = node;
+                $('#addNode, #addChildNode,#editNode').hide();
+                //根据类型显示菜单
+                if (currentNode.nodeType == 'typeProject') {
+                	 $('#addNode').show();
+                }else {
+                	 $('#addChildNode').show();
+                	 $('#editNode').show();
+                }
+            },
+            onItem: function (context, e) {
+                var operId = e.target.getAttribute('id');
+                if(operId == 'addChildNode'){
+                	fnAddChildNode(currentNode.id);
+                }
+                if (operId == 'addNode') {
+                	fnAddNode();
+                }
+                if (operId == 'editNode') {
+                	fnEditNode(currentNode.id);
+                }
+            }
+        });
+    }
+	
+  	//新建节点
+    function fnAddNode() {
+    	$('#directoryModal').find('.modal-title').html('填写节点信息');
+		$('#directoryModal').modal('toggle');
+	}
+  	
+  	//新增同级节点
+  	function fnAddPeerNode(dId){
+  		if(dId == null){
+			var seldatas = $('#dataList').bootstrapTable('getSelections');
+    		if(seldatas.length==0){
+    			alert('请选择目录项！');
+    			return;
+    		}
+    		if(seldatas.length>1){
+    			alert('只会新增所选的第一项的子节点！');
+    		}
+    		var selData = seldatas[0];
+    		dId = selData.id;
+		}
+  		//取得父级名称
+		var r = Math.random().toString().substring(5);
+		$.ajax({
+            url: CTX + 'work-table-directory/find?Mathnum=' + r,
+            method: 'get',
+            dataType: 'json',
+            data: {id:dId},
+            success: function (json) {
+                $('#myform_directory').find('input[name="parentId"]').val(json.parentId);
+                
+                if(json.parent != null){
+	                $("#parentName").val(json.parent.code + " " + json.parent.name);
+                }else{
+	                $("#parentName").val("");
+                }
+            },
+            error: function () {
+                alert('请求超时或系统出错!');
+            }
+        });
+		
+		$("input[name='parentId']").val(parentId);
+		$('#directoryModal').find('.modal-title').html('填写同级节点信息');
+		$('#directoryModal').modal('toggle');
+  	}
+  	
+  	//新增子节点
+	function fnAddChildNode(parentId) {
+		if(parentId == null){
+			var seldatas = $('#dataList').bootstrapTable('getSelections');
+    		if(seldatas.length==0){
+    			alert('请选择目录项！');
+    			return;
+    		}
+    		if(seldatas.length>1){
+    			alert('只会新增所选的第一项的子节点！');
+    		}
+    		var selData = seldatas[0];
+    		parentId = selData.id;
+		}
+		//取得父级名称
+		var r = Math.random().toString().substring(5);
+		$.ajax({
+            url: CTX + 'work-table-directory/find?Mathnum=' + r,
+            method: 'get',
+            dataType: 'json',
+            data: {id:parentId},
+            success: function (json) {
+                $("#parentName").val(json.code + " " + json.name);
+                $('#myform_directory').find('input[name="parentId"]').val(parentId);
+            },
+            error: function () {
+                alert('请求超时或系统出错!');
+            }
+        });
+		
+		$("input[name='parentId']").val(parentId);
+		$('#directoryModal').find('.modal-title').html('填写子节点信息');
+		$('#directoryModal').modal('toggle');
+	}
+  	
+	//编辑节点
+	function fnEditNode(dId){
+		if(dId==null){
+			var seldatas = $('#dataList').bootstrapTable('getSelections');
+    		if(seldatas.length==0){
+    			alert('请选择节点！');
+    			return;
+    		}
+    		if(seldatas.length>1){
+    			alert('只会编辑所选的第一项！');
+    		}
+    		var selData = seldatas[0];
+    		dId = selData.id;
+		}
+		var r = Math.random().toString().substring(5);
+		$.ajax({
+            url: CTX + 'work-table-directory/find?Mathnum=' + r,
+            method: 'get',
+            dataType: 'json',
+            data: {id:dId},
+            success: function (json) {
+                $('#myform_directory').find('input[name="id"]').val(json.id);
+                $('#myform_directory').find('input[name="parentId"]').val(json.parentId);
+                $('#myform_directory').find('input[name="name"]').val(json.name);
+                $('#myform_directory').find('input[name="code"]').val(json.code);
+                
+                if(json.parent != null){
+	                $("#parentName").val(json.parent.code + " " + json.parent.name);
+                }else{
+	                $("#parentName").val("");
+                }
+                
+                $("input[name='status']").val(json.status);
+                
+                $('#node_status button').removeClass('btn-primary');
+                
+                if(json.status == 1){
+                	$('#isvalid').addClass('btn-primary');
+                }else{
+                	$('#invalid').addClass('btn-primary');
+                }
+                
+                $('#directoryModal').find('.modal-title').html('编辑节点信息');
+        		$('#directoryModal').modal('toggle');
+            },
+            error: function () {
+                alert('请求超时或系统出错!');
+            }
+        });
+	}
+	
+	//启用or停用
+	function setStatus(flag){
+		var seldatas = $('#dataList').bootstrapTable('getSelections');
+		if(seldatas.length==0){
+			alert('请选择目录项！');
+			return;
+		}
+		var ids = "";
+		for(var i = 0; i < seldatas.length ; i++){
+			ids += "," + seldatas[i].id;
+		}
+		ids = ids.substring(1);
+		$.ajax({
+            url: CTX + 'work-table-directory/set-status',
+            method: 'post',
+            dataType: 'json',
+            data: {ids:ids,status:flag},
+            success: function (json) {
+                alert(json.msg);
+                if (json.success) {
+                    //刷新列表
+                    //$('#dataList').bootstrapTable('refresh');
+                	queryInfo();
+                	initMenuTree();//初始化项目列表树
+                }
+            },
+            error: function () {
+                alert('请求超时或系统出错!');
+            }
+        });
+	}
+	
+	//保存
+	function doSaveNode(){
+		var result = $('#myform_directory').data('bootstrapValidator');
+		result.validate();
+		if(result.isValid()){
+			loading('正在保存,请稍后...');
+			$.ajax({  
+				url: CTX+'work-table-directory/save',
+	            type: 'POST',  
+	            data:$('#myform_directory').serialize(),// 序列化表单值  
+	            dataType: 'json',//服务端接收的数据类型
+	            success:function(json) {  
+	            	loaded();
+					if(json.success){
+						alert(json.msg);
+						$("#directoryModal").modal('hide');
+				        initMenuTree();//初始化项目列表树
+				        queryInfo();
+					}else{
+						alert(json.msg);
+					}
+	            },  
+	            error:function(json) {  
+	            	alert('请求超时或系统出错!');
+					loaded();
+	            }  
+	        });  
+		}
+	}
+	
+	
+	//初始化按钮
+	var ButtonInit = function () {
+	    var oInit = new Object();
+	    var postdata = {};
+
+	    oInit.Init = function () {
+	        //初始化页面上面的按钮事件
+	    };
+
+	    return oInit;
+	};
+		
+	/*]]>*/
+</script>	
+</html>

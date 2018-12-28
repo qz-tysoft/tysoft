@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+	<title>首页</title>
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css}"/>
+	<!-- Theme style -->
+	<link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/css/common.css}"/>
+
+	<style type="text/css">
+		html,body{background-color: #ecf0f5;}
+		.info-box{min-height:0;}
+		.info-box-icon{
+			font-size: 38px;
+			height: 47px;
+    		line-height: 47px;
+		}
+		.progress-description, .info-box-text{font-size:12px;}
+		.info-box-number{font-size:14px;}
+		.blue{padding:8px 0;}
+		.products-list .product-info{margin-left:40px;}
+		.time-label{color:#777;padding-right:0;}
+		.product-img i{font-size:20px;}
+		.products-list .acc-img img{width:90px;height:auto;}
+	</style>
+</head>
+<body>
+	<section class="content">
+	 	<div class="row">
+	     	<div class="col-md-3 col-sm-6">
+	     		<div class="box box-primary">
+	      			<div class="box-header with-border">
+	      				<h3 class="box-title">门禁统计</h3>
+	      				<div class="box-tools pull-right">
+			                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+		              	</div>
+	      			</div>
+	      			<div class="box-body" style="padding: 10px 10px 0 10px;height:191px;">
+	      				<div class="info-box">
+				            <span class="info-box-icon bg-aqua"><i class="ion ion-ios-people-outline"></i></span>
+				            <div class="info-box-content">
+				              <span class="info-box-text">进场人数</span>
+				              <span id="count_in_num" class="info-box-number">0</span>
+				            </div>
+				            <!-- /.info-box-content -->
+			          	</div>
+			          	<div class="info-box">
+				            <span class="info-box-icon bg-green"><i class="ion ion-ios-people-outline"></i></span>
+				            <div class="info-box-content">
+				              <span class="info-box-text">出场人数</span>
+				              <span id="count_out_num" class="info-box-number">0</span>
+				            </div>
+				            <!-- /.info-box-content -->
+			          	</div>
+			          	<div class="info-box" style="margin-bottom:10px;">
+				            <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
+				            <div class="info-box-content">
+				              <span class="info-box-text">在场人数</span>
+				              <span id="count_ing_num" class="info-box-number">0</span>
+				            </div>
+				            <!-- /.info-box-content -->
+			          	</div>
+	      			</div>
+	      			<div id="count_inout_load" class="overlay">
+		              	<i class="fa fa-refresh fa-spin"></i>
+		            </div>
+	      		</div>
+	     	</div>
+	     	<div class="col-md-5 col-sm-6">
+	     		<div class="box box-primary">
+	      			<div class="box-header with-border">
+	      				<h3 class="box-title">实时通行记录</h3>
+	      				<div class="box-tools pull-right">
+		              		<button type="button" class="btn btn-box-tool" onclick="fnMoreAtteInfomation()">more</button>
+			                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+		              	</div>
+	      			</div>
+	      			<div class="box-body" style="padding:0 10px 10px 10px;height:191px;">
+	      				<ul id="inout_list" class="products-list product-list-in-box">
+		              	</ul>
+	      			</div>
+	      			<div id="inout_list_load" class="overlay">
+		              	<i class="fa fa-refresh fa-spin"></i>
+		            </div>
+	      		</div>
+	     	</div>
+	     	<div class="col-md-4 col-sm-6">
+	     		<div class="box box-primary">
+	      			<div class="box-header with-border">
+	      				<h3 class="box-title">设备报警信息</h3>
+	      				<div class="box-tools pull-right">
+		              		<button type="button" class="btn btn-box-tool" onclick="fnMoreAlarm()">more</button>
+			                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+		              	</div>
+	      			</div>
+	      			<div class="box-body" style="height:191px;">
+	      				<ul id="alarm_list" class="products-list product-list-in-box">
+		              	</ul>
+	      			</div>
+	      			<div id="alarm_list_load" class="overlay">
+		              	<i class="fa fa-refresh fa-spin"></i>
+		            </div>
+	      		</div>
+	     	</div>
+     	</div>
+     	<div class="row" style="padding:0 15px;">
+     		<div class="box box-primary">
+      			<div class="box-header with-border">
+      				<h3 class="box-title">门禁详情</h3>
+      				<div class="box-tools pull-right">
+		                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+	              	</div>
+      			</div>
+      			<div class="box-body" style="background-color: #f9f9f9;min-height:253px;">
+      				<div id="device_list" class="row">
+			     	</div>
+      			</div>
+      			<div id="device_list_load" class="overlay">
+	              	<i class="fa fa-refresh fa-spin"></i>
+	            </div>
+      		</div>
+     	</div>
+    </section>
+</body>
+<script id="inout_list_temp" type="text/template">
+/*<![CDATA[*/
+{{?it.length>0}}
+{{~it:data}}
+	<li class="item">
+		<div class="product-img blue">
+			<i class="fa fa-fw fa-volume-up text-blue"></i>
+		</div>
+		<div class="product-info">
+			{{?data.userType==='02'}}
+			<a href="javascript:void(0)" class="product-title text-yellow">
+				{{=data.userName}}&nbsp;&nbsp;{{=data.workType}}
+				<span class="label pull-right time-label">{{=data.swipeTime}}</span>
+			</a>
+			{{??}}
+			<a href="javascript:void(0)" class="product-title text-yellow">
+				{{=data.userName}}&nbsp;&nbsp;{{=data.adminType}}
+				<span class="label pull-right time-label">{{=data.swipeTime}}</span>
+			</a>
+			{{?}}
+			<span class="product-description">
+			    {{?data.accControlDevice===null && data.attendanceDevice===null}}
+				无设备记录
+				{{??data.accControlDevice!=null && data.attendanceDevice===null}}
+				{{=data.accControlDevice}}
+				{{??data.accControlDevice===null && data.attendanceDevice!=null}}
+				{{=data.attendanceDevice}}
+				{{?}}
+				{{?data.userType==='02'}}&nbsp;&nbsp;{{=data.projectTeamName}}{{?}}
+				<span class="label {{?data.swipeStatus=='进场'}}label-info{{??}}label-success{{?}} pull-right">{{=data.swipeStatus}}</span>
+			</span>
+		</div>
+	</li>
+{{~}}
+{{??}}
+	<h5 class="text-center text-gray">暂无数据</h5>
+{{?}}
+/*]]>*/	
+</script>
+<script id="alarm_list_temp" type="text/template">
+{{?it.length>0}}
+{{~it:data}}
+	<li class="item">
+		<div class="product-img">
+			<i class="fa fa-fw fa-volume-up {{?data.alarmType==='offline'}}text-red{{??data.alarmType==='online'}}text-green{{??}}text-yellow{{?}}"></i>
+		</div>
+		<div class="product-info">
+			<a href="javascript:void(0)" class="product-title {{?data.alarmType==='offline'}}text-red{{??data.alarmType==='online'}}text-green{{??}}text-yellow{{?}}">
+				{{=data.deviceName}}
+				<span class="label pull-right time-label">{{=data.alarmTime}}</span>
+			</a>
+		</div>
+	</li>
+{{~}}
+{{??}}
+	<h5 class="text-center text-gray">暂无数据</h5>
+{{?}}
+</script>
+<script id="device_list_temp" type="text/template">
+{{?it.length>0}}
+{{~it:data}}
+	<div class="col-md-3 col-sm-6">
+		<div class="box" style="border-top:0;">
+			<div class="box-header with-border">
+				<h3 class="box-title">{{=data.deviceName}}</h3>
+				<div class="box-tools pull-right acc-device-status-list" fieldId="{{=data.id}}">
+					{{?data.status=='1'}}
+					<label class="text-green">在线</label>
+					{{??}}
+					<label class="text-red">离线</label>
+					{{?}}
+				</div>
+			</div>
+			<div class="box-body">
+				<ul class="products-list product-list-in-box acc-device-list" fieldType="{{=data.deviceType}}" fieldId="{{=data.id}}">
+					<li class="item">
+						<div class="product-img acc-img">
+							{{?data.deviceType=='acc'}}
+						    <img th:src="@{/static/images/acc-device.png}" alt="Product Image"/>
+							{{??}}
+							<img th:src="@{/static/images/att-device.png}" alt="Product Image"/>
+							{{?}}
+						</div>
+						<div class="product-info" style="margin-left:100px;">
+							<div class="info-box">
+								<span class="info-box-icon bg-aqua" style="width:45px;"><i class="ion ion-ios-people-outline"></i></span>
+								<div class="info-box-content" style="margin-left:40px;">
+									<span class="info-box-text">进场人数</span>
+									<span name="in_num" class="info-box-number">0</span>
+								</div>
+							</div>
+							<div class="info-box">
+								<span class="info-box-icon bg-green" style="width:45px;"><i class="ion ion-ios-people-outline"></i></span>
+								<div class="info-box-content" style="margin-left:40px;">
+									<span class="info-box-text">出场人数</span>
+									<span name="out_num" class="info-box-number">0</span>
+								</div>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+{{~}}
+{{??}}
+	<h5 class="text-center text-gray">暂无数据</h5>
+{{?}}
+</script>
+<script type="text/javascript" th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<!-- Slimscroll -->
+<script type="text/javascript" th:src="@{/static/plugins/slimScroll/jquery.slimscroll.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/dist/js/app.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/doT.min.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+	var CTX = [[@{/}]];	
+	var projectInfoId = [[${projectInfo}!=null?${projectInfo.id}:'']];
+	
+	var websocket = null;
+	//判断当前浏览器是否支持WebSocket
+	if('WebSocket' in window){
+		var host = window.location.host;
+	    websocket = new WebSocket("ws://"+host+CTX+"websocket");
+	}
+	else{
+	    alert('浏览器不支持websocket,请更换IE10+, 火狐34+, Chrome 31+');
+	}
+	//发送消息
+	function send(message){
+	    websocket.send(message);
+	}
+	//监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+	window.onbeforeunload = function(){
+	    websocket.close();
+	}
+	//接收到消息的回调方法
+	websocket.onmessage = function(event){
+	    operMessage(event.data);
+	}
+	//连接发生错误的回调方法
+    websocket.onerror = function(){
+		console.log('发生错误');
+    	websocket.close();
+    	var host = window.location.host;
+	    websocket = new WebSocket("ws://"+host+CTX+"websocket");
+    };
+	//消息处理
+	function operMessage(data){
+		var json = eval('(' + data + ')');
+		//如果考勤消息
+		if(json.infoType=='atteInfo'){
+			//刷新门禁统计信息
+			fnCountInout();
+			//刷新实时通行记录
+			fnQueryInout();
+			
+			var deviceId = null;
+			var deviceType = null;
+			if(json.accId){
+				deviceId = json.accId;
+				deviceType = 'acc';
+			}
+			if(json.attId){
+				deviceId = json.attId;
+				deviceType = 'att';
+			}
+			//刷新某个设备通行记录
+			if($('.acc-device-list').length>0){
+				$('.acc-device-list').each(function(){
+					var fieldId = $(this).attr('fieldId');
+					if(deviceId == fieldId){
+						fnCountAccInout($(this),deviceId,deviceType);
+					}
+				});
+			}
+		}
+		//如果是报警信息
+		if(json.infoType=='alarm'){
+			//刷新报警列表
+			fnQueryAlarm();
+			var deviceId = null;
+			if(json.accId){
+				deviceId = json.accId;
+			}
+			if(json.attId){
+				deviceId = json.attId;
+			}
+			//刷新某个设备状态
+			if($('.acc-device-status-list').length>0){
+				$('.acc-device-status-list').each(function(){
+					var fieldId = $(this).attr('fieldId');
+					if(deviceId == fieldId){
+						if(json.status=='1'){
+							$(this).html('<label class="text-success">在线</label>');
+						}else{
+							$(this).html('<label class="text-red">离线</label>');
+						}
+					}
+				});
+			}
+		}
+	}
+	
+	var dot_inout_temp = null,dot_alarm_temp = null,dot_device_temp = null;
+	$(function(){
+		$('.content').slimScroll({
+		    height: $(window).height()+'px',
+		    wheelStep:'5px'
+	  	});
+		dot_inout_temp = doT.template($('#inout_list_temp').html());
+		dot_alarm_temp = doT.template($('#alarm_list_temp').html());
+		dot_device_temp = doT.template($('#device_list_temp').html());
+		fnCountInout();
+		fnQueryInout();
+		fnQueryAlarm();
+		fnQueryAccControlDevice();
+	});
+	
+	//门禁统计信息
+	function fnCountInout(){
+		$.ajax({
+			url:CTX+'atte-infomation/count-inout',
+			type:'get',
+			dataType:'json',
+			timeout:10000,
+			data: {projectInfoId:projectInfoId},
+			success:function(json){
+				if(json){
+					$('#count_in_num').hide();
+					$('#count_in_num').html(json.inNum);
+					$('#count_in_num').fadeIn('fast');
+					$('#count_out_num').hide();
+					$('#count_out_num').html(json.outNum);
+					$('#count_out_num').fadeIn('fast');
+					$('#count_ing_num').hide();
+					$('#count_ing_num').html(json.bepresentNum);
+					$('#count_ing_num').fadeIn('fast');
+				}
+				$('#count_inout_load').hide();
+			}
+		});
+	}
+	//实时通行记录
+	function fnQueryInout(){
+		$.ajax({
+			url:CTX+'atte-infomation/query-inout-page',
+			type:'get',
+			dataType:'json',
+			timeout:10000,
+			data: {pageNum:1,size:3,projectInfoId:projectInfoId},
+			success:function(json){
+				if(json){
+					$('#inout_list').html(dot_inout_temp(json.rows));
+				}
+				$('#inout_list_load').hide();
+			}
+		});
+	}
+	//查看更多进出场信息
+	function fnMoreAtteInfomation(){
+		var url = CTX+'main/atte-infomation-manage.html?projectInfoId='+projectInfoId;
+		window.parent.openCommonFrameWin(url,null,null);
+	}
+	
+	//设备报警信息
+	function fnQueryAlarm(){
+		$.ajax({
+			url:CTX+'alarm-info/query-alarm-info-page',
+			type:'get',
+			dataType:'json',
+			timeout:10000,
+			data: {pageNum:1,size:4,projectInfoId:projectInfoId},
+			success:function(json){
+				if(json){
+					$('#alarm_list').html(dot_alarm_temp(json.rows));
+				}
+				$('#alarm_list_load').hide();
+			}
+		});
+	}
+	
+	function fnMoreAlarm(){
+		var url = CTX+'alarm-info/list.html?projectInfoId='+projectInfoId;
+		window.parent.openCommonFrameWin(url,null,null);
+	}
+	//门禁设备列表
+	function fnQueryAccControlDevice(){
+		$.ajax({
+			url:CTX+'acc-control-device/query-all',
+			type:'get',
+			dataType:'json',
+			timeout:10000,
+			data: {projectInfoId:projectInfoId},
+			success:function(json){
+				if(json){
+					$('#device_list').append(dot_device_temp(json));
+					if($('.acc-device-list').length>0){
+						$('.acc-device-list').each(function(){
+							var deviceId = $(this).attr('fieldId');
+							var deviceType = $(this).attr('fieldType');
+							fnCountAccInout($(this),deviceId,deviceType);
+						});
+					}
+				}
+				$('#device_list_load').hide();
+			}
+		});
+	}
+	//统计各个门禁出入情况
+	function fnCountAccInout(_this,deviceId,deviceType){
+		$.ajax({
+			url:CTX+'atte-infomation/count-acc-inout',
+			type:'get',
+			dataType:'json',
+			timeout:10000,
+			data: {deviceId:deviceId,deviceType:deviceType,projectInfoId:projectInfoId},
+			success:function(json){
+				if(json){
+					$(_this).find("span[name='in_num']").hide();
+					$(_this).find("span[name='in_num']").html(json.inNum);
+					$(_this).find("span[name='in_num']").fadeIn('fast');
+					$(_this).find("span[name='out_num']").hide();
+					$(_this).find("span[name='out_num']").html(json.outNum);
+					$(_this).find("span[name='out_num']").fadeIn('fast');
+				}
+			}
+		});
+	}
+/*]]>*/	
+</script>
+</html>

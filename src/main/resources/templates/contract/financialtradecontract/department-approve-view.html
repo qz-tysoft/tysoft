@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--
+* @Copyright(c): 厦门路桥信息股份有限公司  版权所有
+* @author :XMRBI
+* @Description:合同领导审批-财务部
+* @createDate:2018-9-14
+-->
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+	name="viewport" />
+<title>领导审批</title>
+<link rel="stylesheet"
+	th:href="@{/static/bootstrap/css/bootstrap.min.css}" />
+<link rel="stylesheet"
+	th:href="@{/static/dist/css/font-awesome.min.css}" />
+<link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}" />
+<link rel="stylesheet" th:href="@{/static/css/common.css}" />
+<link rel="stylesheet" th:href="@{/static/plugins/select2/select2.css}" />
+<link rel="stylesheet"
+	th:href="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.css}" />
+<link rel="stylesheet"
+	th:href="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.css}" />
+<link rel="stylesheet"
+	th:href="@{/static/plugins/bootstrap-validator/css/bootstrapValidator.min.css}" />
+<link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.css}" />
+<link rel="stylesheet"
+	th:href="@{/static/dist/css/skins/_all-skins.min.css}" />
+<link rel="stylesheet"
+	th:href="@{/static/dist/css/font-awesome.min.css}" />
+<link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}" />
+<link rel="stylesheet"
+	th:href="@{/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css}" />
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.min.css}" />
+<link rel="stylesheet"
+	th:href="@{/static/dist/css/skins/_all-skins.min.css}" />
+<link rel="stylesheet" th:href="@{/static/css/common.css}" />
+<!-- Bootstrap 3.3.7 -->
+<link rel="stylesheet"
+	th:href="@{/static/bootstrap/css/bootstrap.min.css}" />
+<link rel="stylesheet"
+	th:href="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.css}" />
+<style type="text/css">
+.panel {
+	margin-bottom: 0px;
+}
+
+.form-group {
+	margin-bottom: 2px;
+}
+</style>
+<style type="text/css">
+html, body {
+	overflow-x: hidden;
+}
+
+body {
+	padding-top: 5px;
+}
+
+.box.box-solid.box-default>.box-header {
+	background-color: #DEF2FF;
+}
+
+.col-sm-10 span {
+	word-break: break-all;
+	word-wrap: break-word;
+	white-space: normal;
+	display: block;
+	float: left;
+	height: 34px;
+	padding: 6px 12px 6px 0px;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #777;
+}
+
+
+
+#signerOpinionList>thead>tr>th {
+	text-align: center;
+	vertical-align: middle !important;
+}
+
+#signerOpinionList>tbody>tr>td {
+	vertical-align: middle !important;
+}
+#contractAnnexs>thead>tr>th {
+	text-align: center;
+	vertical-align: middle !important;
+	vertical-align: middle !important;
+}
+
+#contractAnnexs>tbody>tr>td {
+	text-align: center;
+	vertical-align: middle !important;
+	vertical-align: middle !important;
+}
+
+#btn_upload, #btn_delete {
+	padding: 3px 6px;
+	font-size: 12px;
+}
+
+input {
+	text-align: left;
+}
+
+.table>tbody>tr>td {
+	padding: 3px;
+}
+
+*{margin: 0;padding: 0;font:14px "微软雅黑";}
+.fixed{RIGHT: 15px;BACKGROUND: #CAE1FF;LEFT: 15px;BOTTOM: 0;LINE-HEIGHT: 30px;POSITION: fixed;HEIGHT: 60px}
+#iefixed{MARGIN: -1px 15px 0px;OVERFLOW: hidden;ZOOM: 1;HEIGHT: 1px}
+
+</style>
+</head>
+<body>
+     <!-- 跳转表单-->
+     <input type="hidden" id="lookType" th:value="${lookType}"/>
+     <form action="" method="get" id="closeContractFrom"></form>
+     <form action="" id="approveForm" method="post">
+     <input name="handPeople" type="hidden" th:value="${userName}"/>  
+     <input name="handDeptPeopleOpinino" id="handDeptPeopleOpinino" type="hidden"/>     
+     <input name="handTime" type="hidden" th:value="${approveTime}" />
+     <input name="decision"  id="decision" type="hidden"  />
+     <input name="contractId" th:value="${ContractEnter.id}" type="hidden"/>
+     <input name="taskId" id="taskId" th:value="${taskId}" type="hidden"/>
+     <input name="userId" th:value="${userId}" type="hidden"/>
+     <input name="userRoleType" id="userRoleType" type="hidden" />
+     <input name="isLederApprove" id="isLederApprove" type="hidden" />
+     <input name="isCompanySeniorLeaderApprove" id="isCompanySeniorLeaderApprove" type="hidden"/>
+     <input id="handPeopleDept" th:value="${deptName}"  type="hidden"/>
+     <input id="handPeopleRole" th:value="${roleName}" type="hidden" />
+     <input id="contractOwnerDept" th:value="${ContractEnter.contractOwnerDept}" type="hidden" />
+     </form>
+	<div class="container-fluid" style="width: 100%; height: 100%">
+		<div class="row">
+			<div class="col-md-12">
+				<ul id="myTab" class="nav nav-tabs">
+					
+					<li class="active" ><a href="#contractMain" data-toggle="tab"><span></span>合同摘要表</a>
+					</li>
+					
+				    <li><a href="#basicInfo" data-toggle="tab">基本信息</a>
+					</li>
+					
+					<li><a href="#contractText" data-toggle="tab"><span></span>合同正文</a>
+					</li>
+					
+					<li><a href="#signerOpinion" data-toggle="tab"><span></span>意见及流程</a>
+					</li>
+					
+				</ul>
+			</div>
+		</div>
+
+		<div id="myTabContent" class="tab-content">
+		
+		<div  class="tab-pane fade in active" id="contractMain">
+			<h3 align="center" th:if="${ContractEnter.contractType}==0" th:text="厦门轨道物资有限公司钢材赊销、围挡、钢支撑、机电合同单" style="margin: 10px 0px;"></h3>	
+				<h3 align="center" th:if="${ContractEnter.contractType}==1" th:text="厦门轨道物资有限公司甲供三方合同单" style="margin: 10px 0px;"></h3>	
+				<h3 align="center" th:if="${ContractEnter.contractType}==2" th:text="厦门轨道物资有限公司地铁甲供物资采购合同单" style="margin: 10px 0px;"></h3>	
+				<h3 align="center" th:if="${ContractEnter.contractType}==3" th:text="厦门轨道物资有限公司办公室专用合同单" style="margin: 10px 0px;"></h3>	
+			    <h3 align="center" th:if="${ContractEnter.contractType}==4" th:text="厦门轨道物资有限公司财务部、贸管部通用合同单" style="margin: 10px 0px;"></h3>	
+				<form id="myform_contract" class="form-horizontal">
+					<input hidden="hidden" name="id" th:value="${contractType}" />
+				</form>
+			
+			<table id="contractMainList" class="table table-bordered" style="width: 100%"  >
+			   	<thead>
+			   		<tr align="center">
+			   		</tr>
+			   	</thead>
+			   	<tbody id="contractMainList_body">
+			   		<tr>
+						<td align="left"
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						<span th:text="合同名称"></span>
+						</td>
+						<td style="vertical-align: middle;width: 40%;  text-align: left;" th:text="${ContractEnter.contractName}" ></td>
+						
+						<td align="left"
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						<span th:text="合同编号"></span>
+						</td>
+						<td style="vertical-align: middle;width: 40%;  text-align: left;" th:text="${ContractEnter.contractNumber}" ></td>
+					</tr>
+					
+					  <tr>
+						<td align="left"
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						<span th:text="经办部门"></span>
+						</td>
+						<td style="vertical-align: middle;width: 40%;  text-align: left;" th:text="${ContractEnter.contractOwnerDept}" ></td>
+						
+						<td align="left"
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						<span th:text="经办人"></span>
+						</td>
+						<td style="vertical-align: middle;width: 40%;  text-align: left;" th:text="${ContractEnter.contractOwner}" ></td>
+					</tr>
+					
+						<tr>
+						<td align="left"
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						<span th:text="合同签约方"></span>
+						</td>
+						<td style="vertical-align: middle;width: 40%;  text-align: left;" th:text="${ContractEnter.signContractPeople}" ></td>
+						
+						<td align="left"
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						<span th:text="合同金额"></span>
+						</td>
+						<td style="vertical-align: middle;width: 40%;  text-align: left;" th:text="${ContractEnter.contractMoney}" ></td>
+					</tr>
+					
+						<tr>
+						<td align="left"
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						<span th:text="合同确定方式"></span>
+						</td>
+						<td  colspan="3" style="vertical-align: middle;width: 40%;  text-align: left;" th:text="${ContractEnter.contractConfirmWay}" ></td>
+					    </tr>
+					    
+					    <tr>
+						<td align="left"
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						<span th:text="主要签订依据"></span>
+						</td>
+						<td  colspan="3"  style="vertical-align: middle;width: 40%;  text-align: left;" th:text="${ContractEnter.contractSigningBasis}" ></td>
+					    </tr>
+					    
+					    <tr>
+						<td align="left"
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						<span th:text="合同签订主要事宜"></span>
+						</td>
+						
+						<td  colspan="3"  style="vertical-align: middle;width: 40%;  text-align: left;" th:text="${ContractEnter.contractMainThing}" ></td>
+					    </tr>
+					    
+					    <tr>
+					    <td align="left"  colspan="4"
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						<span style="font-weight: bold;">合同要素审核</span>
+						</td>
+					    </tr>
+					    
+					    <tr>
+					    <td align="left" 
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						部门负责人
+						</td>
+						<td align="left" colspan="3"
+						style="vertical-align: middle; width: 10%; height: 70px; text-align: center;">
+						<div style="height: 25%">
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;width:65px" >
+						<span>审核意见:</span>
+						</div>
+						
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;">
+					    <span th:if="${ContractApproveOpinion.handDeptPeopleOpinino}!=null"  th:text="${ContractApproveOpinion.handDeptPeopleOpinino}" ></span> 
+						<span id="setHandDeptPeopleOpinino" th:if="${ContractApproveOpinion.handDeptPeopleOpinino}==null" ></span>
+						
+						</div>
+						
+						</div>
+						<br/>
+						
+						<div style="height: 30%;" >
+						<div style="text-align: left;float: left;width: 70%"  >
+						
+						<div style="float: left;text-align: left;">
+						<span>负责人:</span>
+						</div>
+						
+						<div style="float: left;">
+						<span th:if="${#strings.contains(roleName,'部门负责人') } and ${ContractApproveOpinion.handDeptPeople}==null"  th:text="${userName}"></span>
+						<span th:if="${ContractApproveOpinion.handDeptPeople}!=null" th:text="${ContractApproveOpinion.handDeptPeople}"></span>  
+						</div>
+						</div>
+					
+						<div style="text-align: center; overflow:hidden;float: left;"  >
+						
+						<div style="float: left;">
+						<span>审核时间：</span>
+						</div>
+						
+						<div style="float: left;">
+                        <span th:if="${ContractApproveOpinion.handDeptPeopleApproveTime}!=null " th:text="${#dates.format(ContractApproveOpinion.handDeptPeopleApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span> 
+						</div>
+						
+						</div>
+						</div>
+						
+						</td>
+					    </tr>
+					    
+					  <tr th:if="${#strings.contains(handPeopleRoleName,'贸管')}">
+					    <td align="left" 
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						风控总监
+						</td>
+						<td align="left" colspan="3"
+						style="vertical-align: middle; width: 10%; height: 70px; text-align: center;">
+						<div style="height: 25%">
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;width:65px" >
+						<span>审核意见:</span>
+						</div>
+						
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;">
+					    <span th:if="${ContractApproveOpinion.riskControlDeptPeopleOpinino}!=null"  th:text="${ContractApproveOpinion.riskControlDeptPeopleOpinino}" ></span> 
+						<span id="riskControlDeptPeopleOpinino" th:if="${ContractApproveOpinion.riskControlDeptPeopleOpinino}==null" ></span>
+						
+						</div>
+						
+						</div>
+						<br/>
+						
+						<div style="height: 30%;" >
+						<div style="text-align: left;float: left;width: 70%"  >
+						
+						<div style="float: left;text-align: left;">
+						<span>负责人:</span>
+						</div>
+						
+						<div style="float: left;">
+						<span th:if="${#strings.contains(roleName,'风控总监') } and ${ContractApproveOpinion.riskControlDeptPeople}==null"  th:text="${userName}"></span>
+						<span th:if="${ContractApproveOpinion.riskControlDeptPeople}!=null" th:text="${ContractApproveOpinion.riskControlDeptPeople}"></span>  
+						</div>
+						</div>
+					
+						<div style="text-align: center; overflow:hidden;float: left;"  >
+						
+						<div style="float: left;">
+						<span>审核时间：</span>
+						</div>
+						
+						<div style="float: left;">
+                        <span th:if="${ContractApproveOpinion.riskControlDeptPeopleApproveTime}!=null "  th:text="${#dates.format(ContractApproveOpinion.riskControlDeptPeopleApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span> 
+						</div>
+						
+						</div>
+						</div>
+						
+						</td>
+					    </tr> 
+					    
+					     
+					    <tr th:if="${#strings.contains(handPeopleRoleName,'贸管')}">
+					    <td align="left" 
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						会计
+						</td>
+						<td align="left" colspan="3"
+						style="vertical-align: middle; width: 10%; height: 70px; text-align: center;">
+						<div style="height: 25%">
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;width:65px" >
+						<span>审核意见:</span>
+						</div>
+						
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;">
+						<span id="setAccountantOpinino" th:if="${ContractApproveOpinion.accountantOpinino}!=null"  th:text="${ContractApproveOpinion.accountantOpinino}"></span>
+						<span id="setAccountantOpinino" th:if="${ContractApproveOpinion.accountantOpinino}==null" ></span>
+						
+						</div>
+						
+						</div>
+						
+							<br/>
+						
+						<div style="height: 30%;" >
+						<div style="text-align: left;float: left;width: 70%"  >
+						
+						<div style="float: left;text-align: left;">
+						<span>负责人:</span>
+						</div>
+						
+						<div style="float: left;">
+						<span th:if="${#strings.contains(roleName,'会计') }  and ${ContractApproveOpinion.accountant}==null"  th:text="${userName}"></span>
+						<span th:if="${ContractApproveOpinion.accountant}!=null" th:text="${ContractApproveOpinion.accountant}"></span>  
+						</div>
+						
+						</div>
+					
+						<div style="text-align: center; overflow:hidden;float: left;"  >
+						
+						<div style="float: left;">
+						<span>审核时间：</span>
+						</div>
+						
+						<div style="float: left;">
+                        <span th:if="${ContractApproveOpinion.accountantPeopleApproveTime}!=null" th:text="${#dates.format(ContractApproveOpinion.accountantPeopleApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span> 
+						</div>
+						
+						</div>
+						</div>
+						</td>
+					    </tr>
+					    
+					    <tr th:if="${#strings.contains(handPeopleRoleName,'贸管')}">
+					    <td align="left" 
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						财务部门负责人
+						</td>
+						<td align="left" colspan="3"
+						style="vertical-align: middle; width: 10%; height: 70px; text-align: center;">
+						<div style="height: 25%">
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;width:65px" >
+						<span>审核意见:</span>
+						</div>
+						
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;">
+					    <span th:if="${ContractApproveOpinion.financialDeptPeopleOpinino}!=null"  th:text="${ContractApproveOpinion.financialDeptPeopleOpinino}" ></span> 
+						<span id="financialDeptPeopleOpinino" th:if="${ContractApproveOpinion.financialDeptPeopleOpinino}==null or ${ContractApproveOpinion.financialDeptPeopleOpinino}==''" ></span>
+						
+						</div>
+						
+						</div>
+						<br/>
+						
+						<div style="height: 30%;" >
+						<div style="text-align: left;float: left;width: 70%"  >
+						
+						<div style="float: left;text-align: left;">
+						<span>负责人:</span>
+						</div>
+						
+						<div style="float: left;">
+						<span th:if="${#strings.contains(roleName,'财务部门负责人') } and ${ContractApproveOpinion.financialDeptPeople}==null"  th:text="${userName}"></span>
+						<span th:if="${ContractApproveOpinion.financialDeptPeople}!=null" th:text="${ContractApproveOpinion.financialDeptPeople}"></span>  
+						</div>
+						</div>
+					
+						<div style="text-align: center; overflow:hidden;float: left;"  >
+						
+						<div style="float: left;">
+						<span>审核时间：</span>
+						</div>
+						
+						<div style="float: left;">
+                        <span th:if="${ContractApproveOpinion.financialDeptPeopleApproveTime}!=null " th:text="${#dates.format(ContractApproveOpinion.financialDeptPeopleApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span> 
+						</div>
+						
+						</div>
+						</div>
+						
+						</td>
+					    </tr>
+					    
+					    <tr th:if="${#strings.contains(handPeopleRoleName,'财务')}">
+					    <td align="left" 
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						法务部
+						</td>
+						<td align="left" colspan="3"
+						style="vertical-align: middle; width: 10%; height: 70px; text-align: center;">
+						<div style="height: 25%">
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;width:65px" >
+						<span>审核意见:</span>
+						</div>
+						
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;">
+						<span id="setLegalDeptPeopleOpinino" th:if="${ContractApproveOpinion.legalDeptPeopleOpinino}!=null"  th:text="${ContractApproveOpinion.legalDeptPeopleOpinino}" ></span>
+						<span id="setLegalDeptPeopleOpinino" th:if="${ContractApproveOpinion.legalDeptPeopleOpinino}==null" ></span>
+						
+						</div>
+						
+						</div>
+						<br/>
+						
+						<div style="height: 30%;" >
+						<div style="text-align: left;float: left;width: 70%"  >
+						
+						<div style="float: left;text-align: left;">
+						<span>负责人:</span>
+						</div>
+						
+						<div style="float: left;">
+						<span th:if="${#strings.contains(roleName,'法务')} and ${ContractApproveOpinion.legalDeptPeople}==null"   th:text="${userName}"></span>
+						<span th:if="${ContractApproveOpinion.legalDeptPeople}!=null " th:text="${ContractApproveOpinion.legalDeptPeople}"></span>  
+						</div>
+						
+						</div>
+					
+						<div style="text-align: center; overflow:hidden;float: left;"  >
+						
+						<div style="float: left;">
+						<span>审核时间：</span>
+						</div>
+						
+						<div style="float: left;">
+                        <span th:if="${ContractApproveOpinion.legalDeptPeopleApproveTime}!=null " th:text="${#dates.format(ContractApproveOpinion.legalDeptPeopleApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span> 
+						</div>
+						
+						</div>
+						</div>
+						</td>
+					    </tr>
+					    
+					    
+					    <tr th:if="${#strings.contains(handPeopleRoleName,'财务')}">
+					    <td align="left" 
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						贸易部负责人
+						</td>
+						<td align="left" colspan="3"
+						style="vertical-align: middle; width: 10%; height: 70px; text-align: center;">
+						<div style="height: 25%">
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;width:65px" >
+						<span>审核意见:</span>
+						</div>
+						
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;">
+					    <span th:if="${ContractApproveOpinion.tradeDeptPeopleOpinion}!=null"  th:text="${ContractApproveOpinion.tradeDeptPeopleOpinion}" ></span> 
+						<span id="tradeDeptPeopleOpinion" th:if="${ContractApproveOpinion.tradeDeptPeopleOpinion}==null" ></span>
+						
+						</div>
+						
+						</div>
+						<br/>
+						
+						<div style="height: 30%;" >
+						<div style="text-align: left;float: left;width: 70%"  >
+						
+						<div style="float: left;text-align: left;">
+						<span>负责人:</span>
+						</div>
+						
+						<div style="float: left;">
+						<span th:if="${#strings.contains(roleName,'贸易部门负责人') } and ${ContractApproveOpinion.tradeDeptPeople}==null"  th:text="${userName}"></span>
+						<span th:if="${ContractApproveOpinion.tradeDeptPeople}!=null" th:text="${ContractApproveOpinion.tradeDeptPeople}"></span>  
+						</div>
+						</div>
+					
+						<div style="text-align: center; overflow:hidden;float: left;"  >
+						
+						<div style="float: left;">
+						<span>审核时间：</span>
+						</div>
+						
+						<div style="float: left;">
+                        <span th:if="${ContractApproveOpinion.tradeDeptPeopleApproveTime}!=null " th:text="${#dates.format(ContractApproveOpinion.tradeDeptPeopleApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span> 
+						</div>
+						
+						</div>
+						</div>
+						
+						</td>
+					    </tr>
+					    
+					    
+					    <tr th:if="${#strings.contains(handPeopleRoleName,'财务')}">
+					    <td align="left" 
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						财务总监
+						</td>
+						<td align="left" colspan="3"
+						style="vertical-align: middle; width: 10%; height: 70px; text-align: center;">
+						<div style="height: 25%">
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;width:65px" >
+						<span>审核意见:</span>
+						</div>
+						
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;">
+					    <span th:if="${ContractApproveOpinion.financialDeptBossOpinino}!=null"  th:text="${ContractApproveOpinion.financialDeptBossOpinino}" ></span> 
+						<span id="financialDeptBossOpinino" th:if="${ContractApproveOpinion.financialDeptBossOpinino}==null" ></span>
+						
+						</div>
+						
+						</div>
+						<br/>
+						
+						<div style="height: 30%;" >
+						<div style="text-align: left;float: left;width: 70%"  >
+						
+						<div style="float: left;text-align: left;">
+						<span>负责人:</span>
+						</div>
+						
+						<div style="float: left;">
+						<span th:if="${#strings.contains(roleName,'财务总监') } and ${ContractApproveOpinion.financialDeptBoss}==null"  th:text="${userName}"></span>
+						<span th:if="${ContractApproveOpinion.financialDeptBoss}!=null" th:text="${ContractApproveOpinion.financialDeptBoss}"></span>  
+						</div>
+						</div>
+					
+						<div style="text-align: center; overflow:hidden;float: left;"  >
+						
+						<div style="float: left;">
+						<span>审核时间：</span>
+						</div>
+						
+						<div style="float: left;">
+                        <span th:if="${ContractApproveOpinion.financialDeptBossApproveTime}!=null " th:text="${#dates.format(ContractApproveOpinion.financialDeptBossApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span> 
+						</div>
+						
+						</div>
+						</div>
+						
+						</td>
+					    </tr>
+					    
+					    
+					    
+					    <tr th:if="${#strings.contains(handPeopleRoleName,'财务')}">
+					    <td align="left" 
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						分管领导
+						</td>
+						<td align="left" colspan="3"
+						style="vertical-align: middle; width: 10%; height: 70px; text-align: center;">
+						<div style="height: 25%">
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;width:65px" >
+						<span>审核意见:</span>
+						</div>
+						
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;">
+					    <span th:if="${ContractApproveOpinion.seniorLeaderOpinino}!=null"  th:text="${ContractApproveOpinion.seniorLeaderOpinino}" ></span> 
+						<span id="seniorLeaderOpinino" th:if="${ContractApproveOpinion.seniorLeaderOpinino}==null" ></span>
+						
+						</div>
+						
+						</div>
+						<br/>
+						
+						<div style="height: 30%;" >
+						<div style="text-align: left;float: left;width: 70%"  >
+						
+						<div style="float: left;text-align: left;">
+						<span>负责人:</span>
+						</div>
+						
+						<div style="float: left;">
+						<span th:if="${#strings.contains(roleName,'分管领导') } and ${ContractApproveOpinion.seniorLeader}==null and ${roleName}!=集团分管领导"  th:text="${userName}"></span>
+						<span th:if="${ContractApproveOpinion.seniorLeader}!=null" th:text="${ContractApproveOpinion.seniorLeader}"></span>  
+						</div>
+						</div>
+					
+						<div style="text-align: center; overflow:hidden;float: left;"  >
+						
+						<div style="float: left;">
+						<span>审核时间：</span>
+						</div>
+						
+						<div style="float: left;">
+                        <span th:if="${ContractApproveOpinion.seniorLeadeApproveTime}!=null " th:text="${#dates.format(ContractApproveOpinion.seniorLeadeApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span> 
+						</div>
+						
+						</div>
+						</div>
+						
+						</td>
+					    </tr>
+					    
+					    
+					    <tr>
+					    <td align="left" 
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						公司负责人
+						</td>
+						<td align="left" colspan="3"
+						style="vertical-align: middle; width: 10%; height: 70px; text-align: center;">
+						<div style="height: 25%">
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;width:65px" >
+						<span>审核意见:</span>
+						</div>
+						
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;">
+					    <span th:if="${ContractApproveOpinion.companyLeaderOpinino}!=null"  th:text="${ContractApproveOpinion.companyLeaderOpinino}" ></span> 
+						<span id="companyLeaderOpinino" th:if="${ContractApproveOpinion.companyLeaderOpinino}==null" ></span>
+						
+						</div>
+						
+						</div>
+						<br/>
+						
+						<div style="height: 30%;" >
+						<div style="text-align: left;float: left;width: 70%"  >
+						
+						<div style="float: left;text-align: left;">
+						<span>负责人:</span>
+						</div>
+						
+						<div style="float: left;">
+						<span th:if="${#strings.contains(roleName,'公司负责人') } and ${ContractApproveOpinion.companyLeader}==null"  th:text="${userName}"></span>
+						<span th:if="${ContractApproveOpinion.companyLeader}!=null" th:text="${ContractApproveOpinion.companyLeader}"></span>  
+						</div>
+						</div>
+					
+						<div style="text-align: center; overflow:hidden;float: left;"  >
+						
+						<div style="float: left;">
+						<span>审核时间：</span>
+						</div>
+						
+						<div style="float: left;">
+                        <span th:if="${ContractApproveOpinion.companyLeaderApproveTime}!=null " th:text="${#dates.format(ContractApproveOpinion.companyLeaderApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span> 
+						</div>
+						
+						</div>
+						</div>
+						
+						</td>
+					    </tr>
+					    
+					    
+					    <tr>
+					    <td align="left" 
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						集团领导
+						</td>
+						<td align="left" colspan="3"
+						style="vertical-align: middle; width: 10%; height: 70px; text-align: center;">
+						<div style="height: 25%">
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;width:65px" >
+						<span>审核意见:</span>
+						</div>
+						
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;">
+					    <span th:if="${ContractApproveOpinion.companySeniorLeaderOpinino}!=null"  th:text="${ContractApproveOpinion.companySeniorLeaderOpinino}" ></span> 
+						<span id="companySeniorLeaderOpinino" th:if="${ContractApproveOpinion.companySeniorLeaderOpinino}==null" ></span>
+						
+						</div>
+						
+						</div>
+						<br/>
+						
+						<div style="height: 30%;" >
+						<div style="text-align: left;float: left;width: 70%"  >
+						
+						<div style="float: left;text-align: left;">
+						<span>负责人:</span>
+						</div>
+						
+						<div style="float: left;">
+						<span th:if="${#strings.contains(roleName,'集团分管领导') }  and ${ContractApproveOpinion.companySeniorLeader}==null"  th:text="${userName}"></span>
+						<span th:if="${ContractApproveOpinion.companySeniorLeader}!=null" th:text="${ContractApproveOpinion.companySeniorLeader}"></span>  
+						</div>
+						</div>
+					
+						<div style="text-align: center; overflow:hidden;float: left;"  >
+						<div style="float: left;">
+						<span>审核时间：</span>
+						</div>
+						
+						<div style="float: left;">
+                        <span th:if="${ContractApproveOpinion.companySeniorLeaderApproveTime}!=null " th:text="${#dates.format(ContractApproveOpinion.companySeniorLeaderApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span> 
+						</div>
+						
+						</div>
+						</div>
+						
+						</td>
+					    </tr>
+					    
+					    					    
+					    <tr>
+					    <td align="left"  colspan="4"
+						style="vertical-align: middle; width: 10%; height: 40px; text-align: center;">
+						<span style="font-weight: bold;">合同文本签收确认</span>
+						</td>
+					    </tr>
+					    
+					    <tr>
+					    <td align="left" 
+						style="vertical-align: middle; width: 10%; height: 25px; text-align: center;">
+						经办部门
+						</td>
+						<td align="left" colspan="3"
+						style="vertical-align: middle; width: 10%; height: 25px; text-align: center;">
+						<div style="height: 15%">
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;width:33%" >
+						<span>签收人：</span>
+						</div>
+						
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;width:33%" >
+						<span>签收份数：</span>
+						</div>
+						
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;width:33%" >
+						<span>签收时间：</span>
+						</div>
+						</div>
+						<br/>
+						
+						</td>
+					    </tr>
+					    
+					      <tr>
+					    <td align="left" 
+						style="vertical-align: middle; width: 10%; height: 25px; text-align: center;">
+						贸易管理部门
+						</td>
+						<td align="left" colspan="3"
+						style="vertical-align: middle; width: 10%; height: 25px; text-align: center;">
+						<div style="height: 15%">
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;width:33%" >
+						<span>签收人：</span>
+						</div>
+						
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;width:33%" >
+						<span>签收份数：</span>
+						</div>
+						
+						<div style="float: left;text-align: left;height:35px;line-height:35px; overflow:hidden;width:33%" >
+						<span>签收时间：</span>
+						</div>
+						</div>
+						<br/>
+						
+						</td>
+					    </tr>
+					    
+					    
+			   	</tbody>
+			 </table>
+			 <div style="float: left;width: 10%;height: 35px;">
+		</div>
+		
+		</div>
+		
+		<div class="tab-pane fade" id="basicInfo">
+				<h3 align="center" th:if="${ContractEnter.contractType}==0" th:text="厦门轨道物资有限公司钢材赊销、围挡、钢支撑、机电合同单" style="margin: 10px 0px;"></h3>	
+				<h3 align="center" th:if="${ContractEnter.contractType}==1" th:text="厦门轨道物资有限公司甲供三方合同单" style="margin: 10px 0px;"></h3>	
+				<h3 align="center" th:if="${ContractEnter.contractType}==2" th:text="厦门轨道物资有限公司地铁甲供物资采购合同单" style="margin: 10px 0px;"></h3>	
+				<h3 align="center" th:if="${ContractEnter.contractType}==3" th:text="厦门轨道物资有限公司办公室专用合同单" style="margin: 10px 0px;"></h3>	
+			    <h3 align="center" th:if="${ContractEnter.contractType}==4" th:text="厦门轨道物资有限公司财务部、贸管部通用合同单" style="margin: 10px 0px;"></h3>	
+				<form id="myform_contract" class="form-horizontal">
+					<input hidden="hidden" name="id" th:value="${contractType}" />
+				</form>
+		    <!--设置表单保存合同数据 -->
+			<form action="" method="post" id="contractListFrom">
+				<table id="contractList" class="table table-bordered"
+					style="width: 100%">
+					<thead>
+						<tr align="center"></tr>
+					</thead>
+					<tbody id="contractList_body">
+						<!-- 合同名称 -->
+						<tr>
+							<td align="left"
+								style="vertical-align: middle; width: 120px; height: 40px; text-align: center;">
+								<span th:text="合同名称："></span>
+							</td>
+							<td colspan="3"  style="vertical-align: middle; height: 40px; text-align: center;" th:text="${ContractEnter.contractName}" ></td>
+						</tr>
+						<!-- 项目名称： -->
+						<tr>
+							<td align="left"
+								style="vertical-align: middle; height: 40px; width: 120px; text-align: center; height: 20px">
+								<span th:text="项目名称："></span>
+							</td>
+
+							<td colspan="3" align="center" style="vertical-align: middle;height: 40px;" th:text="${ContractEnter.projectName}">
+								
+							</td>
+						</tr>
+						<!-- 合同确定方式 合同金额 -->
+						<tr>
+							<td align="left"
+								style="vertical-align: middle; height: 40px; text-align: center; width: 120px;">
+								<span th:text="合同确定方式："></span>
+							</td>
+
+							<td colspan="3" style="vertical-align: middle; height: 40px; text-align: center;" th:text="${ContractEnter.contractConfirmWay}">
+								
+							</td>
+						</tr>
+						<!--合同标的物-->
+						<tr>
+							<td 
+								style="vertical-align: middle; height: 40px; text-align: center; width: 120px;">
+								<span th:text="合同标的物："></span>
+							</td>
+							<td style="vertical-align: middle; height: 40px; text-align: center;" th:text="${ContractEnter.contractMatter}" >
+							
+							</td>
+
+							<td align="left"
+								style="vertical-align: middle; height: 40px; text-align: center; width:160px;">
+								<span th:text="合同金额（元）："></span>
+							</td>
+							
+							<td style="vertical-align: middle; height: 40px; text-align: center;" th:text="${ContractEnter.contractMoney}" >
+						
+							</td>
+						</tr>
+						<!-- 合同签约方-->
+						<tr>
+							<td align="left"
+								style="vertical-align: middle; height: 40px; width: 120px; text-align: center; height: 20px">
+								<span th:text="合同签约方："></span>
+							</td>
+
+							<td colspan="3" align="center" style="vertical-align: middle;height: 40px;" th:text="${signPeople}">
+								
+							</td>
+						</tr>
+						
+						<!--合同标的法务审核人 会计审核人 -->
+						<tr>
+							<td align="left"
+								style="vertical-align: middle; height: 40px; text-align: center; width: 120px;">
+								<span th:text="法务审核人："></span>
+							</td>
+							<td	style="vertical-align: middle; height: 40px; text-align: center;" th:text="${ContractEnter.legalAuditor}">
+							
+							</td>
+
+							<td align="left"
+								style="vertical-align: middle; height: 40px; text-align: center; width: 160px;">
+								<span th:text="会计审核人："></span>
+							</td>
+							
+							<td	style="vertical-align: middle; height: 40px; text-align: center;" th:text="${ContractEnter.accoutingAuditor}">
+
+							</td>
+						</tr>
+						
+						<!--是否要分管领导签字 是否需要公司盖章 -->
+						<tr>
+							<td align="left"
+								style="vertical-align: middle; height: 40px; text-align: center; width: 120px;">
+								<span th:text="是否需要集团分管领导审批："></span>
+							</td>
+							
+							<td align="center" style="vertical-align: middle;">
+							<span th:if=" ${ContractEnter.isLeaderApproval} ==0" th:text="是"></span>
+			   			    <span th:if=" ${ContractEnter.isLeaderApproval} ==1" th:text="否"></span>
+							</td>
+
+							<td align="left"
+								style="vertical-align: middle; height: 40px; text-align: center; width: 160px;">
+								<span th:text="是否需要我司先盖章："></span>
+							</td>
+							
+							<td align="center" style="vertical-align: middle;">
+							<span th:if=" ${ContractEnter.isStamp} ==0" th:text="是"></span>
+			   			    <span th:if=" ${ContractEnter.isStamp} ==1" th:text="否"></span>
+							</td>
+						</tr>
+						
+						  <!--对方经办人电话 合同编号-->
+                             <tr>
+							<td align="left"
+								style="vertical-align: middle; height: 40px; text-align: center; width: 120px;">
+								<span th:text="对方经办人（电话）："></span>
+							</td>
+							
+							<td  style="vertical-align: middle; height: 40px; text-align: center;">
+							<div style="float: left;width: 49%;text-align: center;"> 
+							<span style="vertical-align: middle;" th:text=" ${ContractEnter.theOtherParty}"></span>
+							</div>
+							
+							<div style="float:right;width: 49%;vertical-align: middle;text-align: center;"> 
+							
+							<span th:text=" ${ContractEnter.theOtherPartyPhone}"></span>
+							
+							</div>
+							
+							</td>
+
+							<td align="left"
+								style="vertical-align: middle; height: 40px; text-align: center; width: 160px;">
+								<span th:text="合同编号："></span>
+							</td>
+							<td align="left"
+								style="vertical-align: middle; height: 40px; text-align: center; width: 160px;">
+			                	<span id="contractNumber"></span>
+							</td>
+						</tr>
+						
+						 <!--经办人电话 -->
+                             <tr>
+							<td align="left"
+								style="vertical-align: middle; height: 40px; text-align: center; width: 120px;">
+								<span th:text="合同经办人（电话）："></span>
+							</td>
+							
+							<td style="vertical-align: middle; height: 40px; text-align: center;">
+							<div style="float: left;width: 49% ;vertical-align: middle;text-align: center;"> 
+							
+							<span th:text=" ${ContractEnter.contractOwner}"></span>
+							
+							</div>
+							
+							<div style="float:right;width: 49%;text-align: center;vertical-align: middle;"> 
+							
+							<span th:text=" ${ContractEnter.contractOwnerPhone}"></span>
+							
+							</div>
+							
+							</td>
+
+							<td align="left"
+								style="vertical-align: middle; height: 40px; text-align: center; width: 160px;">
+								<span th:text="经办部门："></span>
+							</td>
+							
+							<td	style="vertical-align: middle; height: 40px; text-align: center;" th:text="${ContractEnter.contractOwnerDept}">
+							
+							</td>
+						</tr>
+						
+						<!--合同签订依据-->
+							<tr>
+							<td align="left"
+								style="vertical-align: middle; width: 120px; height: 60px; text-align: center;">
+								<span th:text="合同签订依据："></span>
+							</td>
+
+							<td colspan="3"  style="vertical-align: middle; height: 40px; text-align: left;" th:text="${ContractEnter.contractSigningBasis}">
+							
+							</td>
+						</tr>
+						
+						
+						<!--合同主要事宜-->
+							<tr>
+							
+							<td align="left"
+								style="vertical-align: middle; width: 120px; height: 60px; text-align: center;">
+								<span th:text="合同主要事宜："></span>
+							</td>
+
+							<td colspan="3"  style="vertical-align: middle; height: 40px; text-align: left;" th:text="${ContractEnter.contractMainThing}">
+							
+							</td>
+						   </tr>
+						   
+						   	<!-- 合同份数 -->
+						<tr>
+							<td align="left"
+								style="vertical-align: middle; width: 120px; height: 40px; text-align: center;">
+								<span th:text="合同份数："></span>
+							</td>
+
+							<td colspan="3" style="vertical-align: middle; width: 120px; height: 40px; text-align: left;">
+							<span th:text="合同一式  +${ContractEnter.contractTextNumber}+ 份，其中我方+${ContractEnter.ownContractTextNumber}+ 份，其他方+${ContractEnter.otherContractTextNumber}+份"></span>
+							</td>
+						</tr>
+						   
+						   <!--我承诺-->
+							<tr>
+							<td align="left" style="vertical-align: middle; width: 120px; height: 40px; text-align: center;">
+								<span th:text="我承诺：" style="color: red;"></span>
+							</td>
+
+							<td colspan="3" align="left" style="height: 40px;">
+							<div style="float: left;text-align: center;height:35px;line-height:35px; overflow:hidden">
+							本人对本合同资信材料、签约方签字字样及印章真实性负责，如因此给公司造成损失愿承担赔偿责任。
+							</div>
+						    </td>
+						</tr>
+					</tbody>
+				</table>
+				
+				</form>
+				
+				<!--附件表格-->
+				<div class="box box-default collapsed-box box-solid" style="margin: 5px 0px;border-color: #DEF2FF;">
+                <div class="box-header with-border" style="padding: 8px;">
+                    <span style="font-weight: bold;font-size: 14px;">附件列表</span>
+                    <form id="formAnnex" class="form-horizontal">
+                    </form>
+                </div>
+                </div>
+                 
+				<!--附件表格-->
+				<table id="annexList" class="table table-bordered" style="width: 100%">
+			   	<thead>
+			   		<tr align="center">
+			   			<th>序号</th>
+			   			<th>附件名称</th>
+			   			<th>创建人</th>
+			   			<th>创建时间</th>
+			   		</tr>
+			   	</thead>
+			   	<tbody id="annexList_body">
+			   		<tr th:if="${#lists.isEmpty(annexs)}" height="32px;">
+						<td colspan="5" align="center">无</td>
+					</tr>
+					<tr th:each="annex,annexStat : ${annexs}">
+						<td align="center">
+							<input hidden="hidden" name="fieldIds" th:value="${annex.id}"/>
+							<span th:text="${annexStat.index+1}"></span>
+						</td>
+						<td align="center">
+							<a href="javascript:" th:onclick="'window.top.openCommonViewImgWin(\''+${annex.id}+'\')'" th:text="${annex.name}+${'.'}+${annex.extendName}"></a>
+						</td>
+						<td th:text="${annex.creator}" align="center"></td>
+						<td th:text="${annex.uploadTime}?${#dates.format(annex.uploadTime, 'yyyy-MM-dd')}:''" align="center"></td>
+					</tr>
+			   	</tbody>
+			 </table>
+			 
+			 <!--界面操作按钮-->
+				 <div style="text-align: center;margin-bottom: 25px;">
+				 
+			     <button type="button"  class="btn btn-primary"  style="margin-right: 25px;width: 80px;"></button> 
+			     <button type="button"  class="btn btn-primary"  style="margin-right: 25px;width: 80px;"></button> 
+			      
+			      </div>
+			</div>
+			
+			<div  class="tab-pane fade" id="contractText">
+	   <table id="contractAnnexs" class="table table-bordered" style="width: 100%">
+			   	<thead>
+			   		<tr align="center">
+			   			<th >序号</th>
+			   			<th>合同名称</th>
+			   		</tr>
+			   	</thead>
+			   	<tbody id="contractAnnexList_body">
+			   		<tr th:if="${#lists.isEmpty(contractAnnexs)}" height="32px;">
+						<td colspan="5" align="center">无</td>
+					</tr>
+					<tr th:each="annex,annexStat : ${contractAnnexs}">
+						<td align="center">
+							<input hidden="hidden" name="fieldIds" th:value="${annex.id}"/>
+							<span th:text="${annexStat.index+1}"></span>
+						</td>
+						<td align="center">
+							<a href="javascript:" th:onclick="'window.top.openCommonViewImgWin(\''+${annex.id}+'\')'" th:text="${annex.name}+${'.'}+${annex.extendName}"></a>
+						</td>
+					</tr>
+			   	</tbody>
+			 </table>
+		</div>
+		
+		 <div  class="tab-pane fade" id="signerOpinion">
+	   <table id="signerOpinionList" class="table table-bordered" style="width: 100%">
+			   	<thead>
+			   		<tr align="center">
+			   			<th style="width: 10%" align="center">审批部门</th>
+			   			<th style="width: 15%" align="center">审批步骤</th>
+			   			<th style="width: 35%" align="center">审批意见</th>
+			   			<th style="width: 10%" align="center">审批人</th>
+			   			<th style="width: 15%" align="center">审批时间</th>
+			   		</tr>
+			   	</thead>
+			   	<tbody id="signerOpinionList_body">
+			   		<tr th:if="${#lists.isEmpty(contractSingerOpinionList)} and ${contractApproveOpinion}==null" height="32px;">
+						<td colspan="5" align="center">无</td>
+					</tr>
+					
+					
+					 <tr th:if="${contractApproveOpinion.handDeptPeople}!=null" >
+				       <td align="center">
+							<span th:text="${contractApproveOpinion.handDeptPeopleDept}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="部门负责人审核"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${contractApproveOpinion.handDeptPeopleOpinino}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${contractApproveOpinion.handDeptPeople}"></span>
+					  </td>
+					   <td align="center">
+						<span th:text="${#dates.format(contractApproveOpinion.handDeptPeopleApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span>
+					  </td>
+				    </tr>
+				    
+				     <tr th:if="${contractApproveOpinion.riskControlDeptPeople}!=null" >
+				       <td align="center">
+							<span th:text="${contractApproveOpinion.riskControlDeptPeopleDept}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="风控总监"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${contractApproveOpinion.riskControlDeptPeopleOpinino}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${contractApproveOpinion.riskControlDeptPeople}"></span>
+					  </td>
+					   <td align="center">
+					   		<span th:text="${#dates.format(contractApproveOpinion.riskControlDeptPeopleApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span>
+					  </td>
+				    </tr>
+				    
+				    
+				    <tr th:if="${ContractApproveOpinion.accountant}!=null" >
+				    <td align="center">
+							<span th:text="${ContractApproveOpinion.accountantDept}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="会计审核"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${ContractApproveOpinion.accountantOpinino}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${ContractApproveOpinion.accountant}"></span>
+					  </td>
+					   <td align="center">
+					   		<span th:text="${#dates.format(ContractApproveOpinion.accountantPeopleApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span>
+					  </td>
+				    </tr>
+				    
+				    
+				     <tr th:if="${contractApproveOpinion.financialDeptPeople}!=null" >
+				       <td align="center">
+							<span th:text="${contractApproveOpinion.financialDeptPeopleDept}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="财务部部门负责人审核"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${contractApproveOpinion.financialDeptPeopleOpinino}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${contractApproveOpinion.financialDeptPeople}"></span>
+					  </td>
+					   <td align="center">
+						<span th:text="${#dates.format(contractApproveOpinion.financialDeptPeopleApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span>
+					  </td>
+				    </tr>
+				    
+				    
+				    
+				        <tr th:if="${ContractApproveOpinion.legalDeptPeople}!=null" >
+				    <td align="center">
+							<span th:text="${ContractApproveOpinion.legalDeptPeopleDept}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="法务部审核"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${ContractApproveOpinion.legalDeptPeopleOpinino}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${ContractApproveOpinion.legalDeptPeople}"></span>
+					  </td>
+					   <td align="center">
+					   		<span th:text="${#dates.format(ContractApproveOpinion.legalDeptPeopleApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span>
+					  </td>
+				    </tr>
+				    
+				    
+				    
+				    			    
+				    <tr th:if="${contractApproveOpinion.tradeDeptPeople}!=null" >
+				       <td align="center">
+							<span th:text="${contractApproveOpinion.tradeDeptPeopleDept}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="贸易管理部负责人审核"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${contractApproveOpinion.tradeDeptPeopleOpinion}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${contractApproveOpinion.tradeDeptPeople}"></span>
+					  </td>
+					   <td align="center">
+					   		<span th:text="${#dates.format(contractApproveOpinion.tradeDeptPeopleApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span>
+					  </td>
+				    </tr>
+				    
+				    
+				     <tr th:if="${contractApproveOpinion.financialDeptBoss}!=null" >
+				       <td align="center">
+							<span th:text="${contractApproveOpinion.financialDeptBossDept}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="财务总监审核"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${contractApproveOpinion.financialDeptBossOpinino}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${contractApproveOpinion.financialDeptBoss}"></span>
+					  </td>
+					   <td align="center">
+					   		<span th:text="${#dates.format(contractApproveOpinion.financialDeptBossApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span>
+					  </td>
+				    </tr>
+				    
+				      <tr th:if="${contractApproveOpinion.seniorLeader}!=null" >
+				       <td align="center">
+							<span th:text="${contractApproveOpinion.seniorLeaderDept}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="分管领导审核"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${contractApproveOpinion.seniorLeaderOpinino}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${contractApproveOpinion.seniorLeader}"></span>
+					  </td>
+					   <td align="center">
+					   		<span th:text="${#dates.format(contractApproveOpinion.seniorLeadeApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span>
+					  </td>
+				    </tr>
+				    
+				    <tr th:if="${contractApproveOpinion.companyLeader}!=null" >
+				       <td align="center">
+							<span th:text="${contractApproveOpinion.companyLeaderDept}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="公司负责人审核"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${contractApproveOpinion.companyLeaderOpinino}"></span>
+					  </td>
+					   <td align="center">
+							<span th:text="${contractApproveOpinion.companyLeader}"></span>
+					  </td>
+					   <td align="center">
+					   		<span th:text="${#dates.format(contractApproveOpinion.companyLeaderApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span>
+					  </td>
+				    </tr>
+				    
+				    <tr th:if="${contractApproveOpinion.companySeniorLeader}!=null" >
+				       <td align="center">
+							<span th:text="${contractApproveOpinion.companySeniorLeaderDept}"></span>
+					  </td>
+					  
+					   <td align="center">
+							<span th:text="集团领导审核"></span>
+					  </td>
+					  
+					   <td align="center">
+							<span th:text="${contractApproveOpinion.companySeniorLeaderOpinino}"></span>
+					  </td>
+					  
+					   <td align="center">
+							<span th:text="${contractApproveOpinion.companySeniorLeader}"></span>
+					  </td>
+					  
+					   <td align="center">
+					   		<span th:text="${#dates.format(contractApproveOpinion.companySeniorLeaderApproveTime,'yyyy-MM-dd HH:mm:ss')}"></span>
+					  </td>
+				    </tr>
+			   	</tbody>
+			 </table>
+		    <button id="btn_upload" type="button" class="btn btn-primary" style="width: 70px; height: 30px;" onclick="lookFlow()">流程图</button>
+		   <div style="height: 200px;" ></div>
+		   
+		</div>
+		
+		<div class="fixed">
+		
+		<div style="padding: 15px;text-align: left;vertical-align: middle;">
+		<div style="float: left;text-align: center;height:35px;line-height:35px; overflow:hidden;width:8%">
+		<span >审核意见:</span>
+		</div>
+		
+		<div style="float: left;width: 48%">
+		<input type="text" id="handPeopleOpinino"  name="handPeopleOpinino" class="form-control" width="100%" onblur="setOpinion()" onkeyup="this.value=this.value.replace(/\s+/g,'')" />
+		</div>
+		
+		
+		<div style="float: left;width:1%;height: 34px;" ></div>
+		
+        <div style="float: left;width:15%;height: 34px;" th:if="${#strings.contains(roleName,'公司负责人')}">
+		<select id="iscompanySeniorLeaderApprove"  class="form-control">
+		<option value="请选择">集团分管领导审批</option>
+        <option value="0">是</option>
+        <option value="1">否</option>
+        </select>
+		</div>
+		
+		
+		<div style="float: left;width:5%;height: 34px;" th:if="${roleName} !='公司负责人'"></div>
+		
+		<div style="float: left;width:12%;height: 34px;" 
+		th:if="${taskName} !='办公室-经办人统稿' and ${taskName} !='办公室-财务经办人审核' 
+		 and ${taskName} !='办公室-财务部部门负责人审核'  and ${taskName} !='办公室-财务总监审核'
+		and ${taskName} !='办公室-贸易管理部经办人审核'  and ${taskName} !='办公室-贸易管理部负责人审核'
+		and ${taskName} !='办公室-风控总监审核'
+		" >
+		<select id="isApprove"  class="form-control">
+		<option value="请选择">是否通过</option>
+        <option value="0">通过</option>
+        <option value="1">不通过</option>
+        </select>
+		</div>
+		
+	   <div style="float: left;width:3%;height: 34px;" th:if="${roleName} !='公司负责人'"></div>
+	    
+		<div style="float: left;width: 7%">
+	     <button type="button" id="sumbitMyOpinion" class="btn btn-primary" onclick="sumbitOpinion()" style="width: 80px;">提交审核</button> 
+		</div>
+		
+		<div style="float: left;width:5%;height: 34px;" th:if="${roleName} !='公司负责人'"></div>
+		
+		<div style="float: left;width:2%;height: 34px;" th:if="${roleName} =='公司负责人'"></div>
+		<div style="float: left;width:1%;height: 34px;" th:if="${roleName} !='公司负责人'"></div>
+		
+		<div style="float: left;width: 7%">
+	     <button type="button"  class="btn btn-primary" onclick="this.disabled=true,fnClickClose()" style="width: 80px;">关闭</button> 
+		</div>
+		</div>
+		</div>
+		
+		
+		</div>
+	</div>
+		
+		
+</body>
+<!-- jQuery 2.2.3 -->
+<script th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/static/js/common.js}"></script>
+<script
+	th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></script>
+<script
+	th:src="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script
+	th:src="@{/static/plugins/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/static/plugins/jQuery/jquery.serializejson.min.js}"></script>
+<script th:src="@{/static/plugins/datepicker/bootstrap-datepicker.js}"></script>
+<script
+	th:src="@{/static/plugins/datepicker/locales/bootstrap-datepicker.zh-CN.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.js}"></script>
+<script
+	th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/plugins/bootstrap-contextmenu/bootstrap-contextmenu.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/plugins/bootstrap-contextmenu/prettify.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/plugins/attention/zDialog/zDrag.js}"></script>
+<!-- Slimscroll -->
+<script type="text/javascript"
+	th:src="@{/static/plugins/slimScroll/jquery.slimscroll.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/dist/js/app.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+	var CTX = [[@{/}]];
+		$(function () {
+			
+		
+		    //2.初始化Button的点击事件
+		    var oButtonInit = new ButtonInit();
+		    oButtonInit.Init();
+		    //初始化时间控件
+		    $('.datepicker').datepicker({
+		    	format:'yyyy-mm',
+		    	language:'zh-CN',
+		      	autoclose: true,
+		      	startView: 'months', //开始视图层，为月视图层
+		        maxViewMode:'years', //最大视图层，为年视图层
+		        minViewMode:'months', //最小视图层，为月视图层
+		        clearBtn: true
+		    }).on('hide',function(){
+				
+			});
+		});
+
+	
+		
+		//初始化按钮
+		var ButtonInit = function () {
+		    var oInit = new Object();
+		    var postdata = {};
+
+		    oInit.Init = function () {
+		        //初始化页面上面的按钮事件
+		    };
+		    return oInit;
+		};
+	
+	//格式化日期
+	function formatDate(time){
+	    var date = new Date(time);
+	    var year = date.getFullYear(),
+	        month = date.getMonth()+1,//月份是从0开始的
+	        day = date.getDate(),
+	        hour = date.getHours(),
+	        min = date.getMinutes(),
+	        sec = date.getSeconds();
+	    var preArr = Array.apply(null,Array(10)).map(function(elem, index) {
+	        return '0'+index;
+	    });////开个长度为10的数组 格式为 00 01 02 03
+
+	    var newTime = year + '-' +
+	                (preArr[month]||month) + '-' +
+	                (preArr[day]||day);/*  + ' ' +
+	                (preArr[hour]||hour) + ':' +
+	                (preArr[min]||min) + ':' +
+	                (preArr[sec]||sec); */
+	    return newTime;         
+	  }
+
+	
+	
+	//失去焦点事件
+	function setOpinion(){
+		//当前用户和合同信息
+		var handPeopleDept=$("#handPeopleDept").val();
+		var handPeopleRole=$("#handPeopleRole").val();
+		var contractOwnerDept=$("#contractOwnerDept").val();
+		var handPeopleOpinino=$("#handPeopleOpinino").val();
+		$("#handDeptPeopleOpinino").val(handPeopleOpinino);
+		//判断当前是哪一个人
+		//经办人审核意见
+	
+		//会计审核意见
+		if(handPeopleRole.indexOf("会计") != -1){
+			$("#setAccountantOpinino").text(handPeopleOpinino);
+			$("#userRoleType").val("会计部门");
+		}
+		
+		
+		if(handPeopleRole.indexOf("财务部门负责人") != -1){
+			$("#financialDeptPeopleOpinino").text(handPeopleOpinino);
+			$("#userRoleType").val("财务部门负责人");
+		}
+		
+		
+		if(handPeopleRole.indexOf("财务总监") != -1){
+			$("#financialDeptBossOpinino").text(handPeopleOpinino);
+			$("#userRoleType").val("财务总监");
+		}
+		
+		
+		//法务部审核意见
+		if(handPeopleRole.indexOf("法务") != -1){
+			$("#setLegalDeptPeopleOpinino").text(handPeopleOpinino);
+			$("#userRoleType").val("法务部门");
+		}
+		
+		//财务总监审核意见
+		if(handPeopleRole.indexOf("财务总监") != -1){
+			$("#setFinancialDeptBossOpinino").text(handPeopleOpinino);
+			$("#userRoleType").val("财务总监");
+		}
+		
+		if(handPeopleRole.indexOf("贸管部合同办理员") != -1){
+			$("#tradeHandPeopleOpinino").text(handPeopleOpinino);
+			$("#userRoleType").val("贸管部合同办理员");
+		}
+		
+		
+		if(handPeopleRole.indexOf("贸易部门负责人") != -1){
+			$("#tradeDeptPeopleOpinion").text(handPeopleOpinino);
+			$("#userRoleType").val("贸易部门负责人");
+		}
+		
+		if(handPeopleRole.indexOf("风控总监") != -1){
+			$("#riskControlDeptPeopleOpinino").text(handPeopleOpinino);
+			$("#userRoleType").val("风控总监");
+		}
+		
+		if(handPeopleRole=="分管领导"){
+			$("#seniorLeaderOpinino").text(handPeopleOpinino);
+			$("#userRoleType").val("分管领导");
+		}
+		
+		if(handPeopleRole.indexOf("公司负责人") != -1){
+			$("#companyLeaderOpinino").text(handPeopleOpinino);
+			$("#userRoleType").val("公司负责人");
+		}
+		
+		if(handPeopleRole.indexOf("集团分管领导") != -1){
+			$("#companySeniorLeaderOpinino").text(handPeopleOpinino);
+			$("#userRoleType").val("集团分管领导");
+		}
+	}
+	
+	
+	     //提交审核意见
+	     function sumbitOpinion(){
+	    	 setOpinion();
+	    		var handPeopleOpinino=$("#handPeopleOpinino").val();
+		    	if(handPeopleOpinino.length==0){
+		    		alert("请填写审核意见！");
+		    		return
+		    	}
+		     	//当前用户和合同信息
+		 		var handPeopleRole=$("#handPeopleRole").val();
+		     	//是否需要集团领导审核
+		 		if(handPeopleRole.indexOf("公司负责人") != -1){
+	    			
+	    			var isCompanySeniorLeaderApprove=$("#iscompanySeniorLeaderApprove").val();
+	    			if(isCompanySeniorLeaderApprove=="请选择"){
+	    				alert("请决定是否需要集团分管领导审核");
+	    				return
+	    			}else{
+	    				$("#isCompanySeniorLeaderApprove").val(isCompanySeniorLeaderApprove);
+	    			}
+	    		}
+		    	var isApprove=$("#isApprove").val();
+		    	if(isApprove=="请选择"){
+		    		alert("请决定是否通过！");
+		            return;    		
+		    	}
+		    	$("#isLederApprove").val(isApprove);
+		    	$("#sumbitMyOpinion").attr("disabled",true);
+		    	
+	    	 $.ajax({
+				url:CTX+'office-contract/handPeopleApprove',
+				method:'post',
+				data:$('#approveForm').serialize(),
+				success:function(json){
+					alert('成功审核')
+					$("#approveForm").attr("action",CTX+'contract-approve/contract-approve-view')
+				    $("#approveForm").submit();
+				},
+				error:function(){
+					alert('请求超时或网络错误');
+				}
+			});
+	     }
+	     
+ 	
+	  	//关闭合同签订界面返回主界面
+	  	function fnClickClose(){
+	  		setOpinion()
+	  		$("#approveForm").attr("action",CTX+'contract-approve/contract-approve-view')
+		    $("#approveForm").submit();
+	  	}
+	  	
+	  //查看流程图
+		function lookFlow(){
+		  var taskId=$("#taskId").val();
+			$("#approveForm").attr("action",CTX+'contract-approve/contract-approve-view')
+			window.open(CTX+'uflo/diagram?taskId='+taskId);
+		}
+		/*]]>*/
+	</script>
+
+	</html>
+

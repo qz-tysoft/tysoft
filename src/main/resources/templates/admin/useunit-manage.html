@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+	<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}" />
+	<link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.css}"/>
+	<link rel="stylesheet" th:href="@{/static/css/common.css}" />
+	<title>企业管理</title>
+	<style type="text/css">
+		html,body {overflow-x:hidden;}
+		.up_icon{width:80px;height:80px;float:left;position: relative;text-align: center;cursor: pointer;background: #ddd;border-radius: 5px;}
+		.up_icon img{max-height:100%;max-width:100%;}
+		.up_icon span{
+			position: absolute;bottom:0;left:0;width:100%;height:20px;line-height:20px;background:#8e8e8e;
+			text-align: center;color:#fff;font-size:12px;border-radius: 0px 0px 6px 6px;background-color:rgba(0,0,0,0.5);}
+		.u58_main {
+		    float: left;
+		    width: 60px;
+		    overflow: hidden;
+		    white-space: nowrap;
+		    text-overflow: ellipsis;
+		    text-align: center;
+		    font-size: 12px;
+		}
+		.u58_content {
+		    float: left;
+		    padding-left: 5px;
+		    height: 58px;
+		    line-height: 20px;
+		    padding: 10px 0px 0px 5px;
+		}
+		.u58_main img {
+		    max-width: 100%;
+		}
+	</style>
+</head>
+<body>
+	<div class="container-fluid" >
+		<!-- 操作工具条 -->
+		<div id="useunit_list_toolbar">
+		  <button id="btn_add" type="button" class="btn btn-default" onclick="goEditUseunit()">
+		    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增企业</button>
+		</div>
+		<table id="useunit_list"></table>
+	</div>
+	
+	<!-- 配置应用可见范围 -->
+	<div class="modal fade" id="useunit_edit_modalwin" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">新增企业</h4>
+				</div>
+				<div class="modal-body">
+					<form id="useunitForm" role="form" method="post" class="form-horizontal">
+						<input type="hidden" name="id" />
+						<input type="hidden" name="manageType" value="0"/>
+						<input type="hidden" name="hireInfo.id"/>
+						<input type="hidden" name="adminId"/>
+						<div class="form-group">
+						 	<label class="col-sm-3 control-label" for="logo_img">企业logo<font color="red">*</font></label>
+							<div class="col-sm-9" style="line-height: 80px;">
+								<input type="hidden" name="hireInfo.logo"/>
+								<div id="logo_img" class="up_icon" onclick="fnSelectImg()">
+									<input type="file" id="photo_file" style="display: none;"/>
+									<img th:src="@{/static/images/u331.png}" class="img-rounded" />
+									<span>上传logo</span>
+								</div>
+								<span class="col-sm-10-span" style="padding: 50px 0 0 10px;">建议上传图片尺寸为640*640，大小不超过200KB</span>
+							</div>
+						</div>
+						<div class="form-group">
+						 	<label class="col-sm-3 control-label" for="useunit_name">企业类型<font color="red">*</font></label>
+							<div class="col-sm-9">
+								<select class="form-control" name="useunitType.id">
+									<option value="">请选择类型</option>
+									<option th:each="utype : ${useunitTypes}" th:value="${utype.id}" th:text="${utype.typeName}"></option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+						 	<label class="col-sm-3 control-label" for="useunit_name">企业名称<font color="red">*</font></label>
+							<div class="col-sm-9">
+								<input id="useunit_name" name="name" type="text" class="form-control" placeholder="企业名称不能超过20个字" />
+							</div>
+						</div>
+						<div class="form-group">
+						 	<label class="col-sm-3 control-label" for="useunit_shortName">企业简称<font color="red">*</font></label>
+							<div class="col-sm-9">
+								<input id="useunit_shortName" name="shortName" type="text" class="form-control" placeholder="企业简称不能超过20个字" />
+							</div>
+						</div>
+						<div class="form-group">
+						 	<label class="col-sm-3 control-label" for="useunit_maxUserNum">受限人数<font color="red">*</font></label>
+							<div class="col-sm-9">
+								<input id="useunit_maxUserNum" name="hireInfo.maxUserNum" type="number" class="form-control" placeholder="企业人数上限" />
+							</div>
+						</div>
+						<div class="form-group">
+						 	<label class="col-sm-3 control-label" for="useunit_maxUserNum">备&nbsp;&nbsp;&nbsp;注&nbsp;</label>
+							<div class="col-sm-9">
+								<input name="remark" type="text" class="form-control" placeholder="企业备注" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" for="useunit_maxUserNum">所属省市</label>
+							<div class="col-sm-9" id="citySelect">
+								<div class="row">
+									<div class="col-sm-4">
+										<select class="prov form-control" name="prov"></select>  
+									</div>
+									<div class="col-sm-4">
+										 <select class="city form-control" name="city" disabled="disabled"></select>
+									</div>
+									<div class="col-sm-4">
+										 <select class="dist form-control" name="dist" disabled="disabled"></select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<h4>管理员信息</h4>
+						<div class="form-group">
+						 	<label class="col-sm-3 control-label" for="user_loginName">管理员账号<font color="red">*</font></label>
+							<div class="col-sm-9">
+								<input id="user_loginName" name="loginName" type="text" class="form-control" placeholder="账号需由英文字母或数字组成" />
+							</div>
+						</div>
+						<div class="form-group">
+						 	<label class="col-sm-3 control-label" for="user_password">登录密码</label>
+							<div class="col-sm-9">
+								<input id="user_password" name="password" type="password" class="form-control" placeholder="新增企业时,为空默认密码6" />
+							</div>
+						</div>
+						<div class="form-group">
+						 	<label class="col-sm-3 control-label" for="user_surepwd">确认密码</label>
+							<div class="col-sm-9">
+								<input id="user_surepwd" name="surePwd" type="password" class="form-control" />
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> 
+					 <button id="submit_btn" type="button" class="btn btn-primary" onclick="goSaveUseunit()">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+	var CTX = [[@{/}]];
+	var STATIC = [[@{/static/}]];
+/*]]>*/	
+</script>
+<script type="text/javascript" th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/fastclick/fastclick.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/citySelect/jquery.cityselect.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+	$(function(){
+		$('#useunit_list').bootstrapTable({
+			url: CTX + 'useunit/useunit-list',         
+            method: 'post',                    
+            contentType: "application/x-www-form-urlencoded",
+            toolbar: '#useunit_list_toolbar', 	//工具按钮用哪个容器
+            striped: true,                      //是否显示行间隔色
+            cache: false,     
+            pagination: true,
+            sidePagination: "server",
+            showRefresh: true,
+            showHeader:false,
+            search: true,                       //是否显示表格搜索
+            strictSearch: true,
+            searchAlign:'right',
+            uniqueId: "id",
+            pageNumber:1,                       //初始化加载第一页，默认第一页
+            pageSize: 10,                       //每页的记录行数（*）
+            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+            queryParams: function(params){
+            	var temp = {   //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+       	    		pageNum: params.pageNumber,//页码params.offset
+                    size: params.pageSize,//页面大小params.limit
+                    search:params.searchText
+       	        };
+       	        return temp;
+            },
+            queryParamsType: "a",
+            columns:[{
+            	field: 'name',
+                title: '企业名称',
+                width:'80%',
+                formatter:function(v,r,i){
+                	var desc = '暂无信息';
+                	if(r.hireInfo!=null){
+                		desc = '上限人数:'+r.hireInfo.maxUserNum+
+                				'&nbsp;&nbsp;部门数:'+(r.hireInfo.departmentNum==null?0:r.hireInfo.departmentNum)+
+                				'&nbsp;&nbsp;在用人数:'+(r.hireInfo.inuseUserNum==null?0:r.hireInfo.inuseUserNum);
+                	}
+                	return '<div class="u58_main"><img src="'+r.hireInfo.logo+'" class="img-rounded"/></div><div class="u58_content">'+r.name+' '+
+                			(r.isAllow?'<span class="label label-success" style="border-radius: 1em;">在用</span>':'<span class="label label-danger" style="border-radius: 1em;">停用</span>')+
+                		   '<br/><span style="color:gray;font-size:12px;">'+desc+'</span></div>';
+                }
+            },{
+            	field:'cz',
+            	title:'操作',
+            	align:'center',
+            	valign:'middle',
+            	width:'20%',
+            	formatter:function(v,r,i){
+            		return '<button type="button" class="btn btn-default btn-link" onclick="goEditRoles(\''+r.id+'\')"><i class="fa fa-key" title="权限分配"></i></button>'+
+            		'<button type="button" class="btn btn-default btn-link" onclick="goEditUseunit(\''+r.id+'\')"><i class="glyphicon glyphicon-edit" title="编辑"></i></button>'+
+            		'<button type="button" class="btn btn-default btn-link" onclick="goAllowUseunit(\''+r.id+'\','+r.isAllow+')">'+(r.isAllow?'<i class="glyphicon glyphicon-ban-circle text-red" title="禁用"></i>':'<i class="glyphicon glyphicon-ok text-success" title="启用"></i>')+'</button>';
+            	}
+            }]
+		});
+		$('.search input').attr('placeholder','企业名称/企业简称');
+		//初始化表单验证
+		$('#useunitForm').bootstrapValidator({
+			message: '此处输入有误',
+	        excluded: [':disabled'],
+	        feedbackIcons: {
+	            valid: 'glyphicon glyphicon-ok',
+	            invalid: 'glyphicon glyphicon-remove',
+	            validating: 'glyphicon glyphicon-refresh'
+	        },
+	        fields:{
+	        	'useunitType.id':{
+	        		message: '企业类型不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '请选择企业类型'
+	                    }
+	                }
+	        	},
+	        	'hireInfo.logo':{
+	        		message: '企业logo不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '请选择企业logo'
+	                    }
+	                }
+	        	},
+	        	'name':{
+	        		message: '名称输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '企业名称不可为空'
+	                    },
+	                    stringLength: {
+	                        max: 20,
+	                        message: '企业名称长度必须在20个字内'
+	                    }
+	                }
+	        	},
+	        	'shortName':{
+	        		message: '简称输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '企业简称不可为空'
+	                    },
+	                    stringLength: {
+	                        max: 20,
+	                        message: '企业简称长度必须在20个字内'
+	                    }
+	                }
+	        	},
+	        	'hireInfo.maxUserNum':{
+	        		message: '受限人数输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '受限人数不可为空'
+	                    }
+	                }
+	        	},
+	        	'loginName':{
+	        		message: '管理员输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '管理员不可为空'
+	                    },
+	                    regexp: {/* 只需加此键值对，包含正则表达式，和提示 */
+                            regexp: /^[a-zA-Z0-9_\.]+$/,
+                            message: '账号只能是字母和数字_.'
+                        },
+                        remote: {
+                            type: 'GET',
+                            //以get方式调用接口根据接口返回的valid,true为通过false为未通过
+                            url: CTX+'system-user/validate-login-name',
+                            data: function(validator){
+                            	return {
+                            		id: $('#useunitForm').find("input[name='adminId']").val(),
+                            	};
+                            },
+                            message: '账号已注册',
+                            delay: 500
+                        }
+	                }
+	        	},
+	        	'password':{
+	        		message:'密码无效',
+	        		validators:{
+	        			identical: {//相同
+	                         field: 'surePwd', //需要进行比较的input name值
+	                         message: '两次密码不一致'
+	                    }
+	        		}
+	        	},
+	        	'surePwd':{
+	        		message:'密码无效',
+	        		validators:{
+	        			identical: {//相同
+	                         field: 'password', //需要进行比较的input name值
+	                         message: '两次密码不一致'
+	                    }
+	        		}
+	        	}
+	        }
+		}).on('success.form.bv',function(e){
+			//异步验证成功（需要此处提交表单）
+			$.ajax({
+				url:CTX+'useunit/save-useunit',
+				method:'post',
+				dataType:'json',
+				data:$("#useunitForm").serialize(),
+				success:function(json){
+					alert(json.msg);
+					if(json.success){
+						$('#useunit_edit_modalwin').modal('toggle');
+						$('#useunit_list').bootstrapTable('refresh');
+					}
+					$('#submit_btn').removeAttr('disabled');
+					$('#submit_btn').text('保存');
+				},
+				error:function(){
+					alert('请求超时或系统出错!');
+					$('#submit_btn').removeAttr('disabled');
+					$('#submit_btn').text('保存');
+				}
+			});
+		}).on('error.validator.bv',function(e){
+			//表单验证失败处理
+			$('#submit_btn').removeAttr('disabled');
+			$('#submit_btn').text('保存');
+		});
+		
+		//初始化模态窗口关闭事件
+		$('#useunit_edit_modalwin').on('hidden.bs.modal', function (e) {
+			resetUseunitForm();
+		});
+		$(document).on('change','#photo_file',function(){
+			readFile(this);
+		});
+		
+		$('#citySelect').citySelect({
+			url: STATIC+'js/citySelect/city.min.json'
+		});
+	});
+	
+	function fnSelectImg(){
+		document.getElementById('photo_file').click();
+	}
+	
+	function readFile(_this) {
+        var file = _this.files[0];
+        if(file==null){return false;}
+        if(file.size/1024>200){
+        	alert('大小不能超过200KB');
+        	return false;
+        }
+        //判断是否是图片类型
+        if (!/image\/\w+/.test(file.type)) {
+            alert("只能选择图片");
+            return false;
+        }
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function (e) { 
+        	$('#logo_img .img-rounded').attr('src',this.result);
+        	$("input[name='hireInfo.logo']").val(this.result);
+        	var bootstrapValidator = $("#useunitForm").data('bootstrapValidator');  
+        	bootstrapValidator.updateStatus('hireInfo.logo', 'NOT_VALIDATED').validateField('hireInfo.logo');
+        }
+    }
+	
+	//新增编辑企业
+	function goEditUseunit(useunitId){
+		$('#useunit_edit_modalwin').modal('toggle');
+		resetUseunitForm();
+		if(useunitId){
+			$('.modal-title').text('编辑企业');
+			$.ajax({
+				url:CTX+'useunit/get-useunit',
+				method:'get',
+				dataType:'json',
+				data:{useunitId:useunitId},
+				success:function(json){
+					if(json){
+						var useunit = json.useunit;
+						var admin = json.admin;
+						$('#useunitForm').find("input[name='id']").val(useunit.id);
+						$('#useunitForm').find("input[name='hireInfo.id']").val(useunit.hireInfo!=null?useunit.hireInfo.id:'');
+						$('#useunitForm').find("input[name='hireInfo.logo']").val(useunit.hireInfo!=null?useunit.hireInfo.logo:'');
+						$('#useunitForm').find("select[name='useunitType.id']").val(useunit.useunitType.id);
+						$('#useunitForm').find("input[name='name']").val(useunit.name);
+						$('#useunitForm').find("input[name='shortName']").val(useunit.shortName);
+						$('#useunitForm').find("input[name='hireInfo.maxUserNum']").val(useunit.hireInfo!=null?useunit.hireInfo.maxUserNum:'');
+						$('#useunitForm').find("input[name='remark']").val(useunit.remark);
+						$('#useunitForm').find("input[name='loginName']").val(admin!=null?admin.loginName:'');
+						$("#useunitForm input[name='adminId']").val(admin!=null?admin.id:'');
+						$('#logo_img .img-rounded').attr('src',useunit.hireInfo!=null?useunit.hireInfo.logo:STATIC+'images/u331.png');
+						if(useunit.pcity!=null){
+							var pcity = useunit.pcity.split(',');
+							$('#citySelect').citySelect({
+								url: STATIC+'js/citySelect/city.min.json',
+								prov: pcity[0],
+								city: pcity.length>1?pcity[1]:null,
+								dist: pcity.length>2?pcity[2]:null
+							});
+						}
+					}
+				},
+				error:function(){
+					alert('请求超时或系统出错!');
+				}
+			});
+		}else{
+			$('.modal-title').text('新增企业');
+		}
+	}
+	
+	function goAllowUseunit(useunitId,isAllow){
+		$.ajax({
+			url:CTX+'useunit/allow-useunit',
+			method:'post',
+			dataType:'json',
+			data:{id:useunitId,isAllow:isAllow},
+			success:function(json){
+				alert(json.msg);
+				if(json.success){
+					$('#useunit_list').bootstrapTable('refresh');
+				}
+			},
+			error:function(){
+				alert('请求超时或系统出错!');
+			}
+		});
+	}
+	//保存按钮方法
+	function goSaveUseunit(){
+		$('#submit_btn').attr('disabled','disabled');
+    	$('#submit_btn').text('保存中...');
+		$('#useunitForm').bootstrapValidator('validate');
+	}
+	//重置表单方法
+	function resetUseunitForm(){
+		$('#useunitForm').bootstrapValidator('resetForm', true);
+		$("#useunitForm input[name='id']").val('');
+		$("#useunitForm input[name='hireInfo.id']").val('');
+		$("#useunitForm input[name='remark']").val('');
+		$("#useunitForm input[name='adminId']").val('');
+		$('#logo_img .img-rounded').attr('src',STATIC+'images/u331.png');
+		$("#photo_file").remove();
+		$('#logo_img').append('<input type="file" id="photo_file" style="display:none;"/>');
+		$("#useunitForm select[name='prov']").val('');
+		$("#useunitForm select[name='city']").empty();
+		$("#useunitForm select[name='city']").attr('disabled','disabled');
+		$("#useunitForm select[name='dist']").empty();
+		$("#useunitForm select[name='dist']").attr('disabled','disabled');
+	}
+	
+	//权限分配
+	function goEditRoles(useunitId){
+		var width = $(window.parent).width()*3/4;//定义长度
+		var height =$(window.parent).height()-50;	
+		var url = CTX+"authority/dist-authority?useunitId="+useunitId;
+		top.openCommonFrameWin(url,width,height);
+	}
+/*]]>*/
+</script>
+</html>
