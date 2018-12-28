@@ -5,7 +5,7 @@
   <artifactId>tysoft</artifactId>
   <packaging>war</packaging>
   <version>0.0.1-SNAPSHOT</version>
-  <name>tysoft Maven Webapp</name>
+  <name>tysoft</name>
  <parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -158,12 +158,6 @@
          <artifactId>spring-boot-starter-thymeleaf</artifactId>
 	   </dependency>
 		
-	<!-- 添加PageOffice依赖（必须）hxx -->
-    <dependency>
-    <groupId>com.zhuozhengsoft</groupId>
-    <artifactId>pageoffice</artifactId>
-    <version>4.4.0.4</version>
-    </dependency>
     <!-- 添加Sqlite依赖（可选：如果不需要使用印章功能的话，不需要添加此依赖）hxx-->
     <dependency>
     <groupId>org.xerial</groupId>

@@ -19,7 +19,7 @@ public class ContractEnterController extends BaseController{
 		@RequestMapping("test")
 		public String signContractView(HttpServletRequest request,Map<String,Object> map) throws Exception {
 	
-			return "/login";
+			return "login";
 		}
 		
 		

@@ -63,10 +63,3 @@ tio-config:
   serverPort: 6789
   serverTimeout: 10000
 
-
-#管理中心配置
-segs-center: 
-  isOpen: false
-  #上传数据地址
-  syndata:
-    url: http://localhost:8008/segs-center/syndata/
