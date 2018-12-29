@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="Cache-Control" content="no-cache" />
+<meta http-equiv="Cache-Control" content="no-store"/>
+<meta http-equiv="Expires" content="0" />
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /> -->
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+<title>登陆</title>
+<link rel="stylesheet" th:href="@{/static/login/css/style.css}"/>
+<style type="text/css">
+/*--login--*/
+.login_m {
+	width: 403px;
+	margin: 0 auto;
+	height: 375px;
+	margin-top: 98px;
+}
+
+.login_logo {
+	text-align: center;
+	margin-bottom: 25px;
+}
+
+.login_boder {
+	background: url(static/login/img/login_m_bg.png) no-repeat;
+	height: 302px;
+	overflow: hidden;
+}
+
+.login_padding {
+	padding: 28px 47px 20px 47px;
+}
+
+.login_boder h2 {
+	color: #4f5d80;
+	text-transform: uppercase;
+	font-size: 12px;
+	font-weight: normal;
+	margin-bottom: 11px;
+}
+
+.forget_model_h2 {
+	color: #4f5d80;
+	font-size: 12px;
+	font-weight: normal;
+	margin-bottom: 11px;
+}
+
+.login_boder input.txt_input {
+	width: 295px;
+	height: 36px;
+	border: 1px solid #cad2db;
+	background: url(../images/txt_input_bg.gif) no-repeat;
+	padding: 0 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	line-height: 36px;
+	margin-bottom: 10px;
+	font-size: 14px;
+	color: #717171;
+	font-family: Arial;
+}
+
+.login_boder input.txt_input2 {
+	margin-bottom: 20px;
+}
+
+.login_boder input.txt_input:focus {
+	transition: border linear .2s, box-shadow linear .2s;
+	-moz-transition: border linear .2s, -moz-box-shadow linear .2s;
+	-webkit-transition: border linear .2s, -webkit-box-shadow linear .2s;
+	outline: none;
+	border-color: rgba(173, 173, 173.75);
+	box-shadow: 0 0 8px rgba(173, 173, 173, .5);
+	-moz-box-shadow: 0 0 8px rgba(173, 173, 173, .5);
+	-webkit-box-shadow: 0 0 8px rgba(173, 173, 173, 3);
+	border: 1px solid #6192c8;
+}
+
+.login_boder p.forgot {
+	font-size: 11px;
+	text-align: right;
+	margin-bottom: 15px;
+}
+
+.login_boder p.forgot a, .login_boder p.forgot a:visited {
+	color: #8c8e91;
+}
+
+.login_boder p.forgot a:hover {
+	color: #206fd5;
+}
+
+.rem_sub input.sub_button {
+	float: right;
+	width: 122px;
+	height: 32px;
+	background: url(static/login/img/site_bg.png) no-repeat -153px -850px;
+	border: none;
+	color: #FFF;
+	padding-bottom: 2px;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.rem_sub input.sub_buttons {
+	float: left;
+	width: 122px;
+	height: 32px;
+	background: url(static/login/img/site_bg.png) no-repeat -153px -850px;
+	border: none;
+	color: #FFF;
+	padding-bottom: 2px;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.rem_sub input.sub_buttons:hover {
+	background-position: -153px -882px;
+	cursor: pointer;
+}
+
+.rem_sub input.sub_button:hover {
+	background-position: -153px -882px;
+	cursor: pointer;
+}
+
+.rem_sub .rem_sub_l {
+	float: left;
+	font-size: 12px;
+	height: 33px;
+	line-height: 33px;
+}
+
+.rem_sub input#checkbox {
+	margin-right: 5px;
+	vertical-align: middle;
+}
+</style>
+
+</head>
+<body class="login" mycollectionplug="bind">
+<div class="login_m">
+<div class="login_logo">
+<img th:src="@{/static/login/img/logo.png}" width="196" height="46"></img>
+</div>
+<div class="login_boder">
+
+<div class="login_padding" id="login_model">
+
+  <h2>账号</h2>
+  
+  <label>
+    <input type="text" id="username" class="txt_input txt_input2"></input>
+  </label>
+  <h2>密码</h2>
+  <label>
+    <input type="password" name="textfield2" id="userpwd" class="txt_input"></input>
+  </label>
+ 
+<br></br>
+<br></br>
+<br></br>
+  <div class="rem_sub" style="algin:center;">
+  <div class="rem_sub_l">
+  <label id="tipMsg" style="color: red"></label>
+  </div>
+    <label>
+      <input  type="submit" class="sub_button" name="button" id="button" value="登陆" style="opacity: 0.7;"></input>
+    </label>
+  </div>
+</div>
+
+<div id="forget_model" class="login_padding" style="display:none">
+<br></br>
+ 
+  <div class="rem_sub">
+  <div class="rem_sub_l" align="center">
+   </div>
+    <label>
+     <input type="submit" class="sub_buttons" name="button" id="Retrievenow" value="Retrieve now" style="opacity: 0.7;"></input>
+     　　　
+     <input type="submit" class="sub_button" name="button" id="denglou" value="Return" style="opacity: 0.7;"></input>
+    
+    </label>
+  </div>
+</div>
+<!--login_padding  Sign up end-->
+</div><!--login_boder end-->
+</div><!--login_m end-->
+ <br></br> 
+ <br></br>
+<p align="center">版权所有-路桥信息</p>
+</body>
+<script th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<!--[if lte IE 8]>
+<script type="text/javascript"  th:src="@{/static/plugins/jQuery/jquery-1.10.2.min.js}"></script>
+<![endif]-->
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+	var CTX = [[@{/}]];
+	$(function(){
+		alert(1);
+		alert(CTX);
+	});
+	function formKeyDown(ev) {
+		if (ev.keyCode == 13) {
+			alert(1)
+			//loginSubmit();
+		}
+	}
+	//登录
+	function loginSubmit(){
+		if($("input[name='loginName']").val() == ''){
+			$('#error_info').text('账号不可为空！');
+			$("input[name='loginName']").focus();
+			return;
+		}
+		if($("input[name='loginPwd']").val() == ''){
+			$('#error_info').text('密码不可为空！');
+			$("input[name='loginPwd']").focus();
+			return;
+		}
+		$('#login_btn').attr('disabled',true);
+		$('#login_btn').html('正在登录...');
+		$.ajax({
+			url:CTX+'login/validate',
+			method:'post',
+			dataType:'json',
+			data:$('#loginForm').serialize(),
+			success:function(json){
+				if(json&&json.code==0){
+					window.location.href = CTX+'main.html';
+				}else{
+					$('#error_info').text(json.msg);
+				}
+				$('#login_btn').removeAttr('disabled');
+				$('#login_btn').html('登&nbsp;录');
+			},
+			error:function(){
+				$('#error_info').text('请求超时或网络错误');
+				$('#login_btn').removeAttr('disabled');
+				$('#login_btn').html('登&nbsp;录');
+			}
+		});
+	}
+/*]]>*/
+</script>
+</html>

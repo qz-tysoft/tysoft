@@ -39,7 +39,7 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 	public class DefaultView extends WebMvcConfigurerAdapter{
 		@Override
 		public void addViewControllers( ViewControllerRegistry registry ) {
-			registry.addViewController( "/" ).setViewName( "login" );
+			registry.addViewController( "/" ).setViewName( "Wopop" );
 			registry.setOrder( Ordered.HIGHEST_PRECEDENCE );
 			super.addViewControllers( registry );
 		} 

@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Implementation-Title: tysoft
 Implementation-Version: 0.0.1-SNAPSHOT
-Built-By: dell
+Built-By: BearBear
 Implementation-Vendor-Id: com.tysoft
-Build-Jdk: 1.8.0_172
+Build-Jdk: 1.8.0_131
 Implementation-URL: http://projects.spring.io/spring-boot/tysoft/
 Created-By: Maven Integration for Eclipse
 Implementation-Vendor: Pivotal Software, Inc.
