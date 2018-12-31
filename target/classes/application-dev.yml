@@ -18,6 +18,9 @@ spring:
 #    url: jdbc:mysql://localhost:3306/xmmetro_segs?characterEncoding=utf8
     username: root
     password: 123456
+#  thymeleaf:
+#    mode:LEGACYHTML5
+#    cache:false
 #    url: jdbc:mysql://10.4.173.134/xmmetro_ic?characterEncoding=utf8
 #    username: root
 #    password: gmmsxmrbi
@@ -39,7 +42,8 @@ spring:
 #    #每隔五分钟检测空闲超过10分钟的连接
 #    minEvictableIdleTimeMillis: 600000
 #    timeBetweenevictionRunsMillis: 300000
-    
+#thymeleaf
+         
   jpa:
     database: MYSQL
     show-sql: true
@@ -56,10 +60,5 @@ spring:
           region.factory_class: org.hibernate.cache.ehcache.EhCacheRegionFactory
           
 
-## t-io 网络配置
-tio-config: 
-  secret: fb49e26b1014935f380e26360d917063
-  serverIp: 127.0.0.1
-  serverPort: 6789
-  serverTimeout: 10000
+
 

@@ -13,17 +13,24 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/login")
 public class LoginController {
     
+	private String mainView="main-win";
+	
 	
 	@RequestMapping("validate")
 	@ResponseBody
 	public Map<String, Object> isLoginMsg(HttpServletRequest request){
 		Map<String,Object> tipMsg=new HashedMap<>();
-		String loginName=request.getParameter("loginName");
-		String loginPwd=request.getParameter("loginPwd");
+		String loginName=request.getParameter("userName");
+		String loginPwd=request.getParameter("password");
 		if(loginName.equals(loginPwd)) {
 			tipMsg.put("msg", 0);
 		}
-		
 		return tipMsg;
+	}
+	
+	
+	@RequestMapping("mainView")
+	public String mainView(HttpServletRequest request){
+		return mainView;
 	}
 }
