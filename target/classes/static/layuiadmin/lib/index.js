@@ -8,18 +8,18 @@
  */
  
 layui.extend({
-  setter: 'config' //配置模块
+   setter: 'config' //配置模块
   ,admin: 'lib/admin' //核心模块
   ,view: 'lib/view' //视图渲染模块
 }).define(['setter', 'admin'], function(exports){
-  var setter = layui.setter
-  ,element = layui.element
-  ,admin = layui.admin
-  ,tabsPage = admin.tabsPage
-  ,view = layui.view
+  var setter = layui.setter,
+  element = layui.element,
+  admin = layui.admin,
+  tabsPage = admin.tabsPage,
+  view = layui.view,
   
   //打开标签页
-  ,openTabsPage = function(url, text){
+  openTabsPage = function(url, text){
     //遍历页签选项卡
     var matchTo
     ,tabs = $('#LAY_app_tabsheader>li')

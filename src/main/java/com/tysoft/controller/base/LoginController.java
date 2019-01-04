@@ -13,8 +13,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/login")
 public class LoginController {
     
+	//后台主界面
 	private String mainView="index";
-	
+	//404界面
+	private String noFindView="template/tips/404";
+	//500界面
+	private String errorView="template/tips/error";
 	
 	@RequestMapping("validate")
 	@ResponseBody
@@ -28,9 +32,21 @@ public class LoginController {
 		return tipMsg;
 	}
 	
-	
+	//主界面
 	@RequestMapping("mainView")
 	public String mainView(HttpServletRequest request){
 		return mainView;
+	}
+	
+	//404界面
+	@RequestMapping("noFindView")
+	public String noFindView(HttpServletRequest request){
+		return noFindView;
+	}
+	
+	//404界面
+	@RequestMapping("errorView")
+	public String errorPage(HttpServletRequest request){
+			return errorView;
 	}
 }
