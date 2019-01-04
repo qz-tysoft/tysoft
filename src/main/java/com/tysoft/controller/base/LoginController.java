@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/login")
 public class LoginController {
     
-	private String mainView="main-win";
+	private String mainView="index";
 	
 	
 	@RequestMapping("validate")
