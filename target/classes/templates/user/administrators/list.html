@@ -49,6 +49,11 @@
       <div class="layui-card-body">
     
           <table class="layui-hide" id="test-table-page"></table>
+          
+            <script type="text/html" id="company-isOpen">
+              <input type="checkbox" name="isOpen" lay-skin="switch" lay-text="启用|禁用" 
+               value="1"></input>
+            </script>
     
       </div>
     </div>
@@ -79,11 +84,12 @@
         elem: '#test-table-page'
         ,url: layui.setter.base + 'json/table/user.js'
         ,cols: [[
-          {field:'id', width:80, title: '公司名', sort: true}
-          ,{field:'username', width:80, title: '公司账号'}
-          ,{field:'sex', width:80, title: '联系人', sort: true}
-          ,{field:'city', width:80, title: '电话'}
-          ,{field:'sign', title: '状态', minWidth: 150}
+           {field:'id',  title: '公司名',align:'center'}
+          ,{field:'username', title: '公司账号',align:'center'}
+          ,{field:'sex',  title: '联系人',align:'center'}
+          ,{field:'city', title: '电话',align:'center'}
+          ,{field:'sign1', title: '状态', minWidth: 150,templet: '#company-isOpen',align:'center'}
+          ,{field:'sign', title: '操作', minWidth: 150,align:'center'}
         ]]
         ,page: true
       });
