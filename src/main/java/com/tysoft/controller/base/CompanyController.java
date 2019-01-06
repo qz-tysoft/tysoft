@@ -5,8 +5,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -31,7 +33,8 @@ public class CompanyController extends BaseController{
 	@Autowired
 	protected  UserService userService;
 	
-    private String companyView="user/administrators/list"; 
+    private String companyView="company/company"; 
+    private String companyAddView="company/company-add"; 
     
     //公司主界面
   	@RequestMapping("companyView")
@@ -39,12 +42,23 @@ public class CompanyController extends BaseController{
   		return companyView;
   	}
 	
-  	//新增公司
-  	@RequestMapping("addCompany")
-	@ResponseBody
-	public Map<String, Object> addCompany(HttpServletRequest request){
-  		Map<String, Object> tipMap=new HashMap<>();
-  		
-  		return tipMap;
+  	//新增公司界面
+  	@RequestMapping("companyAddView")
+	public String companyAddView(HttpServletRequest request){
+  		return companyAddView;
   	}
+  	
+    //新增公司界面
+  	@RequestMapping("companyAdd")
+	@ResponseBody
+	public Map<String, Object> companyAdd(HttpServletRequest request){
+  		Map<String,Object> tipMsg=new HashedMap<>();
+  		String companyName=request.getParameter("companyName");
+  		String loginName=request.getParameter("loginName");
+  		String loginPsw=request.getParameter("loginPsw");
+  	
+  		
+  		return tipMsg;
+  	}
+  	
 }
