@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tysoft.controller.BaseController;
+import com.tysoft.entity.base.*;
 import com.tysoft.service.base.*;
 
 
@@ -55,10 +56,12 @@ public class CompanyController extends BaseController{
   		Map<String,Object> tipMsg=new HashedMap<>();
   		String companyName=request.getParameter("companyName");
   		String loginName=request.getParameter("loginName");
+  		tipMsg.put("msg", 1);
+  	    Company saveCompany=new Company();
+  	    saveCompany.setCompanyName(companyName);
+  		Company company=companyService.saveCompany(saveCompany);
   		String loginPsw=request.getParameter("loginPsw");
-  	
-  		
-  		return tipMsg;
+        return   tipMsg;
   	}
   	
 }

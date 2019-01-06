@@ -10,7 +10,7 @@
   <link rel="stylesheet" th:href="@{/static/layuiadmin/layui/css/layui.css}" media="all"/>
 </head>
 <body>
-
+<form id="myForm" action="">
   <div class="layui-form" lay-filter="layuiadmin-app-form-list" id="layuiadmin-app-form-list" style="padding: 20px 30px 0 0;">
     <div class="layui-form-item">
       <label class="layui-form-label">公司名</label>
@@ -41,7 +41,7 @@
       <input type="button" lay-submit="" lay-filter="layuiadmin-app-form-edit" id="layuiadmin-app-form-edit" value="确认编辑"></input>
     </div>
   </div>
-
+</form>
  <script type="text/javascript" th:src="@{/static/layuiadmin/layui/layui.js}"></script>
   <script>
 
@@ -56,10 +56,21 @@
     //监听提交
     form.on('submit(company-add-form-submit)', function(data){
       var field = data.field; //获取提交的字段
-      alert(JSON.stringify(field));
       var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引  
-      //提交 Ajax 成功后，关闭当前弹层并重载表格
       //$.ajax({});
+       $.ajax({  
+			url: "companyAdd",
+	        type: 'POST',  
+	        data:$('#myForm').serialize(),// 序列化表单值  
+	        dataType: 'json',//服务端接收的数据类型
+	        success:function(json) {  
+	           alert(1112222);
+	        },  
+	        error:function(json) {  
+	           	alert('请求超时或系统出错!');
+				loaded();
+	        }  
+	   });
       parent.layui.table.reload('LAY-app-content-list'); //重载表格
       parent.layer.close(index); //再执行关闭 
     });
