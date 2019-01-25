@@ -1,38 +1,3 @@
-##上传文件目录
-web: 
-  upload-path: D:/segs/
-##合同正文保存路径
-  upload-contract-path: d:/Contract_Text
-  
-pageOffice-posyspath: d:/lic/
-pageOffice-popassword: 111111
-
-#待办配置
-todoConfig:
-  fillReportUrl: http://10.4.173.134:8181/segs/business-report/edit?redirect=no&ReportId=
-  auditReportUrl: http://10.4.173.134:8181/segs/business-report/audit?redirect=no&ReportId=
-  contractParter: yinq
-  financeParter: linxj
-
-#推送OAjdbc配置
-oaConfig:
-  driver: com.microsoft.sqlserver.jdbc.SQLServerDriver
-  url: jdbc:sqlserver://10.4.173.90;DatabaseName=XMMetroOA
-#  url: jdbc:sqlserver://10.4.173.141;DatabaseName=XMMetroOA
-  user: sa
-  password: a.123456
-#  password: GDJT_Metro
-  
-#uuv接口调用
-bingo: 
-  serviceUuvUrl: http://10.3.51.21:804
-  namespace: http://tempuri.org/
-  
-#短信接口  
-messageSend: 
-  serviceUuvUrl: http://10.3.10.26:13031
-  namespace: http://tempuri.org/
-  
 spring: 
   resources:
     static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${web.upload-path}
@@ -78,16 +43,3 @@ spring:
           
           
   
-## t-io 网络配置
-tio-config: 
-  secret: fb49e26b1014935f380e26360d917063
-  serverIp: 127.0.0.1
-  serverPort: 6789
-  serverTimeout: 10000
-
-#管理中心配置
-segs-center: 
-  isOpen: false
-  #上传数据地址
-  syndata:
-    url: http://172.16.53.225:8008/segs-center/syndata/

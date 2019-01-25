@@ -1,12 +1,6 @@
-##上传文件目录
+  ##上传文件目录
 web: 
-  upload-path: D:/segs/
-##合同正文保存路径
-  upload-contract-path: d:/Contract_Text
-  
-pageOffice-posyspath: d:/lic/
-pageOffice-popassword: 111111
-
+  upload-path: D:/webapps/tysoft/
   
 spring: 
   resources:
@@ -15,34 +9,14 @@ spring:
   datasource: 
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mysql://localhost:3306/tyoa?characterEncoding=utf8
-#    url: jdbc:mysql://localhost:3306/xmmetro_segs?characterEncoding=utf8
     username: root
     password: 123456
-#  thymeleaf:
-#    mode:LEGACYHTML5
-#    cache:false
-#    url: jdbc:mysql://10.4.173.134/xmmetro_ic?characterEncoding=utf8
-#    username: root
-#    password: gmmsxmrbi
-    # 初始化大小，最小，最大
-#    initialSize: 5
-#    maxIdle: 20
-#    minIdle: 5
-#    maxActive: 50
-#    #是否自动回收超时连接
-#    removeAbandoned: true
-#    #超时时间(以秒数为单位)
-#    removeAbandonedTimeout: 18000
-#    #超时等待时间以毫秒为单位 6000毫秒/1000等于60秒
-#    maxWait: 100000
-#    testWhileIdle: true
-#    #检测数据库的查询语句
-#    validationQuery: select 1 from dual
-#    testOnBorrow: true
-#    #每隔五分钟检测空闲超过10分钟的连接
-#    minEvictableIdleTimeMillis: 600000
-#    timeBetweenevictionRunsMillis: 300000
-#thymeleaf
+    type: com.alibaba.druid.pool.DruidDataSource
+ #   配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+    filters: stat,wall,log4j
+    maxPoolPreparedStatementPerConnectionSize: 20
+    useGlobalDataSourceStat: true
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
          
   jpa:
     database: MYSQL

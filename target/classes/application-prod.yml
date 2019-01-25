@@ -14,27 +14,8 @@ todoConfig:
   contractParter: yinq
   financeParter: linxj
 
-#推送OAjdbc配置
-oaConfig:
-  driver: com.microsoft.sqlserver.jdbc.SQLServerDriver
-#  url: jdbc:sqlserver://10.3.51.23;DatabaseName=XMMetroOA
-#  url: jdbc:sqlserver://oadb.xmgdjt.com.cn;DatabaseName=XMMetroOA
-#  user: GDJT_OA
-#  password: svCB0HBpLLex5CIrLSsx
-  url: jdbc:sqlserver://10.4.173.141;DatabaseName=XMMetroOA
-  user: sa
-  password: GDJT_Metro
 
-#uuv接口
-bingo: 
-  serviceUuvUrl: http://sso.xmgdjt.com.cn:804
-#  serviceUuvUrl: http://oa.xmgdjt.com.cn:804
-  namespace: http://tempuri.org/
-  
-#短信接口  
-messageSend: 
-  serviceUuvUrl: http://10.3.10.26:13031
-  namespace: http://tempuri.org/
+
   
 spring: 
   resources:
@@ -80,17 +61,5 @@ spring:
           region.factory_class: org.hibernate.cache.ehcache.EhCacheRegionFactory
           
 
-## t-io 网络配置
-tio-config: 
-  secret: fb49e26b1014935f380e26360d917063
-  serverIp: 127.0.0.1
-  serverPort: 6789
-  serverTimeout: 1000
 
 
-#管理中心配置
-segs-center: 
-  isOpen: false
-  #上传数据地址
-  syndata:
-    url: http://localhost:8008/segs-center/syndata/

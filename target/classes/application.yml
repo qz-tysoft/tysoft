@@ -18,7 +18,7 @@ spring:
       cache: false
       
 logging:
-  file: D:/webapps/segs/log/segs-log.log
+  file: D:/webapps/tysoft/log/segs-log.log
   level: 
     org.hibernate: info
     com.microsoft: info
@@ -27,12 +27,6 @@ server:
   port: 8181
   context-path: /${spring.application.name}
   
-##token配置项          
-audience: 
-  config: 
-    clientId: 84113da4-888b-47ac-8f13-86292fa99bc7
-    base64Secret: c2Vncy1jbG91ZDo4NDExM2RhNC04ODhiLTQ3YWMtOGYxMy04NjI5MmZhOTliYzc=
-    name: restapiuser
-    expiresSecond: 172800
+
     
     

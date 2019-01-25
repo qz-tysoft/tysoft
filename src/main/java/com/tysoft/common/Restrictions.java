@@ -6,14 +6,7 @@ import org.springframework.util.StringUtils;
 
 import com.tysoft.common.Criterion.Operator;
 
-/**     
- * @Title: Restrictions.java   
- * @Package com.lottery.respository.common   
- * @Description: TODO(用一句话描述该文件做什么)   
- * @author 李世康     
- * @date 2017年10月27日 下午9:06:18   
- * @version V1.0     
- */
+
 public class Restrictions {
 	/**
      * 等于

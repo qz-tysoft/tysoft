@@ -5,14 +5,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
-/**     
- * @Title: SpringUtil.java   
- * @Package com.xmrbi.segs.common   
- * @Description: TODO(用一句话描述该文件做什么)   
- * @author 李世康     
- * @date 2018年5月15日 上午8:45:33   
- * @version V1.0     
- */
 @Component
 public class SpringUtil implements ApplicationContextAware {
 	

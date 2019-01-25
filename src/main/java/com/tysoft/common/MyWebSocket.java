@@ -9,14 +9,7 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import org.springframework.stereotype.Component;
 
-/**     
- * @Title: MyWebSocket.java   
- * @Package com.socketTest.config   
- * @Description: TODO(用一句话描述该文件做什么)   
- * @author 李世康     
- * @date 2017年10月16日 下午4:06:00   
- * @version V1.0     
- */
+
 @ServerEndpoint(value = "/websocket")
 @Component
 public class MyWebSocket {
@@ -79,18 +72,7 @@ public class MyWebSocket {
      * @param userId
      * @throws IOException
      */
-//    public static void sendOne(String message,Integer userId){
-//    	for (MyWebSocket item : webSocketSet) {
-//    		if(item.userId == userId){
-//    			try {
-//                    item.sendMessage(message);
-//                } catch (IOException e) {
-//                	e.printStackTrace();
-//                }
-//    			break;
-//    		}
-//    	}
-//    }
+
 
     /**
      * 群发自定义消息
