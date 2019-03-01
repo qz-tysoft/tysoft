@@ -21,9 +21,6 @@
 	</properties>
 
 	<dependencies>
-
-	
-	
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -39,11 +36,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -155,12 +154,11 @@
 			<version>2.1.2</version>
 		</dependency>
 			
-		<!-- tomcat 的支持hxx.-->  
-      <dependency>  
+       <dependency>  
           <groupId>org.springframework.boot</groupId>  
           <artifactId>spring-boot-starter-tomcat</artifactId>  
           <scope>provided</scope>  
-      </dependency>
+       </dependency>
       
       <dependency>
      <groupId>com.alibaba</groupId>

@@ -10,6 +10,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.Ordered;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -22,6 +23,7 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 @ServletComponentScan
 @EnableScheduling
 @EnableAsync//开启异步任务
+@EnableAspectJAutoProxy
 /*@ImportResource("classpath:context.xml")//加载配置文件
 */public class MainApplication {
 

@@ -4,6 +4,7 @@ spring:
     active: dev    
   aop:
     proxy-target-class: true
+    auto: true
   mvc:
     static-path-pattern: /static/**
   ##上传文件大小限制
@@ -16,12 +17,12 @@ spring:
     name: tysoft
   thymeleaf:
       cache: false
-      
+   ##日志配置   
 logging:
-  file: D:/webapps/tysoft/log/segs-log.log
+  file: D:/tysoft_oa/log/tysoft-log.log
   level: 
-    org.hibernate: info
-    com.microsoft: info
+    org.hibernate: warn
+    com.microsoft: warn
   
 server: 
   port: 8181
