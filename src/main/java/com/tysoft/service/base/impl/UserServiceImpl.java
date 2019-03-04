@@ -25,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.tysoft.repository.base.UserRepository;
@@ -65,8 +66,10 @@ public class UserServiceImpl implements UserService {
 	 * @return User
 	 */
 	@Override
+	@Cacheable(value="userCount")
     public User findUserById(String id){
-	    return this.userRepository.findOne(id);
+	    System.out.println("redis测试");
+		return this.userRepository.findOne(id);
 	}
 
 	/**

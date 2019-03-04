@@ -8,6 +8,7 @@ import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomi
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -24,6 +25,7 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 @EnableScheduling
 @EnableAsync//开启异步任务
 @EnableAspectJAutoProxy
+@EnableCaching//redis
 /*@ImportResource("classpath:context.xml")//加载配置文件
 */public class MainApplication {
 
