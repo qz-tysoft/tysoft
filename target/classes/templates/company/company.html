@@ -49,10 +49,13 @@
       <div class="layui-card-body">
     
           <table class="layui-hide" id="test-table-page"></table>
+          <script type="text/html" id="indexTpl">
+          {{d.LAY_TABLE_INDEX+1}}
+          </script>
           
             <script type="text/html" id="company-isOpen">
               <input type="checkbox" name="isOpen" lay-skin="switch" lay-text="启用|禁用" 
-               value="1"></input>
+               value="0" lay-filter="LAY-user-back-switch"></input>
             </script>
     
       </div>
@@ -61,33 +64,43 @@
 
   <script type="text/javascript" th:src="@{/static/layuiadmin/layui/layui.js}"></script>
   <script>
-  
   layui.config({
     base: '../static/layuiadmin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'useradmin', 'table'], function(){
+  }).use(['index', 'useradmin', 'table','form'], function(){
     var $ = layui.$
     ,form = layui.form
     ,table = layui.table;
     //监听搜索
     form.on('submit(LAY-user-back-search)', function(data){
       var field = data.field;
-      
       //执行重载
       table.reload('LAY-user-back-manage', {
         where: field
       });
     });
     
+  //layUi 判断是否选中lay-filter就相当于id
+  form.on('switch(LAY-user-back-switch)', function(data){
+	  //获取当前控件                                                                
+	  var selectIfKey=data.othis; 
+      //获取当前行
+      var parentTr = selectIfKey.parents("tr");
+	  console.log(parentTr);
+      //获取当前所在行的索引
+      var parentTrIndex = parentTr.attr("data-index");    
+      //获取id
+      var dataField = $(parentTr).find("td:eq(0)").find(".layui-table-cell").text(); 
+    });  
+    
     table.render({
         elem: '#test-table-page'
-        ,url: layui.setter.base + 'json/table/user.js'
+        ,url: layui.setter.base + '../../login/findAllUser'
         ,cols: [[
-           {field:'id',  title: '公司名',align:'center'}
-          ,{field:'username', title: '公司账号',align:'center'}
-          ,{field:'sex',  title: '联系人',align:'center'}
-          ,{field:'city', title: '电话',align:'center'}
+           {title: '序号',templet: '#indexTpl',align:'center'}
+          ,{field:'id',  title: '公司名',align:'center'}
+          ,{field:'name', title: '账号',align:'center'}
           ,{field:'sign1', title: '状态', minWidth: 150,templet: '#company-isOpen',align:'center'}
           ,{field:'sign', title: '操作', minWidth: 150,align:'center'}
         ]]
