@@ -1,9 +1,9 @@
-/**
+﻿/**
 * <p>Description: 1.基础数据 bs</p>
 * <p>Copyright: Copyright (c) 2019</p>
-* <p>Company: 厦门路桥信息股份有限公司</p>
+* <p>Company:tysoft</p>
 *
-* @author :dell
+* @author :BearBear
 * @version 1.0
 */
 
@@ -11,9 +11,9 @@ package com.tysoft.service.base;
 
 
 import java.util.List;
-import java.util.Map;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import com.tysoft.common.Criteria;
 import com.tysoft.entity.base.Unit;
 
 /**
@@ -48,29 +48,21 @@ public interface UnitService {
 
 	/**
 	 * 根据条件查询单位表
-	 * @param queryMap
-	 * @param searchText
+	 * @param criteria
 	 * @param sort
 	 * @return List
 	 */
-    public List<Unit> queryUnitList(Map<String,String> queryMap,String searchText,Sort sort);
+    public List<Unit> queryUnitByCondition(Criteria<Unit> criteria,Sort sort);
 
 	/**
 	 * 根据条件分页查询单位表
-	 * @param queryMap
-	 * @param searchText
-	 * @param pageable
+	 * @param criteria
+	 * @param sort
+	 * @param pageNo
+	 * @param pageSize
 	 * @return Page
 	 */
-    public Map<String,Object> queryPagesByMap(Map<String,String> queryMap,String searchText,Pageable pageable);
-
-	/**
-	 * 根据条件分页查询单位表
-	 * @param searchText
-	 * @param pageable
-	 * @return Map<String,Object>
-	 */
-    public Map<String,Object> queryPages(String searchText,Pageable pageable);
+    public Page<Unit> queryUnitByPage(Criteria<Unit> criteria,Sort sort, Integer pageNo, Integer pageSize);
 
 
 }

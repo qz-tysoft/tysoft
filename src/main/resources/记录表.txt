@@ -1,74 +1,5 @@
--- Date:2019-1-4 22:45:47
--- author:dell
-
-SET FOREIGN_KEY_CHECKS=0; 
-
--- DROP TABLE IF EXISTS `bs_company`;
-CREATE TABLE `bs_company` (
-  `id` VARCHAR(100) NOT NULL  COMMENT 'id',
-  `company_name` VARCHAR(500) DEFAULT NULL  COMMENT '公司名',
-  `company_state` INT(20) DEFAULT NULL  COMMENT '状态',
-  `company_num` INT(20) DEFAULT NULL  COMMENT '公司人数',
-  `use_num` INT(20) DEFAULT NULL  COMMENT '使用人数',
-  `dept_num` INT(20) DEFAULT NULL  COMMENT '部门数',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='公司表';
-
-
--- Date:2019-1-4 22:45:47
--- author:dell
-
-SET FOREIGN_KEY_CHECKS=0; 
-
--- DROP TABLE IF EXISTS `bs_company_power`;
-CREATE TABLE `bs_company_power` (
-  `id` VARCHAR(100) NOT NULL  COMMENT 'id',
-  `power_id` VARCHAR(100) DEFAULT NULL  COMMENT '权限id',
-  `company_id` VARCHAR(100) DEFAULT NULL  COMMENT '公司id',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='公司权限表';
-
-
--- Date:2019-1-4 22:45:47
--- author:dell
-
-SET FOREIGN_KEY_CHECKS=0; 
-
--- DROP TABLE IF EXISTS `bs_power`;
-CREATE TABLE `bs_power` (
-  `id` VARCHAR(100) NOT NULL  COMMENT 'id',
-  `power_name` VARCHAR(500) DEFAULT NULL  COMMENT '权限名称',
-  `url` VARCHAR(500) DEFAULT NULL  COMMENT '地址',
-  `father_id` INT(20) DEFAULT NULL  COMMENT '父级id',
-  `company_id` VARCHAR(100) DEFAULT NULL  COMMENT '公司id',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='权限表';
-
-
--- Date:2019-1-4 22:45:47
--- author:dell
-
-SET FOREIGN_KEY_CHECKS=0; 
-
--- DROP TABLE IF EXISTS `bs_role`;
-CREATE TABLE `bs_role` (
-  `id` VARCHAR(100) NOT NULL  COMMENT 'id',
-  `role_name` VARCHAR(500) DEFAULT NULL  COMMENT '角色名',
-  `company_id` VARCHAR(100) DEFAULT NULL  COMMENT '公司id',
-  `unit_id` VARCHAR(100) DEFAULT NULL COMMENT '单位表',
-  KEY `rs_unit_role` (`unit_id`) USING BTREE,
-  CONSTRAINT `fk_rs_unit_role` FOREIGN KEY (`unit_id`) REFERENCES `bs_unit` (`id`),
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色表';
-
-
--- Date:2019-1-4 22:45:47
--- author:dell
-
-SET FOREIGN_KEY_CHECKS=0; 
-
--- Date:2019-1-4 22:45:47
--- author:dell
+-- Date:2019-3-6 15:05:06
+-- author:BearBear
 
 SET FOREIGN_KEY_CHECKS=0; 
 
@@ -76,16 +7,13 @@ SET FOREIGN_KEY_CHECKS=0;
 CREATE TABLE `bs_unit` (
   `id` VARCHAR(100) NOT NULL  COMMENT 'id',
   `unit_name` VARCHAR(500) DEFAULT NULL  COMMENT '单位名',
-  `unit_state` INT(20) DEFAULT NULL  COMMENT '单位状态',
-  `company_id` VARCHAR(100) DEFAULT NULL COMMENT '公司表',
-  KEY `rs_company_unit` (`company_id`) USING BTREE,
-  CONSTRAINT `fk_rs_company_unit` FOREIGN KEY (`company_id`) REFERENCES `bs_company` (`id`),
+  `unit_num` INT(20) DEFAULT NULL  COMMENT '单位人数',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='单位表';
 
 
--- Date:2019-1-4 22:45:47
--- author:dell
+-- Date:2019-3-6 15:05:06
+-- author:BearBear
 
 SET FOREIGN_KEY_CHECKS=0; 
 
@@ -95,7 +23,6 @@ CREATE TABLE `bs_user` (
   `name` VARCHAR(100) DEFAULT NULL  COMMENT '名字',
   `login_name` VARCHAR(500) DEFAULT NULL  COMMENT '账号',
   `login_psw` VARCHAR(500) DEFAULT NULL  COMMENT '密码',
-  `company_id` VARCHAR(100) DEFAULT NULL  COMMENT '公司id',
   `state` INT(20) DEFAULT NULL  COMMENT '人员状态',
   `unit_id` VARCHAR(100) DEFAULT NULL COMMENT '单位表',
   KEY `rs_unit_user` (`unit_id`) USING BTREE,
@@ -104,8 +31,8 @@ CREATE TABLE `bs_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
 
 -- 请另存为UTF-8编码格式后再用mysql工具导入运行该文件（建议用EditPlus打开另存为UTF-8编码）
--- Date:2019-1-4 22:45:47
--- author:dell
+-- Date:2019-3-6 15:05:06
+-- author:BearBear
 
 SET FOREIGN_KEY_CHECKS=0; 
 
@@ -123,8 +50,8 @@ CREATE TABLE SS_ROLE_POWER (
 
 
 -- 请另存为UTF-8编码格式后再用mysql工具导入运行该文件（建议用EditPlus打开另存为UTF-8编码）
--- Date:2019-1-4 22:45:47
--- author:dell
+-- Date:2019-3-6 15:05:06
+-- author:BearBear
 
 SET FOREIGN_KEY_CHECKS=0; 
 
@@ -140,5 +67,28 @@ CREATE TABLE SS_USER_ROLE (
   PRIMARY KEY (`user_id`,`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='';
 
+-- Date:2019-3-6 15:05:05
+-- author:BearBear
 
+SET FOREIGN_KEY_CHECKS=0; 
 
+-- DROP TABLE IF EXISTS `bs_power`;
+CREATE TABLE `bs_power` (
+  `id` VARCHAR(100) NOT NULL  COMMENT 'id',
+  `power_name` VARCHAR(500) DEFAULT NULL  COMMENT '权限名称',
+  `url` VARCHAR(500) DEFAULT NULL  COMMENT '地址',
+  `icon` VARCHAR(100) DEFAULT NULL  COMMENT '图标名称',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='权限表';
+
+-- Date:2019-3-6 15:05:06
+-- author:BearBear
+
+SET FOREIGN_KEY_CHECKS=0; 
+
+-- DROP TABLE IF EXISTS `bs_role`;
+CREATE TABLE `bs_role` (
+  `id` VARCHAR(100) NOT NULL  COMMENT 'id',
+  `role_name` VARCHAR(500) DEFAULT NULL  COMMENT '角色名',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色表';

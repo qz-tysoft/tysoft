@@ -1,3 +1,14 @@
+﻿/**
+* <p>Description: SEGS_COM SEGS_COM</p>
+*
+* <p>Copyright: Copyright (c) 2019</p>
+*
+* <p>Company: tysoft</p>
+*
+* @author :BearBear
+* @version 1.0
+*/
+
 package com.tysoft.entity.base;
 
 import java.io.Serializable;
@@ -8,6 +19,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.Table;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Column;
 import java.util.HashMap;
 import java.util.Map;
 import java.text.SimpleDateFormat;
@@ -17,7 +29,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * 权限表 
- * 创建日期 2019-1-4 22:16:29
+ * 创建日期 2019-3-6 15:11:13
  */
 @Entity
 @Table(name="bs_power")
@@ -25,7 +37,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Power implements Serializable{
 
-    private static final long serialVersionUID = 167806838301L;
+    private static final long serialVersionUID = 376355989795L;
 
     public  Power(){
     }
@@ -49,14 +61,10 @@ public class Power implements Serializable{
     private java.lang.String url;
 
     /**
-     * 父级id
+     * 图标名称
      */
-    private java.lang.Integer fatherId;
+    private java.lang.String icon;
 
-    /**
-     * 公司id
-     */
-    private java.lang.String companyId;
 
     @Id
     @GenericGenerator(name="idGenerator", strategy="uuid")
@@ -64,6 +72,7 @@ public class Power implements Serializable{
     /**
      *@return:java.lang.String id
      */
+    @Column(length=100)
     public java.lang.String getId(){
       return this.id;
     }
@@ -77,6 +86,7 @@ public class Power implements Serializable{
     /**
      *@return:java.lang.String 权限名称
      */
+    @Column(length=500)
     public java.lang.String getPowerName(){
       return this.powerName;
     }
@@ -90,6 +100,7 @@ public class Power implements Serializable{
     /**
      *@return:java.lang.String 地址
      */
+    @Column(length=500)
     public java.lang.String getUrl(){
       return this.url;
     }
@@ -101,29 +112,17 @@ public class Power implements Serializable{
     }
 
     /**
-     *@return:java.lang.Integer 父级id
+     *@return:java.lang.String 图标名称
      */
-    public java.lang.Integer getFatherId(){
-      return this.fatherId;
+    @Column(length=100)
+    public java.lang.String getIcon(){
+      return this.icon;
     }
     /**
-     *@param:java.lang.Integer 父级id
+     *@param:java.lang.String 图标名称
      */
-    public void setFatherId(java.lang.Integer fatherId){ 
-      this.fatherId=fatherId;
-    }
-
-    /**
-     *@return:java.lang.String 公司id
-     */
-    public java.lang.String getCompanyId(){
-      return this.companyId;
-    }
-    /**
-     *@param:java.lang.String 公司id
-     */
-    public void setCompanyId(java.lang.String companyId){ 
-      this.companyId=companyId;
+    public void setIcon(java.lang.String icon){ 
+      this.icon=icon;
     }
 
 
@@ -133,14 +132,13 @@ public class Power implements Serializable{
         vo.setId(this.id);
         vo.setPowerName(this.powerName);
         vo.setUrl(this.url);
-        vo.setFatherId(this.fatherId);
-        vo.setCompanyId(this.companyId);
+        vo.setIcon(this.icon);
        return vo;
     }
 
     /**PoToJson*/
     public String poToJson() {
-    	SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     	StringBuilder sb = new StringBuilder("{");
         sb.append("\"id\":\"").append(this.getId()).append("\"");
         sb.append(",");
@@ -148,22 +146,19 @@ public class Power implements Serializable{
         sb.append(",");
         sb.append("\"url\":\"").append(this.getUrl()).append("\"");
         sb.append(",");
-        sb.append("\"fatherId\":\"").append(this.getFatherId()).append("\"");
-        sb.append(",");
-        sb.append("\"companyId\":\"").append(this.getCompanyId()).append("\"");
+        sb.append("\"icon\":\"").append(this.getIcon()).append("\"");
         sb.append("}");
         return sb.toString();
     }
 
     /**PoToMap*/
     public Map<String, Object> poToMap() {
-    	SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     	Map<String, Object> jsonMap = new HashMap<String, Object>();
         jsonMap.put("id",this.id);
         jsonMap.put("powerName",this.powerName);
         jsonMap.put("url",this.url);
-        jsonMap.put("fatherId",this.fatherId);
-        jsonMap.put("companyId",this.companyId);
+        jsonMap.put("icon",this.icon);
         return jsonMap;
     }
 }

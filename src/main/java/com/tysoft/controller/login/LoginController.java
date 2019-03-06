@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.commons.collections4.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tysoft.common.JsonUtils;
+import com.tysoft.common.MD5Util;
 import com.tysoft.entity.base.User;
 import com.tysoft.service.base.UserService;
 import net.sf.json.JSONArray;
@@ -39,15 +41,20 @@ public class LoginController {
 	@ResponseBody
 	public Map<String, Object> isLoginMsg(HttpServletRequest request){
 		Map<String,Object> tipMsg=new HashedMap<>();
-		//User user=new User();
-		//user.setLoginName("redis");
-		//this.userService.saveUser(user);
-		//redis缓存设置
-		User user=this.userService.findUserById("4028209a6947b8c1016947b9eb970001");
 		String loginName=request.getParameter("userName");
 		String loginPwd=request.getParameter("password");
-		if(loginName.equals(loginPwd)) {
-			tipMsg.put("msg", 0);
+		User user=this.userService.findUser(loginName, loginPwd);
+		if(user!=null) {
+			if(user.getState()==0) {
+				tipMsg.put("msg", 0);
+				//加入session
+				request.getSession().setAttribute("SYS_USER", user);
+			}else if(user.getState()==1) {
+				//用户被禁用
+				tipMsg.put("msg", 1);
+			}
+		}else {
+			tipMsg.put("msg", 2);
 		}
 		return tipMsg;
 	}
@@ -55,6 +62,8 @@ public class LoginController {
 	//主界面
 	@RequestMapping("mainView")
 	public String mainView(HttpServletRequest request){
+		User user=(User) request.getSession().getAttribute("SYS_USER");
+		request.setAttribute("user", user);
 		return mainView;
 	}
 	
@@ -62,6 +71,8 @@ public class LoginController {
 	@RequestMapping("findAllUser")
 	@ResponseBody
 	public Object findAllUser(HttpServletRequest request){
+		String companyAccount=request.getParameter("companyAccount");
+		System.out.println(companyAccount);
 		Map<String, Object> resultMap = new LinkedHashMap<String,Object>();
 		List<User> users=this.userService.queryAllUser();
 		List<Object> userJson=new ArrayList<>();

@@ -1,3 +1,14 @@
+﻿/**
+* <p>Description: SEGS_COM SEGS_COM</p>
+*
+* <p>Copyright: Copyright (c) 2019</p>
+*
+* <p>Company: tysoft</p>
+*
+* @author :BearBear
+* @version 1.0
+*/
+
 package com.tysoft.entity.base;
 
 import java.io.Serializable;
@@ -8,10 +19,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.Table;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.JoinColumn;
-import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import java.util.HashMap;
 import java.util.Map;
 import java.text.SimpleDateFormat;
@@ -22,7 +30,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 /**
  * 单位表 单位表
 
- * 创建日期 2019-1-4 21:59:53
+ * 创建日期 2019-3-6 15:11:13
  */
 @Entity
 @Table(name="bs_unit")
@@ -30,7 +38,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Unit implements Serializable{
 
-    private static final long serialVersionUID = 10663550610L;
+    private static final long serialVersionUID = 233931232148L;
 
     public  Unit(){
     }
@@ -49,14 +57,10 @@ public class Unit implements Serializable{
     private java.lang.String unitName;
 
     /**
-     * 单位状态
+     * 单位人数
      */
-    private java.lang.Integer unitState;
+    private java.lang.Integer unitNum;
 
-    /**
-     *  公司表
-     */
-    private Company company;
 
     @Id
     @GenericGenerator(name="idGenerator", strategy="uuid")
@@ -64,6 +68,7 @@ public class Unit implements Serializable{
     /**
      *@return:java.lang.String id
      */
+    @Column(length=100)
     public java.lang.String getId(){
       return this.id;
     }
@@ -77,6 +82,7 @@ public class Unit implements Serializable{
     /**
      *@return:java.lang.String 单位名
      */
+    @Column(length=500)
     public java.lang.String getUnitName(){
       return this.unitName;
     }
@@ -88,56 +94,48 @@ public class Unit implements Serializable{
     }
 
     /**
-     *@return:java.lang.Integer 单位状态
+     *@return:java.lang.Integer 单位人数
      */
-    public java.lang.Integer getUnitState(){
-      return this.unitState;
+    public java.lang.Integer getUnitNum(){
+      return this.unitNum;
     }
     /**
-     *@param:java.lang.Integer 单位状态
+     *@param:java.lang.Integer 单位人数
      */
-    public void setUnitState(java.lang.Integer unitState){ 
-      this.unitState=unitState;
+    public void setUnitNum(java.lang.Integer unitNum){ 
+      this.unitNum=unitNum;
     }
 
-    @ManyToOne( cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY )
-    @JoinColumn(name="company_id",nullable = true)
-    public Company getCompany() {
-       return company;
-    }
-    public void setCompany(Company company) {
-       this.company = company;
-    }
 
     /**PoToVo*/
     public Unit poToVo() {
         Unit vo = new Unit();
         vo.setId(this.id);
         vo.setUnitName(this.unitName);
-        vo.setUnitState(this.unitState);
+        vo.setUnitNum(this.unitNum);
        return vo;
     }
 
     /**PoToJson*/
     public String poToJson() {
-    	SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     	StringBuilder sb = new StringBuilder("{");
         sb.append("\"id\":\"").append(this.getId()).append("\"");
         sb.append(",");
         sb.append("\"unitName\":\"").append(this.getUnitName()).append("\"");
         sb.append(",");
-        sb.append("\"unitState\":\"").append(this.getUnitState()).append("\"");
+        sb.append("\"unitNum\":\"").append(this.getUnitNum()).append("\"");
         sb.append("}");
         return sb.toString();
     }
 
     /**PoToMap*/
     public Map<String, Object> poToMap() {
-    	SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     	Map<String, Object> jsonMap = new HashMap<String, Object>();
         jsonMap.put("id",this.id);
         jsonMap.put("unitName",this.unitName);
-        jsonMap.put("unitState",this.unitState);
+        jsonMap.put("unitNum",this.unitNum);
         return jsonMap;
     }
 }

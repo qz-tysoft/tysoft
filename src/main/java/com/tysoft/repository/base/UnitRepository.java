@@ -1,9 +1,9 @@
-/**
+﻿/**
 * <p>Description: 单位表管理</p>
 * <p>Copyright: Copyright (c) 2019</p>
-* <p>Company: 厦门路桥信息股份有限公司</p>
-* @author :dell
-* 创建日期 2019-1-4 22:45:47
+* <p>Company: tysoft</p>
+* @author :BearBear
+* 创建日期 2019-3-6 14:43:57
 * @version V1.0
 */
 

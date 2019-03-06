@@ -41,5 +41,4 @@ spring:
           use_query_cache: true
           region.factory_class: org.hibernate.cache.ehcache.EhCacheRegionFactory
           
-          
   

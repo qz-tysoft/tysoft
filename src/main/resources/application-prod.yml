@@ -1,21 +1,6 @@
 ##上传文件目录
 web: 
   upload-path: D:/webapps/segs/
-##合同正文保存路径
-  upload-contract-path: D:/webapps/segs/Contract_Text/
-  
-pageOffice-posyspath: D:/webapps/segs/lic
-pageOffice-popassword: 111111
-
-#待办配置
-todoConfig:
-  fillReportUrl: http://10.4.173.142:8181/segs/business-report/edit?redirect=no&ReportId=
-  auditReportUrl: http://10.4.173.142:8181/segs/business-report/audit?redirect=no&ReportId=
-  contractParter: yinq
-  financeParter: linxj
-
-
-
   
 spring: 
   resources:

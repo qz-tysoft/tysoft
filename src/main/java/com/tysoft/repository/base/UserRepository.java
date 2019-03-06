@@ -1,9 +1,9 @@
-/**
+﻿/**
 * <p>Description: 用户表管理</p>
 * <p>Copyright: Copyright (c) 2019</p>
-* <p>Company: 厦门路桥信息股份有限公司</p>
-* @author :dell
-* 创建日期 2019-1-4 22:45:47
+* <p>Company: tysoft</p>
+* @author :BearBear
+* 创建日期 2019-3-6 14:43:57
 * @version V1.0
 */
 
@@ -30,7 +30,7 @@ public interface UserRepository extends JpaRepository<User,String>, JpaSpecifica
 	 * @param pageable
 	 * @return Page
 	 */
-	@Query("select t from User t where t.name like ?1 or t.loginName like ?1 or t.loginPsw like ?1 or t.companyId like ?1 ")
+	@Query("select t from User t where t.name like ?1 or t.loginName like ?1 or t.loginPsw like ?1 ")
     public Page<User> queryPage(String searchText,Pageable pageable);
 
 

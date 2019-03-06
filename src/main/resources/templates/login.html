@@ -55,23 +55,32 @@
 	 	        });
 			return;
 		}
-		$('#login_but').text("登录中...").attr("disabled","disabled").addClass("layui-disabled");
+		$('#login_but').text("登录中...").attr("disabled","disabled");
     	$.ajax({
 			url:CTX+'login/validate',
 			method:'post',
 			dataType:'json',
 			data:$('#loginForm').serialize(),
 			success:function(json){
-				if(json&&json.msg==0){
+				if(json.msg==0){
 					var mainViewUrl=CTX+'login/mainView';
-					window.open(mainViewUrl);
-					//$('#loginForm').attr("action",CTX)
-					//window.location.href = CTX+'mainWin.html';
-				}else{
-					$('#tipMsg').text(json.msg);
+					window.location.href = CTX+'login/mainView';
+				}else if(json.msg==1){
+					$('#login_but').text('登&nbsp;录'); 
+					layer.msg("该用户已经被禁用",{
+			 	            time:1000,
+			 	            offset: msgHeight+'px'
+			 	      });
+					$('#login_but').text("登录");
+					$('#login_but').attr("disabled",false); 
+				}else if(json.msg==2){
+					layer.msg("请输入正确的账号密码",{
+			 	            time:1000,
+			 	            offset: msgHeight+'px'
+			 	        });
+					$('#login_but').text("登录");
+					$('#login_but').attr("disabled",false); 
 				}
-				$('#login_btn').removeAttr('disabled');
-				$('#login_btn').html('登&nbsp;录');
 			},
 			error:function(){
 				$('#tipMsg').text('请求超时或网络错误');

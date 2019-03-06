@@ -19,19 +19,19 @@
           <div class="layui-inline">
             <label class="layui-form-label">公司名</label>
             <div class="layui-input-block">
-              <input type="text" name="companyAccount" placeholder="请输入" autocomplete="off" class="layui-input"></input>
+              <input type="text" name="companyName" placeholder="请输入" autocomplete="off" class="layui-input"></input>
             </div>
           </div>
           <div class="layui-inline">
             <label class="layui-form-label">公司账号</label>
             <div class="layui-input-block">
-              <input type="text" name="telphone" placeholder="请输入" autocomplete="off" class="layui-input"></input>
+              <input type="text" name="companyAccount" placeholder="请输入" autocomplete="off" class="layui-input"></input>
             </div>
           </div>
            <div class="layui-inline">
             <label class="layui-form-label">状态</label>
             <div class="layui-input-block" style="width: 80px;">
-              <select name="role">
+              <select name="state">
                 <option value="0">启用</option>
                 <option value="1">禁用</option>
               </select>
@@ -47,17 +47,24 @@
       </div>
       
       <div class="layui-card-body">
-    
           <table class="layui-hide" id="test-table-page"></table>
           <script type="text/html" id="indexTpl">
           {{d.LAY_TABLE_INDEX+1}}
           </script>
+           <script type="text/html" id="company-isOpen">
+           {{# if (d.state=== 0) { }}
+           <input type="checkbox" name="isOpen" lay-skin="switch" lay-text="启用|禁用" lay-filter="LAY-user-back-switch" ></input>
+           {{# } else if(d.state=== 1) { }}
+           <input type="checkbox" name="isOpen" lay-skin="switch" lay-text="启用|禁用" lay-filter="LAY-user-back-switch"  checked=""></input>
+           {{# } }}
+          </script>
           
-            <script type="text/html" id="company-isOpen">
-              <input type="checkbox" name="isOpen" lay-skin="switch" lay-text="启用|禁用" 
-               value="0" lay-filter="LAY-user-back-switch"></input>
-            </script>
-    
+           <script type="text/html" id="addBut">
+		   <a lay-event="edit" title="编辑" onClick="edit(this)" href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe642;</i></a>	
+		    &nbsp;
+            &nbsp;
+           <a lay-event="del" title="删除"  onClick="del(this)" href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe640;</i></a>	
+           </script>
       </div>
     </div>
   </div>
@@ -76,7 +83,7 @@
     form.on('submit(LAY-user-back-search)', function(data){
       var field = data.field;
       //执行重载
-      table.reload('LAY-user-back-manage', {
+      table.reload('test-table-page', {
         where: field
       });
     });
@@ -87,13 +94,13 @@
 	  var selectIfKey=data.othis; 
       //获取当前行
       var parentTr = selectIfKey.parents("tr");
-	  console.log(parentTr);
       //获取当前所在行的索引
       var parentTrIndex = parentTr.attr("data-index");    
       //获取id
       var dataField = $(parentTr).find("td:eq(0)").find(".layui-table-cell").text(); 
     });  
     
+    //按钮button
     table.render({
         elem: '#test-table-page'
         ,url: layui.setter.base + '../../login/findAllUser'
@@ -101,18 +108,19 @@
            {title: '序号',templet: '#indexTpl',align:'center'}
           ,{field:'id',  title: '公司名',align:'center'}
           ,{field:'name', title: '账号',align:'center'}
-          ,{field:'sign1', title: '状态', minWidth: 150,templet: '#company-isOpen',align:'center'}
-          ,{field:'sign', title: '操作', minWidth: 150,align:'center'}
+          ,{field:'state', title: '状态编码',align:'center'}
+          ,{field:'state1', title: '状态', minWidth: 150,templet:'#company-isOpen',align:'center'}
+          ,{field:'sign', title: '操作', minWidth: 150,align:'center',templet:'#addBut'}
         ]]
         ,page: true
       });
-  
+    
     //事件
     var active = {
-      batchdel: function(){
-        var checkStatus = table.checkStatus('LAY-user-back-manage')
+      del: function(){
+    	var checkStatus = table.checkStatus('test-table-page')
         ,checkData = checkStatus.data; //得到选中的数据
-
+       
         if(checkData.length === 0){
           return layer.msg('请选择数据');
         }
@@ -124,14 +132,6 @@
           layer.close(index);
           
           layer.confirm('确定删除吗？', function(index) {
-            
-            //执行 Ajax 后重载
-            /*
-            admin.req({
-              url: 'xxx'
-              //,……
-            });
-            */
             table.reload('LAY-user-back-manage');
             layer.msg('已删除');
           });
@@ -158,6 +158,20 @@
       active[type] ? active[type].call(this) : '';
     });
   });
+  
+  function del(node){
+	    layer.prompt({
+	          formType: 1
+	          ,title: '敏感操作，请输入管理员密码'
+	        }, function(value, index){
+	          layer.close(index);
+	          
+	            layer.confirm('确定删除吗？', function(index) {
+	            
+	            layer.msg('已删除');
+	          });
+	        });
+  }
   </script>
 </body>
 </html>

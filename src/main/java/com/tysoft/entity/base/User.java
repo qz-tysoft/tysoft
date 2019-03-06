@@ -1,3 +1,14 @@
+﻿/**
+* <p>Description: SEGS_COM SEGS_COM</p>
+*
+* <p>Copyright: Copyright (c) 2019</p>
+*
+* <p>Company: tysoft</p>
+*
+* @author :BearBear
+* @version 1.0
+*/
+
 package com.tysoft.entity.base;
 
 import java.io.Serializable;
@@ -8,12 +19,16 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.Table;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.CascadeType;
+import com.tysoft.entity.base.Unit;
 import java.util.List;
 import java.util.ArrayList;
+import com.tysoft.entity.base.Role;
 import javax.persistence.ManyToMany;
 import javax.persistence.JoinTable;
 import org.hibernate.annotations.Fetch;
@@ -27,7 +42,7 @@ import javax.persistence.Entity;
 
 /**
  * 用户表 
- * 创建日期 2019-1-4 22:16:29
+ * 创建日期 2019-3-6 15:11:13
  */
 @Entity
 @Table(name="bs_user")
@@ -35,7 +50,7 @@ import javax.persistence.Entity;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User implements Serializable{
 
-    private static final long serialVersionUID = 18777524318L;
+    private static final long serialVersionUID = 10663550610L;
 
     public  User(){
     }
@@ -64,11 +79,6 @@ public class User implements Serializable{
     private java.lang.String loginPsw;
 
     /**
-     * 公司id
-     */
-    private java.lang.String companyId;
-
-    /**
      * 人员状态
      */
     private java.lang.Integer state;
@@ -82,12 +92,14 @@ public class User implements Serializable{
      *  角色表
      */
     private List<Role> roles = new ArrayList<Role>();
+
     @Id
     @GenericGenerator(name="idGenerator", strategy="uuid")
     @GeneratedValue(generator="idGenerator")
     /**
      *@return:java.lang.String id
      */
+    @Column(length=100)
     public java.lang.String getId(){
       return this.id;
     }
@@ -101,6 +113,7 @@ public class User implements Serializable{
     /**
      *@return:java.lang.String 名字
      */
+    @Column(length=100)
     public java.lang.String getName(){
       return this.name;
     }
@@ -114,6 +127,7 @@ public class User implements Serializable{
     /**
      *@return:java.lang.String 账号
      */
+    @Column(length=500)
     public java.lang.String getLoginName(){
       return this.loginName;
     }
@@ -127,6 +141,7 @@ public class User implements Serializable{
     /**
      *@return:java.lang.String 密码
      */
+    @Column(length=500)
     public java.lang.String getLoginPsw(){
       return this.loginPsw;
     }
@@ -135,19 +150,6 @@ public class User implements Serializable{
      */
     public void setLoginPsw(java.lang.String loginPsw){ 
       this.loginPsw=loginPsw;
-    }
-
-    /**
-     *@return:java.lang.String 公司id
-     */
-    public java.lang.String getCompanyId(){
-      return this.companyId;
-    }
-    /**
-     *@param:java.lang.String 公司id
-     */
-    public void setCompanyId(java.lang.String companyId){ 
-      this.companyId=companyId;
     }
 
     /**
@@ -163,8 +165,8 @@ public class User implements Serializable{
       this.state=state;
     }
 
-    @ManyToOne( cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY )
-    @JoinColumn(name="unit_id",nullable = true)
+    @ManyToOne( cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY )
+    @JoinColumn(name="unit_id",nullable = true,foreignKey=@ForeignKey(name="fk_rs_unit_user"))
     public Unit getUnit() {
        return unit;
     }
@@ -175,7 +177,6 @@ public class User implements Serializable{
     @JoinTable(name = "ss_user_role",  joinColumns = { @JoinColumn(name = "user_id") },  inverseJoinColumns = { @JoinColumn(name = "role_id") })
     @Fetch(FetchMode.SUBSELECT)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-
     public List<Role> getRoles() {
        return roles;
     }
@@ -190,14 +191,13 @@ public class User implements Serializable{
         vo.setName(this.name);
         vo.setLoginName(this.loginName);
         vo.setLoginPsw(this.loginPsw);
-        vo.setCompanyId(this.companyId);
         vo.setState(this.state);
        return vo;
     }
 
     /**PoToJson*/
     public String poToJson() {
-    	SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     	StringBuilder sb = new StringBuilder("{");
         sb.append("\"id\":\"").append(this.getId()).append("\"");
         sb.append(",");
@@ -207,8 +207,6 @@ public class User implements Serializable{
         sb.append(",");
         sb.append("\"loginPsw\":\"").append(this.getLoginPsw()).append("\"");
         sb.append(",");
-        sb.append("\"companyId\":\"").append(this.getCompanyId()).append("\"");
-        sb.append(",");
         sb.append("\"state\":\"").append(this.getState()).append("\"");
         sb.append("}");
         return sb.toString();
@@ -216,14 +214,14 @@ public class User implements Serializable{
 
     /**PoToMap*/
     public Map<String, Object> poToMap() {
-    	SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     	Map<String, Object> jsonMap = new HashMap<String, Object>();
         jsonMap.put("id",this.id);
         jsonMap.put("name",this.name);
         jsonMap.put("loginName",this.loginName);
         jsonMap.put("loginPsw",this.loginPsw);
-        jsonMap.put("companyId",this.companyId);
         jsonMap.put("state",this.state);
+        jsonMap.put("unit", this.unit==null?null:this.unit.poToMap());
         return jsonMap;
     }
 }
