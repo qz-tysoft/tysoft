@@ -42,7 +42,7 @@ import javax.persistence.Entity;
 
 /**
  * 用户表 
- * 创建日期 2019-3-6 15:11:13
+ * 创建日期 2019-3-7 9:17:52
  */
 @Entity
 @Table(name="bs_user")
@@ -82,6 +82,11 @@ public class User implements Serializable{
      * 人员状态
      */
     private java.lang.Integer state;
+
+    /**
+     * 电话
+     */
+    private java.lang.Integer phone;
 
     /**
      * 使用单位 单位表
@@ -165,6 +170,19 @@ public class User implements Serializable{
       this.state=state;
     }
 
+    /**
+     *@return:java.lang.Integer 电话
+     */
+    public java.lang.Integer getPhone(){
+      return this.phone;
+    }
+    /**
+     *@param:java.lang.Integer 电话
+     */
+    public void setPhone(java.lang.Integer phone){ 
+      this.phone=phone;
+    }
+
     @ManyToOne( cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY )
     @JoinColumn(name="unit_id",nullable = true,foreignKey=@ForeignKey(name="fk_rs_unit_user"))
     public Unit getUnit() {
@@ -192,6 +210,7 @@ public class User implements Serializable{
         vo.setLoginName(this.loginName);
         vo.setLoginPsw(this.loginPsw);
         vo.setState(this.state);
+        vo.setPhone(this.phone);
        return vo;
     }
 
@@ -208,6 +227,8 @@ public class User implements Serializable{
         sb.append("\"loginPsw\":\"").append(this.getLoginPsw()).append("\"");
         sb.append(",");
         sb.append("\"state\":\"").append(this.getState()).append("\"");
+        sb.append(",");
+        sb.append("\"phone\":\"").append(this.getPhone()).append("\"");
         sb.append("}");
         return sb.toString();
     }
@@ -221,6 +242,7 @@ public class User implements Serializable{
         jsonMap.put("loginName",this.loginName);
         jsonMap.put("loginPsw",this.loginPsw);
         jsonMap.put("state",this.state);
+        jsonMap.put("phone",this.phone);
         jsonMap.put("unit", this.unit==null?null:this.unit.poToMap());
         return jsonMap;
     }

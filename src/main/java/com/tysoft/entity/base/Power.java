@@ -29,7 +29,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * 权限表 
- * 创建日期 2019-3-6 15:11:13
+ * 创建日期 2019-3-7 9:14:11
  */
 @Entity
 @Table(name="bs_power")
@@ -64,6 +64,11 @@ public class Power implements Serializable{
      * 图标名称
      */
     private java.lang.String icon;
+
+    /**
+     * pid
+     */
+    private java.lang.String pid;
 
 
     @Id
@@ -125,6 +130,20 @@ public class Power implements Serializable{
       this.icon=icon;
     }
 
+    /**
+     *@return:java.lang.String pid
+     */
+    @Column(length=100)
+    public java.lang.String getPid(){
+      return this.pid;
+    }
+    /**
+     *@param:java.lang.String pid
+     */
+    public void setPid(java.lang.String pid){ 
+      this.pid=pid;
+    }
+
 
     /**PoToVo*/
     public Power poToVo() {
@@ -133,6 +152,7 @@ public class Power implements Serializable{
         vo.setPowerName(this.powerName);
         vo.setUrl(this.url);
         vo.setIcon(this.icon);
+        vo.setPid(this.pid);
        return vo;
     }
 
@@ -147,6 +167,8 @@ public class Power implements Serializable{
         sb.append("\"url\":\"").append(this.getUrl()).append("\"");
         sb.append(",");
         sb.append("\"icon\":\"").append(this.getIcon()).append("\"");
+        sb.append(",");
+        sb.append("\"pid\":\"").append(this.getPid()).append("\"");
         sb.append("}");
         return sb.toString();
     }
@@ -159,6 +181,7 @@ public class Power implements Serializable{
         jsonMap.put("powerName",this.powerName);
         jsonMap.put("url",this.url);
         jsonMap.put("icon",this.icon);
+        jsonMap.put("pid",this.pid);
         return jsonMap;
     }
 }

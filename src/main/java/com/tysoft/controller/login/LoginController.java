@@ -71,8 +71,6 @@ public class LoginController {
 	@RequestMapping("findAllUser")
 	@ResponseBody
 	public Object findAllUser(HttpServletRequest request){
-		String companyAccount=request.getParameter("companyAccount");
-		System.out.println(companyAccount);
 		Map<String, Object> resultMap = new LinkedHashMap<String,Object>();
 		List<User> users=this.userService.queryAllUser();
 		List<Object> userJson=new ArrayList<>();

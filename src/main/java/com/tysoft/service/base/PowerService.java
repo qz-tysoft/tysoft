@@ -64,5 +64,5 @@ public interface PowerService {
 	 */
     public Page<Power> queryPowerByPage(Criteria<Power> criteria,Sort sort, Integer pageNo, Integer pageSize);
 
-
+    public Power  parentPower(String powerName); 
 }

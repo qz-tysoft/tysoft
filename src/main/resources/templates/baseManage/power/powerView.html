@@ -17,39 +17,46 @@
       <div class="layui-form layui-card-header layuiadmin-card-header-auto">
         <div class="layui-form-item">
           <div class="layui-inline">
-            <label class="layui-form-label">权限名</label>
+            <label class="layui-form-label">权限模块</label>
             <div class="layui-input-block">
-              <input type="text" name="powerName" placeholder="请输入" autocomplete="off" class="layui-input"></input>
+              <input type="text" id="powerName" name="powerName" placeholder="请输入" autocomplete="off" class="layui-input"></input>
             </div>
           </div>
           
           <div class="layui-inline">
+            <div style="height: 1px;width: 40px"></div>
             <button  style="margin-left:50px;"    class="layui-btn layuiadmin-btn-admin" lay-submit="" lay-filter="LAY-user-back-search">
               <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
             </button>
+            <button class="layui-btn layuiadmin-btn-admin" data-type="clear">清空</button>
             <button class="layui-btn layuiadmin-btn-admin" data-type="add">添加</button>
           </div>
         </div>
       </div>
       
       <div class="layui-card-body">
-          <table class="layui-hide" id="test-table-page"></table>
+          <table class="layui-hide" id="power-table-page" lay-filter="power-table-page"></table>
           <script type="text/html" id="indexTpl">
           {{d.LAY_TABLE_INDEX+1}}
           </script>
           
            <script type="text/html" id="addBut">
-		   <a lay-event="edit" title="编辑" onClick="edit(this)" href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe642;</i></a>	
+		   <a lay-event="edit" title="编辑"  href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe642;</i></a>	
 		    &nbsp;
             &nbsp;
-           <a lay-event="del" title="删除"  onClick="del(this)" href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe640;</i></a>	
-           </script>
+           <a lay-event="addChildPower" title="添加子权限"  href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe654;</i></a>	
+            &nbsp;
+            &nbsp;
+           <a lay-event="del" title="删除"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe640;</i></a>	
+
+ </script>
       </div>
     </div>
   </div>
 
   <script type="text/javascript" th:src="@{/static/layuiadmin/layui/layui.js}"></script>
   <script>
+  //var CTX = [[@{/}]];
   layui.config({
     base: '../static/layuiadmin/' //静态资源所在路径
   }).extend({
@@ -62,7 +69,7 @@
     form.on('submit(LAY-user-back-search)', function(data){
       var field = data.field;
       //执行重载
-      table.reload('test-table-page', {
+      table.reload('power-table-page', {
         where: field
       });
     });
@@ -81,21 +88,27 @@
     
     //按钮button
     table.render({
-        elem: '#test-table-page'
-        ,url: layui.setter.base + '../../login/findAllUser'
+        elem: '#power-table-page'
+        ,url: layui.setter.base + '../../baseManage/powerPage'
         ,cols: [[
            {title: '序号',templet: '#indexTpl',align:'center'}
-          ,{field:'name', title: '权限名',align:'center'}
-          ,{field:'url', title:  'url',align:'center'}
+          ,{field:'powerName', title: '权限模块名称',align:'center'}
           ,{field:'sign', title: '操作', minWidth: 150,align:'center',templet:'#addBut'}
         ]]
         ,page: true
+      });
+    //监听表格点击事件
+    table.on('tool(power-table-page)', function(obj){
+    	var data = obj.data;
+        if(obj.event === 'addChildPower'){
+        	openChildPower(data);
+        }
       });
     
     //事件
     var active = {
       del: function(){
-    	var checkStatus = table.checkStatus('test-table-page')
+    	var checkStatus = table.checkStatus('power-table-page')
         ,checkData = checkStatus.data; //得到选中的数据
        
         if(checkData.length === 0){
@@ -117,17 +130,49 @@
       ,add: function(){
     	  layer.open({
                type: 2
-              ,title: '添加公司'
-              ,content: 'companyAddView'
+              ,title: '添加权限模块'
+              ,content: 'powerView?powerViewType=powerAddView'
               ,maxmin: true
-              ,area: ['420px', '300px']
+              ,area: ['500px', '200px']
               ,btn: ['确定', '取消']
               ,yes: function(index, layero){
-                //点击确认触发 iframe 内容中的按钮提交
-                var submit = layero.find('iframe').contents().find("#company-add-form-submit");
-                submit.click();
+            	  var iframeWindow = window['layui-layer-iframe'+ index]
+            	  ,submitID = 'LAY-power-front-submit'
+                  ,submit = layero.find('iframe').contents().find('#'+ submitID);
+            	  //监听提交
+                  iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                    var field = data.field; //获取提交的字段
+                    //提交 Ajax 成功后，静态更新表格中的数据
+                  	$.ajax({
+			        url:'powerAdd',
+			        method:'post',
+			        dataType:'json',
+			        data:{"powerName":field.powerName},
+			        success:function(date){
+				      if(date.msg==0){
+				    	  layer.msg("模块名已被使用,请重新输入!",{
+				 	            time:1000
+				 	      });
+				      }else if(date.msg==1){
+				    	  table.reload('power-table-page'); //数据刷新
+				    	  layer.msg("添加成功!",{
+				 	            time:1000
+				 	      });
+				    	  layer.close(index); //关闭弹层
+				    	  
+				      }
+			        },
+			        error:function(){
+				    alert('请求超时或系统错误');
+			        }
+		            }); 
+                
+                  });
+                  submit.trigger('click');
               }
             });
+      },clear:function(){
+    	  var powerName=$("#powerName").val("");
       }
     }  
     $('.layui-btn.layuiadmin-btn-admin').on('click', function(){
@@ -148,6 +193,18 @@
 	            layer.msg('已删除');
 	          });
 	        });
+  }
+  
+  function openChildPower(node){
+	  var name=node.powerName;
+	  var index = layer.open({
+		  title: name.toString()+'-子权限',
+		  type: 2,
+          content: 'powerView?powerViewType=powerLookChildView&amp;pid='+node.id.toString()+'',
+          area: ['300px', '300px'],
+          maxmin: true
+        });
+        layer.full(index);
   }
   </script>
 </body>

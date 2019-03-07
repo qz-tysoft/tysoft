@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tysoft.common.Criteria;
+import com.tysoft.common.Restrictions;
 import com.tysoft.repository.base.PowerRepository;
 import com.tysoft.entity.base.Power;
 import com.tysoft.service.base.PowerService;
@@ -98,6 +99,13 @@ public class PowerServiceImpl implements PowerService {
 		Pageable pageable = new PageRequest(pageNo, pageSize, sort);
 		return this.powerRepository.findAll(criteria, pageable);
 	}
-
+	 
+	 @Override
+	 public Power  parentPower(String powerName) {
+		  Criteria<Power> criteria=new Criteria<>();
+		  criteria.add(Restrictions.eq("powerName", powerName, false));
+		  criteria.add(Restrictions.eq("pid", "menu", false));
+		  return this.powerRepository.findOne(criteria);
+	  }
 
 }
