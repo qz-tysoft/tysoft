@@ -107,5 +107,12 @@ public class PowerServiceImpl implements PowerService {
 		  criteria.add(Restrictions.eq("pid", "menu", false));
 		  return this.powerRepository.findOne(criteria);
 	  }
+	 
+	 public void   batchDeletPower(List<Power> powerList) {
+		 for(int i=0;i<powerList.size();i++) {
+			 Power power=powerList.get(i);
+			 this.deletePowerByIds(power.getId());
+		 }
+	 }
 
 }

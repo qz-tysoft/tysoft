@@ -14,8 +14,8 @@ import org.springframework.data.jpa.domain.Specification;
  * @Title: Criteria.java   
  * @Package com.lottery.respository.common   
  * @Description: TODO(用一句话描述该文件做什么)   
- * @author 李世康     
- * @date 2017年10月27日 上午8:37:43   
+ * @author 黄雄雄     
+ * @date 2019年3月8日 上午8:37:43   
  * @version V1.0     
  */
 public class Criteria<T> implements Specification<T> {

@@ -35,7 +35,7 @@
       </div>
       
       <div class="layui-card-body">
-          <table class="layui-hide" id="child-power-table-page" lay-filter="child-power-table-pagee"></table>
+          <table class="layui-hide" id="child-power-table-page" lay-filter="child-power-table-page"></table>
           <script type="text/html" id="indexTpl">
           {{d.LAY_TABLE_INDEX+1}}
           </script>
@@ -44,7 +44,7 @@
 		   <a lay-event="edit" title="编辑"  href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe642;</i></a>	
 		    &nbsp;
             &nbsp;
-           <a lay-event="del" title="删除"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe640;</i></a>	
+           <a lay-event="delChildPower" title="删除"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe640;</i></a>	
             &nbsp;
             &nbsp;
 
@@ -54,6 +54,7 @@
   </div>
 
   <script type="text/javascript" th:src="@{/static/layuiadmin/layui/layui.js}"></script>
+  <script type="text/javascript" th:src="@{/static/json/json2.js}"></script>
   <script>
   //var CTX = [[@{/}]];
   layui.config({
@@ -101,8 +102,27 @@
     //监听表格点击事件
     table.on('tool(child-power-table-page)', function(obj){
     	var data = obj.data;
-        if(obj.event === 'addChildPower'){
-        	openChildPower(data);
+        if(obj.event === 'delChildPower'){
+        	//删除子权限方法
+        	  var id=data.id;
+        	  $.ajax({
+        	        url:'powerDel',
+        	        method:'post',
+        	        dataType:'json',
+        	        data:{"id":id},
+        	        success:function(date){
+        	        	  //数据刷新
+        	        	  table.reload('child-power-table-page');
+        		    	  layer.msg("删除成功!",{
+				 	            time:1000
+				 	      });
+        	        },
+        	        error:function(){
+        		    alert('请求超时或系统错误');
+        	        }
+                    }); 
+        }else if(obj.event==='edit'){
+        	openEditPower(data);
         }
       });
     
@@ -145,13 +165,11 @@
                   iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
                     var field = data.field; //获取提交的字段
                     //提交 Ajax 成功后，静态更新表格中的数据
-                    alert(field.pid);
-                    return 
                   	$.ajax({
 			        url:'powerAdd',
 			        method:'post',
 			        dataType:'json',
-			        data:{"powerName":field.powerName},
+			        data:{"childPower":JSON.stringify(field)},
 			        success:function(date){
 				       if(date.msg==1){
 				    	  table.reload('child-power-table-page'); //数据刷新
@@ -179,32 +197,65 @@
       active[type] ? active[type].call(this) : '';
     });
   });
+
   
-  function del(node){
-	    layer.prompt({
-	          formType: 1
-	          ,title: '敏感操作，请输入管理员密码'
-	        }, function(value, index){
-	          layer.close(index);
-	          
-	            layer.confirm('确定删除吗？', function(index) {
-	            
-	            layer.msg('已删除');
-	          });
-	        });
+  function delChildPower(node){
+	  var id=node.id;
+	  $.ajax({
+	        url:'powerDel',
+	        method:'post',
+	        dataType:'json',
+	        data:{"id":id},
+	        success:function(date){
+		    	  table.reload('child-power-table-page'); //数据刷新
+	        },
+	        error:function(){
+		    alert('请求超时或系统错误');
+	        }
+            }); 
   }
   
-  function openChildPower(node){
-	  var name=node.powerName;
-	  var index = layer.open({
-		  title: name.toString()+'子权限',
-		  type: 2,
-          content: 'http://baidu.com',
-          area: ['300px', '300px'],
-          maxmin: true
-        });
-        layer.full(index);
+  function openEditPower(node){
+	  var $ = layui.$;
+	  var table = layui.table;
+	  layer.open({
+          type: 2
+         ,title: '编辑子权限'
+         ,content: 'powerView?powerViewType=powerEdit&amp;id='+node.id.toString()+''
+         ,maxmin: true
+         ,area: ['500px', '230px']
+         ,btn: ['确定', '取消']
+         ,yes: function(index, layero){
+       	  var iframeWindow = window['layui-layer-iframe'+ index]
+       	  ,submitID = 'LAY-power-edit-submit'
+             ,submit = layero.find('iframe').contents().find('#'+ submitID);
+       	  //监听提交
+             iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+               var field = data.field; //获取提交的字段
+               //提交 Ajax 成功后，静态更新表格中的数据
+             	$.ajax({
+		        url:'powerEdit',
+		        method:'post',
+		        dataType:'json',
+		        data:{"editPower":JSON.stringify(field)},
+		        success:function(date){
+		       	 layer.close(index); 
+		       	 table.reload('child-power-table-page');
+ 	             layer.msg("编辑成功!",{
+		 	            time:1000
+			 	  });
+		        },
+		        error:function(){
+			    alert('请求超时或系统错误');
+		        }
+	            }); 
+             });
+             submit.trigger('click');
+         }
+       });
   }
+  
+  
   </script>
 </body>
 </html>

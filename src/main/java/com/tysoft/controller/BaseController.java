@@ -31,6 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
+
+import com.tysoft.entity.base.User;
 import com.tysoft.entity.security.Annex;
 import com.tysoft.entity.security.AnnexFolder;
 import com.tysoft.entity.security.Authority;
@@ -133,10 +135,10 @@ public abstract class BaseController {
 	 * @return
 	 * @throws Exception
 	 */
-//	protected SystemUser getCurrentSystemUser(HttpServletRequest request) throws Exception{
-//		SystemUser user = (SystemUser)request.getSession().getAttribute("SYS_USER");
-//		return user;
-//	}
+	 protected User getCurrentSystemUser(HttpServletRequest request) throws Exception{
+		User user = (User)request.getSession().getAttribute("SYS_USER");
+		return user;
+	}
 	
 	/**
 	 * 获取当前所属租户

@@ -102,32 +102,21 @@
     	var data = obj.data;
         if(obj.event === 'addChildPower'){
         	openChildPower(data);
+        }else if(obj.event === 'del'){
+        	   layer.prompt({
+        	          formType: 1
+        	          ,title: '敏感操作,请输入管理员密码'
+        	        }, function(value, index){
+        	          validatePsw(value,index,data);
+        	        }); 
+        }else if(obj.event==='edit'){
+        	openEditPower(data);
         }
       });
     
     //事件
     var active = {
-      del: function(){
-    	var checkStatus = table.checkStatus('power-table-page')
-        ,checkData = checkStatus.data; //得到选中的数据
-       
-        if(checkData.length === 0){
-          return layer.msg('请选择数据');
-        }
-        
-        layer.prompt({
-          formType: 1
-          ,title: '敏感操作，请输入管理员密码'
-        }, function(value, index){
-          layer.close(index);
-          
-          layer.confirm('确定删除吗？', function(index) {
-            table.reload('LAY-user-back-manage');
-            layer.msg('已删除');
-          });
-        }); 
-      }
-      ,add: function(){
+      add: function(){
     	  layer.open({
                type: 2
               ,title: '添加权限模块'
@@ -159,7 +148,6 @@
 				 	            time:1000
 				 	      });
 				    	  layer.close(index); //关闭弹层
-				    	  
 				      }
 			        },
 			        error:function(){
@@ -181,18 +169,32 @@
     });
   });
   
-  function del(node){
-	    layer.prompt({
-	          formType: 1
-	          ,title: '敏感操作，请输入管理员密码'
-	        }, function(value, index){
-	          layer.close(index);
-	          
-	            layer.confirm('确定删除吗？', function(index) {
-	            
-	            layer.msg('已删除');
-	          });
-	        });
+  function validatePsw(value,index,data2){
+	  var $ = layui.$;
+	  $.ajax({
+	        url:'validatePsw',
+	        method:'post',
+	        dataType:'json',
+	        data:{"psw":value},
+	        success:function(data){
+	        	 var code=data.msg;
+	        	 layer.close(index); 
+	        	 if(code==1){
+	        		 layer.close(index); 
+	        		 layer.msg("管理员密码错误!",{
+			 	            time:1000
+			 	      });
+	        	 }else if(code==0){
+	        		  layer.confirm('确定删除该权限模块？', function(index) {
+	        			  powerDel(data2,index);
+	        	      });
+	        	 }
+	        },
+	        error:function(){
+		    alert('请求超时或系统错误');
+	        }
+          }); 
+
   }
   
   function openChildPower(node){
@@ -206,6 +208,69 @@
         });
         layer.full(index);
   }
+  
+  function powerDel(data,index){
+	  var $ = layui.$;
+	  var table = layui.table
+	  $.ajax({
+	        url:'powerDel',
+	        method:'post',
+	        dataType:'json',
+	        data:{"id":data.id},
+	        success:function(data2){
+	        	  //数据刷新
+	        	 layer.close(index); 
+	        	 table.reload('power-table-page');
+ 	             layer.msg("模块已删除!",{
+		 	            time:1000
+			 	  });
+	        },
+	        error:function(){
+		    alert('请求超时或系统错误');
+	        }
+        }); 
+  }
+  
+  function openEditPower(node){
+	  var $ = layui.$;
+	  var table = layui.table;
+	  layer.open({
+          type: 2
+         ,title: '编辑权限'
+         ,content: 'powerView?powerViewType=powerEdit&amp;id='+node.id.toString()+''
+         ,maxmin: true
+         ,area: ['500px', '200px']
+         ,btn: ['确定', '取消']
+         ,yes: function(index, layero){
+       	  var iframeWindow = window['layui-layer-iframe'+ index]
+       	  ,submitID = 'LAY-power-edit-submit'
+             ,submit = layero.find('iframe').contents().find('#'+ submitID);
+       	  //监听提交
+             iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+               var field = data.field; //获取提交的字段
+               //提交 Ajax 成功后，静态更新表格中的数据
+             	$.ajax({
+		        url:'powerEdit',
+		        method:'post',
+		        dataType:'json',
+		        data:{"editPower":JSON.stringify(field)},
+		        success:function(date){
+		       	 layer.close(index); 
+		       	 table.reload('power-table-page');
+ 	             layer.msg("编辑成功!",{
+		 	            time:1000
+			 	  });
+		        },
+		        error:function(){
+			    alert('请求超时或系统错误');
+		        }
+	            }); 
+             });
+             submit.trigger('click');
+         }
+       });
+  }
+  
   </script>
 </body>
 </html>

@@ -15,7 +15,7 @@
       <label class="layui-form-label">名称</label>
       <div class="layui-input-inline">
         <input type="hidden"  name="pid" th:value="${pid}"/>
-        <input type="text" name="powerName" lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">
+        <input type="text" name="powerName" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
         </input>
       </div>
     </div>
@@ -23,7 +23,7 @@
     <div class="layui-form-item" th:if="${pid}!=null">
       <label class="layui-form-label">url</label>
       <div class="layui-input-inline">
-        <input type="text" name="url" lay-verify="required" placeholder="请输入url" autocomplete="off" class="layui-input">
+        <input style="width: 350px;" type="text" name="url" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
         </input>
       </div>
     </div>

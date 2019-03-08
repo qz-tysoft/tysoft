@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8"/>
-  <title>添加权限</title>
+  <title>编辑权限</title>
   <meta name="renderer" content="webkit"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
@@ -14,22 +14,25 @@
     <div class="layui-form-item">
       <label class="layui-form-label">名称</label>
       <div class="layui-input-inline">
-        <input type="hidden"  name="pid" th:value="${pid}"/>
-        <input type="text" name="powerName" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
-        </input>
+        <input type="hidden"  name="id" th:value="${power.id}"/>
+        <input type="hidden"  name="pid" th:value="${power.pid}"/>
+        <input type="hidden"  name="icon" th:value="${power.icon}"/>
+        <input th:if="${power.pid}==menu" th:value="${power.url}"  type="hidden" name="url"/>
+        <input type="text" th:value="${power.powerName}" name="powerName" lay-verify="required" placeholder="" autocomplete="off" class="layui-input"/>
       </div>
     </div>
     
-    <div class="layui-form-item" th:if="${pid}!=null">
+  
+  <div class="layui-form-item" th:if="${power.pid}!=menu">
       <label class="layui-form-label">url</label>
       <div class="layui-input-inline">
-        <input style="width: 350px;" type="text" name="url" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
-        </input>
+          <input  th:if="${power.pid}!=menu" th:value="${power.url}" style="width: 350px;" type="text" name="url" lay-verify="required" placeholder="" autocomplete="off" class="layui-input"/>
       </div>
     </div>
+  
     
     <div class="layui-form-item layui-hide">
-      <input type="button" lay-submit="" lay-filter="LAY-power-front-submit" id="LAY-power-front-submit" value="确认"></input>
+      <input type="button" lay-submit="" lay-filter="LAY-power-edit-submit" id="LAY-power-edit-submit" value="确认"></input>
     </div>
   </div>
  <script type="text/javascript" th:src="@{/static/layuiadmin/layui/layui.js}"></script>

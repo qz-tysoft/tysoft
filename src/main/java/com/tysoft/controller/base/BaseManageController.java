@@ -18,19 +18,25 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.JsonObject;
 import com.tysoft.common.Criteria;
+import com.tysoft.common.JsonUtils;
+import com.tysoft.common.MD5Util;
 import com.tysoft.common.Restrictions;
+import com.tysoft.controller.BaseController;
 import com.tysoft.entity.base.Power;
+import com.tysoft.entity.base.User;
 import com.tysoft.service.base.PowerService;
 import com.tysoft.service.base.RoleService;
 import com.tysoft.service.base.UnitService;
 import com.tysoft.service.base.UserService;
 
 import jodd.util.StringUtil;
+import net.sf.json.JSONObject;
 
 @Controller
 @RequestMapping("/baseManage")
-public class BaseManageController {
+public class BaseManageController extends BaseController{
 	//自动装载相关服务
 		@Autowired
 		protected PowerService powerService;
@@ -42,11 +48,12 @@ public class BaseManageController {
 		protected  UserService userService;
 		private String userView="baseManage/user/userView"; 
 		private String userAdd="baseManage/user/user-add"; 
+		private String powerView="baseManage/power/powerView";
+		private String powerAdd="baseManage/power/power-add";
+		private String powerEdit="baseManage/power/power-edit"; 
+		private String powerLookChild="baseManage/power/power-look-child";
 		private String unitView="baseManage/unit/unitView";
 		private String unitAdd="baseManage/unit/unit-add"; 
-		private String powerView="baseManage/power/powerView";
-		private String powerAdd="baseManage/power/power-add"; 
-		private String powerLookChild="baseManage/power/power-look-child";
 		private String roleView="baseManage/role/roleView";
 		private String roleAdd="baseManage/power/role-add"; 
 		   
@@ -62,13 +69,11 @@ public class BaseManageController {
 	  		return userAdd;
 	  	}
 	  	
-	  	
 	    //人员增加
 	  	@RequestMapping("userAdd")
 		@ResponseBody
 		public Map<String, Object> companyAdd(HttpServletRequest request){
 	  		Map<String,Object> tipMsg=new HashedMap<>();
-	  		String companyName=request.getParameter("companyName");
 	  		tipMsg.put("msg", 1);
 	        return   tipMsg;
 	  	}
@@ -89,6 +94,11 @@ public class BaseManageController {
 				String pid=request.getParameter("pid");
 				request.setAttribute("pid", pid);
 				view=powerLookChild;
+			}else if(powerViewType.equals("powerEdit")) {
+				String id=request.getParameter("id");
+				Power  power=this.powerService.findPowerById(id);
+				request.setAttribute("power",power);
+				view=powerEdit;
 			}
 	  		return view;
 	  	}
@@ -123,6 +133,7 @@ public class BaseManageController {
 					String icon=power.getIcon();
 					map.put("id", id);
 					map.put("powerName", powerName);
+					map.put("url", power.getUrl());
 					map.put("icon", icon);
 					listMap.add(map);
 				}
@@ -135,33 +146,112 @@ public class BaseManageController {
 			return powerMap;
 		}
 		
-		
-		
 		//权限增加界面
 	  	@RequestMapping("powerAddView")
 	  	public String powerAddView(HttpServletRequest request){
 	  		return powerAdd;
 	  	}
-	  	 //人员增加
+	  	
+	  	//权限增加
 	  	@RequestMapping("powerAdd")
 		@ResponseBody
 		public Map<String, Object> powerAdd(HttpServletRequest request){
 	  		Map<String,Object> tipMsg=new HashedMap<>();
+	  		//权限json字符串
+	  		String childPower=request.getParameter("childPower");
             String powerName=request.getParameter("powerName");
-            Power power=this.powerService.parentPower(powerName);
-            if(power!=null) {
-            	//该权限模块已存在
-            	tipMsg.put("msg", 0);
+            if(StringUtil.isNotBlank(childPower)) {
+             //获得对象
+    	  	 JSONObject obj=JSONObject.fromObject(childPower);
+    	  	 Power power=new Power();
+    	  	 power.setPid((String)obj.get("pid"));
+    	  	 power.setPowerName((String)obj.get("powerName"));
+    	  	 power.setUrl((String)obj.get("url"));
+    	  	 Power savePower=this.powerService.savePower(power);
+    	  	 if(savePower!=null) {
+    	  		tipMsg.put("msg",1);
+    	  	 }
             }else {
-            	Power addPower=new Power();
-            	addPower.setPowerName(powerName);
-            	addPower.setPid("menu");
-            	Power newPower=this.powerService.savePower(addPower);
-            	if(newPower!=null) {
-            		tipMsg.put("msg", 1);	
-            	}
+            	 Power power=this.powerService.parentPower(powerName);
+                 if(power!=null) {
+                 	//该权限模块已存在
+                 	tipMsg.put("msg", 0);
+                 }else {
+                 	Power addPower=new Power();
+                 	addPower.setPowerName(powerName);
+                 	addPower.setPid("menu");
+                 	Power newPower=this.powerService.savePower(addPower);
+                 	if(newPower!=null) {
+                 		tipMsg.put("msg", 1);	
+                 	}
+                 }
             }
+           
 	        return   tipMsg;
 	  	}
 	  	
+	  	//权限修改
+		@RequestMapping("powerEdit")
+		@ResponseBody
+	  	public Map<String, Object> powerEdit(HttpServletRequest request){
+	  		Map<String,Object> tipMsg=new HashedMap<>();
+	  		String editPower=request.getParameter("editPower");
+	  		JSONObject obj=JSONObject.fromObject(editPower);
+	  		Power power=(Power)JSONObject.toBean(obj, Power.class);
+	  		this.powerService.savePower(power);
+	  		return tipMsg;
+	  	}
+	  	
+	  	//权限删除
+	  	@RequestMapping("powerDel")
+		@ResponseBody
+	  	public Map<String,Object> powerDel(HttpServletRequest request){
+	  	  Map<String,Object> resultMap=new HashedMap<>();
+	  	  String id=request.getParameter("id");
+	  	  Power power=this.powerService.findPowerById(id);
+	  	  //删除子权限
+	  	  if(!power.getPid().equals("menu")) {
+	  		  this.powerService.deletePowerByIds(id);
+	  	  }else {
+	  	  //批量删除
+	  		  //主权限id
+	  		  String pid=power.getId();
+	  		  Criteria<Power> criteria=new Criteria<>();
+	  		  criteria.add(Restrictions.eq("pid", pid, false));	
+	  		  List<Power> powerList=this.powerService.queryPowerByCondition(criteria, null);
+	  		  powerList.add(power);
+	  		  this.powerService.batchDeletPower(powerList);
+	  	  }
+	  	  
+	  	  return resultMap;
+	  	}
+
+        //验证删除密码
+	  	@RequestMapping("validatePsw")
+		@ResponseBody
+		public Map<String,Object> validatePsw(HttpServletRequest request) throws Exception{
+	  		 Map<String,Object> resultMap=new HashedMap<>();
+	  		 String psw=request.getParameter("psw");
+	  		 User user=this.getCurrentSystemUser(request);
+	  		 if(MD5Util.encode(psw).equals(user.getLoginPsw())) {
+	  			resultMap.put("msg", 0);
+	  		 }else {
+	  			resultMap.put("msg", 1);
+	  		 }
+	  		 return resultMap;
+	  	}
+
+	  	 //单位界面
+	  	@RequestMapping("unitView")
+	  	public String unitView(HttpServletRequest request){
+	  		String view="";
+	  		String unitViewType=request.getParameter("unitViewType");
+	  		if(unitViewType.equals("unitView")) {
+	  			view=unitView;
+	  		}else if(unitViewType.equals("unitAdd")) {
+	  			view=unitAdd;
+	  		}
+	  		return view;
+	  	}
+
 }
