@@ -25,6 +25,7 @@ import com.tysoft.common.MD5Util;
 import com.tysoft.common.Restrictions;
 import com.tysoft.controller.BaseController;
 import com.tysoft.entity.base.Power;
+import com.tysoft.entity.base.Unit;
 import com.tysoft.entity.base.User;
 import com.tysoft.service.base.PowerService;
 import com.tysoft.service.base.RoleService;
@@ -254,4 +255,24 @@ public class BaseManageController extends BaseController{
 	  		return view;
 	  	}
 
+	  	
+	  	
+	    //添加单位
+	  	@RequestMapping("unitAdd")
+		@ResponseBody
+		public Map<String,Object> unitAdd(HttpServletRequest request) throws Exception{
+	  		 Map<String,Object> resultMap=new HashedMap<>();
+	  		 String unitName=request.getParameter("unitName");
+             Unit unit=this.unitService.findUnitByName(unitName);
+             if(unit!=null) {
+    	  		 resultMap.put("msg", 0);
+             }else {
+ 	  			 Unit newUnit=new Unit();
+ 	  			 newUnit.setUnitName(unitName);
+ 	  			 newUnit.setUnitNum(0);
+ 	  			 this.unitService.saveUnit(newUnit);
+            	 resultMap.put("msg", 1);
+             }
+	  		 return resultMap;
+	  	}
 }

@@ -199,15 +199,17 @@
   
   function openChildPower(node){
 	  var name=node.powerName;
+	  var width=window.screen.availWidth*0.7;
+	  var height=window.screen.availHeight*0.6;
 	  var index = layer.open({
 		  title: name.toString()+'-子权限',
 		  type: 2,
           content: 'powerView?powerViewType=powerLookChildView&amp;pid='+node.id.toString()+'',
-          area: ['300px', '300px'],
-          maxmin: true
+          maxmin: true,
+          area:[width+"px",height+"px"]
         });
-        layer.full(index);
   }
+  
   
   function powerDel(data,index){
 	  var $ = layui.$;

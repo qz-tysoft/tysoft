@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tysoft.common.Criteria;
+import com.tysoft.common.Restrictions;
 import com.tysoft.repository.base.UnitRepository;
 import com.tysoft.entity.base.Unit;
 import com.tysoft.service.base.UnitService;
@@ -99,5 +100,13 @@ public class UnitServiceImpl implements UnitService {
 		return this.unitRepository.findAll(criteria, pageable);
 	}
 
+    public Unit findUnitByName(String unitName) {
+    	 Criteria<Unit> criteria=new Criteria<>();
+         criteria.add(Restrictions.eq("unitName", unitName, false));
+         Unit unit=this.unitRepository.findOne(criteria);
+         return unit;
+    }
 
+	
+	
 }

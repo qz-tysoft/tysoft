@@ -64,5 +64,5 @@ public interface UnitService {
 	 */
     public Page<Unit> queryUnitByPage(Criteria<Unit> criteria,Sort sort, Integer pageNo, Integer pageSize);
 
-
+    public Unit findUnitByName(String unitName);
 }

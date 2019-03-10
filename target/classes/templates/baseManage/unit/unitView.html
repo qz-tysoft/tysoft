@@ -35,7 +35,7 @@
       </div>
       
       <div class="layui-card-body">
-          <table class="layui-hide" id="power-table-page" lay-filter="power-table-page"></table>
+          <table class="layui-hide" id="unit-table-page" lay-filter="unit-table-page"></table>
           <script type="text/html" id="indexTpl">
           {{d.LAY_TABLE_INDEX+1}}
           </script>
@@ -69,7 +69,7 @@
     form.on('submit(LAY-user-back-search)', function(data){
       var field = data.field;
       //执行重载
-      table.reload('power-table-page', {
+      table.reload('unit-table-page', {
         where: field
       });
     });
@@ -88,17 +88,18 @@
     
     //按钮button
     table.render({
-        elem: '#power-table-page'
+        elem: '#unit-table-page'
         ,url: layui.setter.base + '../../baseManage/powerPage'
         ,cols: [[
            {title: '序号',templet: '#indexTpl',align:'center'}
           ,{field:'unitName', title: '单位名称',align:'center'}
+          ,{field:'unitNum', title: '单位人数',align:'center'}
           ,{field:'sign', title: '操作', minWidth: 150,align:'center',templet:'#addBut'}
         ]]
         ,page: true
       });
     //监听表格点击事件
-    table.on('tool(power-table-page)', function(obj){
+    table.on('tool(unit-table-page)', function(obj){
     	var data = obj.data;
         if(obj.event === 'addChildPower'){
         	openChildPower(data);
@@ -126,24 +127,24 @@
               ,btn: ['确定', '取消']
               ,yes: function(index, layero){
             	  var iframeWindow = window['layui-layer-iframe'+ index]
-            	  ,submitID = 'LAY-power-front-submit'
+            	  ,submitID = 'LAY-unit-front-submit'
                   ,submit = layero.find('iframe').contents().find('#'+ submitID);
             	  //监听提交
                   iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
                     var field = data.field; //获取提交的字段
                     //提交 Ajax 成功后，静态更新表格中的数据
                   	$.ajax({
-			        url:'powerAdd',
+			        url:'unitAdd',
 			        method:'post',
 			        dataType:'json',
-			        data:{"powerName":field.powerName},
+			        data:{"unitName":field.unitName},
 			        success:function(date){
 				      if(date.msg==0){
-				    	  layer.msg("模块名已被使用,请重新输入!",{
+				    	  layer.msg("已有单位,请重新输入!",{
 				 	            time:1000
 				 	      });
 				      }else if(date.msg==1){
-				    	  table.reload('power-table-page'); //数据刷新
+				    	  table.reload('unit-table-page'); //数据刷新
 				    	  layer.msg("添加成功!",{
 				 	            time:1000
 				 	      });
@@ -220,7 +221,7 @@
 	        success:function(data2){
 	        	  //数据刷新
 	        	 layer.close(index); 
-	        	 table.reload('power-table-page');
+	        	 table.reload('unit-table-page');
  	             layer.msg("模块已删除!",{
 		 	            time:1000
 			 	  });
@@ -256,7 +257,7 @@
 		        data:{"editPower":JSON.stringify(field)},
 		        success:function(date){
 		       	 layer.close(index); 
-		       	 table.reload('power-table-page');
+		       	 table.reload('unit-table-page');
  	             layer.msg("编辑成功!",{
 		 	            time:1000
 			 	  });
