@@ -67,24 +67,7 @@ public class LoginController {
 		return mainView;
 	}
 	
-	//查询所有用户
-	@RequestMapping("findAllUser")
-	@ResponseBody
-	public Object findAllUser(HttpServletRequest request){
-		Map<String, Object> resultMap = new LinkedHashMap<String,Object>();
-		List<User> users=this.userService.queryAllUser();
-		List<Object> userJson=new ArrayList<>();
-		if(users.size()>0) {
-			for(int i=0;i<users.size();i++) {
-				userJson.add(JsonUtils.objectToJson(users.get(i)));
-			}
-		}
-		resultMap.put("code", 0);
-		resultMap.put("msg", "");
-		resultMap.put("count", users.size());
-		resultMap.put("data", users);
-		return resultMap;
-	}
+	
 	
 	//404界面
 	@RequestMapping("noFindView")

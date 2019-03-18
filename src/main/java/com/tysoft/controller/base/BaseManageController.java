@@ -251,6 +251,15 @@ public class BaseManageController extends BaseController{
 	  			view=unitView;
 	  		}else if(unitViewType.equals("unitAdd")) {
 	  			view=unitAdd;
+	  		}else if(unitViewType.equals("unitEdit")) {
+	  			String id=request.getParameter("id");
+	  			Unit unit=this.unitService.findUnitById(id);
+	  			request.setAttribute("unit",unit);
+	  			view=unitAdd;
+	  		}else if(unitViewType.equals("unitAddPeople")) {
+	  		    String unitId=request.getParameter("unitId");
+	  		    request.setAttribute("unitId",unitId);
+	  		    view=userView;
 	  		}
 	  		return view;
 	  	}
@@ -275,4 +284,138 @@ public class BaseManageController extends BaseController{
              }
 	  		 return resultMap;
 	  	}
+	  	
+	    //添加单位
+	  	@RequestMapping("unitPage")
+		@ResponseBody
+		public Object unitPage(HttpServletRequest request) {
+			String page=request.getParameter("page");
+			String limit=request.getParameter("limit");
+			String unitName=request.getParameter("unitName");
+			Criteria<Unit> criteria=new Criteria<>();
+	    
+			if(StringUtil.isNotBlank(unitName)) {
+			  criteria.add(Restrictions.like("unitName", unitName, false));
+			}
+			Order order = new Order(Direction.DESC, "id");// 根据id排序
+			Sort sort = new Sort(order);
+			List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+			Page<Unit> pages=this.unitService.queryUnitByPage(criteria, sort, Integer.valueOf(page)-1, Integer.valueOf(limit));
+			if (pages.getTotalPages() > 0) {
+				Map<String, Object> map = null;
+				Unit firstUnit=null;
+				for (Unit unit : pages.getContent()) {
+					map = new HashMap<String, Object>();
+					String id=unit.getId();
+					String name=unit.getUnitName();
+					Integer unitNum=unit.getUnitNum();
+					map.put("id", id);
+					map.put("unitName", name);
+					map.put("unitNum",unitNum);
+					if(name.equals(this.firstUnit)) {
+						listMap.add(0,map);
+				    }else {
+				    	listMap.add(map);
+				    }
+				}
+			}
+			Map<String, Object> unitMap = new LinkedHashMap<String,Object>();
+			unitMap.put("code", 0);
+			unitMap.put("msg", "");
+			unitMap.put("count",pages.getTotalElements());
+			unitMap.put("data", listMap);
+			return unitMap;
+	  	}
+	  	
+	    //编辑单位
+	  	@RequestMapping("unitEdit")
+		@ResponseBody
+		public String unitEdit(HttpServletRequest request) throws IllegalAccessException {
+	  		String editUnit=request.getParameter("editUnit");
+	  		Unit unit=(Unit)this.StringtoBean(editUnit,Unit.class);
+	  		this.unitService.saveUnit(unit);
+	  		return this.Success;
+	  	}
+	  	
+	  	//解散单位
+	  	@RequestMapping("unitRelease")
+		@ResponseBody
+		public String unitRelease(HttpServletRequest request) {
+	  		String id=request.getParameter("id");
+	  		Unit unit=this.unitService.findUnitById(id);
+	  		int unitNum=unit.getUnitNum();
+	  		if(unitNum==0) {
+	  			this.unitService.deleteUnitByIds(id);	
+	  		}else {
+	  			System.out.println("当前单位存在人员");
+	  		}
+	  		return Success;
+	  	}
+		
+	  	//添加单位-人员
+	  	@RequestMapping("peopleAdd")
+		@ResponseBody
+		public String peopleAdd(HttpServletRequest request) {
+	  		
+	  		
+	  		return null;
+	  	}
+	  	
+		//删除单位-人员
+	  	@RequestMapping("peopleDelet")
+		@ResponseBody
+		public String peopleDelet(HttpServletRequest request) {
+	  		
+	  		
+	  		return null;
+	  	}
+	  	
+	  	
+	    //修改单位-人员
+	  	@RequestMapping("peopleEdit")
+		@ResponseBody
+		public String peopleEdit(HttpServletRequest request) {
+	  		
+	  		
+	  		return null;
+	  	}
+	  	
+		@RequestMapping("peoplePage")
+		@ResponseBody
+		public Object peoplePage(HttpServletRequest request) {
+			Map<String, Object> resultMap = new LinkedHashMap<String,Object>();
+			String unitId=request.getParameter("unitId");
+			String page=request.getParameter("page");
+			String limit=request.getParameter("limit");
+			String name=request.getParameter("name");
+			Criteria<User> criteria=new Criteria<>();
+			criteria.add(Restrictions.eq("unit",this.unitService.findUnitById(unitId), false));
+			if(StringUtil.isNotBlank(name)) {
+			  criteria.add(Restrictions.like("name", name, false));
+			}
+			Order order = new Order(Direction.DESC, "id");// 根据id排序
+			Sort sort = new Sort(order);
+			List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+			Page<User> pages=this.userService.queryUserByPage(criteria, sort, Integer.valueOf(page)-1, Integer.valueOf(limit));
+			if (pages.getTotalPages() > 0) {
+				Map<String, Object> map = null;
+				for (User user : pages.getContent()) {
+					map = new HashMap<String, Object>();
+					String id=user.getId();
+					String userName=user.getName();
+					int phone=user.getPhone();
+					map.put("id", id);
+					map.put("userName", userName);
+					map.put("phone",phone);
+				    listMap.add(map);
+				}
+			}
+			Map<String, Object> peopleMap = new LinkedHashMap<String,Object>();
+			peopleMap.put("code", 0);
+			peopleMap.put("msg", "");
+			peopleMap.put("count",pages.getTotalElements());
+			peopleMap.put("data", listMap);
+			return peopleMap;
+		}
+	
 }

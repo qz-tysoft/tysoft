@@ -14,9 +14,14 @@
     <div class="layui-form-item">
       <label class="layui-form-label">单位名</label>
       <div class="layui-input-inline">
-        <input type="text" name="unitName" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
-        </input>
+     
+        <input  th:if="${unit}==null"  type="text" name="unitName" lay-verify="required" placeholder="" autocomplete="off" class="layui-input"/>
+        <input  th:if="${unit}!=null"  th:value="${unit.unitName}" type="text" name="unitName" lay-verify="required" placeholder="" autocomplete="off" class="layui-input"/>
+        <input  th:if="${unit}!=null"  th:value="${unit.unitNum}" type="hidden" name="unitNum" class="layui-input"/>
+        <input  th:if="${unit}!=null"  th:value="${unit.id}" type="hidden" name="id" class="layui-input"/>
+
       </div>
+      
     </div>
     
     <div class="layui-form-item layui-hide">

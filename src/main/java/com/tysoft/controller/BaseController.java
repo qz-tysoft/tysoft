@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
+import com.tysoft.entity.base.Unit;
 import com.tysoft.entity.base.User;
 import com.tysoft.entity.security.Annex;
 import com.tysoft.entity.security.AnnexFolder;
@@ -47,10 +49,14 @@ import net.sf.json.JSONObject;
  * @version V2.0     
  */
 public abstract class BaseController {
+	public static  String Success="0";
+	public static  String Fail="1";
+	public static  String firstUnit="未分配人员";
 	
 	@Value("${web.upload-path}")
 	protected String webUploadPath;
-//	@Autowired
+
+	//	@Autowired
 //	protected AnnexService annexService;
 //	
 //	@Autowired  
@@ -592,4 +598,16 @@ public abstract class BaseController {
         cal.add(Calendar.YEAR, 1);  
         return cal.getTime();  
     }  
+    
+    /**
+     * 字符串转Bean
+     * @return
+     */
+   public Object StringtoBean(String str,Class beanClass) {
+	   JSONObject objStr=JSONObject.fromObject(str);
+	   Object obj=JSONObject.toBean(objStr, beanClass);
+	   return obj;
+   }
+    
+  
 }

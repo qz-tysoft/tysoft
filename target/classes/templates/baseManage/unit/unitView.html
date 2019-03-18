@@ -41,13 +41,18 @@
           </script>
           
            <script type="text/html" id="addBut">
+           {{# if (d.unitName!='未分配人员') { }}
 		   <a lay-event="edit" title="编辑"  href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe642;</i></a>	
-		    &nbsp;
-            &nbsp;
-           <a lay-event="addChildPower" title="添加人员"  href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe654;</i></a>	
+           {{# } }}
             &nbsp;
             &nbsp;
+           <a lay-event="addUnitPeople" title="添加人员"  href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe654;</i></a>	
+            &nbsp;
+            &nbsp;
+        
+           {{# if (d.unitName!='未分配人员') { }}
            <a lay-event="del" title="删除"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe640;</i></a>	
+           {{# } }}
 
  </script>
       </div>
@@ -57,6 +62,8 @@
   <script type="text/javascript" th:src="@{/static/layuiadmin/layui/layui.js}"></script>
   <script>
   //var CTX = [[@{/}]];
+  var width=window.screen.availWidth*0.7;
+  var height=window.screen.availHeight*0.6;
   layui.config({
     base: '../static/layuiadmin/' //静态资源所在路径
   }).extend({
@@ -89,7 +96,7 @@
     //按钮button
     table.render({
         elem: '#unit-table-page'
-        ,url: layui.setter.base + '../../baseManage/powerPage'
+        ,url: layui.setter.base + '../../baseManage/unitPage'
         ,cols: [[
            {title: '序号',templet: '#indexTpl',align:'center'}
           ,{field:'unitName', title: '单位名称',align:'center'}
@@ -101,8 +108,8 @@
     //监听表格点击事件
     table.on('tool(unit-table-page)', function(obj){
     	var data = obj.data;
-        if(obj.event === 'addChildPower'){
-        	openChildPower(data);
+        if(obj.event === 'addUnitPeople'){
+        	addUnitPeople(data);
         }else if(obj.event === 'del'){
         	   layer.prompt({
         	          formType: 1
@@ -111,7 +118,7 @@
         	          validatePsw(value,index,data);
         	        }); 
         }else if(obj.event==='edit'){
-        	openEditPower(data);
+        	openEditUnit(data);
         }
       });
     
@@ -145,7 +152,7 @@
 				 	      });
 				      }else if(date.msg==1){
 				    	  table.reload('unit-table-page'); //数据刷新
-				    	  layer.msg("添加成功!",{
+				    	  layer.msg("保存成功!",{
 				 	            time:1000
 				 	      });
 				    	  layer.close(index); //关闭弹层
@@ -186,8 +193,8 @@
 			 	            time:1000
 			 	      });
 	        	 }else if(code==0){
-	        		  layer.confirm('确定删除该权限模块？', function(index) {
-	        			  powerDel(data2,index);
+	        		  layer.confirm('确定删除解散该部门?', function(index) {
+	        			  unitDel(data2,index);
 	        	      });
 	        	 }
 	        },
@@ -198,23 +205,23 @@
 
   }
   
-  function openChildPower(node){
-	  var name=node.powerName;
+  function addUnitPeople(node){
+	  var unitName=node.unitName;
 	  var index = layer.open({
-		  title: name.toString()+'-子权限',
+		  title: unitName+'-添加人员',
 		  type: 2,
-          content: 'powerView?powerViewType=powerLookChildView&amp;pid='+node.id.toString()+'',
-          area: ['300px', '300px'],
+          content: 'unitView?unitViewType=unitAddPeople&amp;unitId='+node.id+'',
+          area:[width+"px",height+"px"],
           maxmin: true
         });
-        layer.full(index);
+      
   }
   
-  function powerDel(data,index){
+  function unitDel(data,index){
 	  var $ = layui.$;
 	  var table = layui.table
 	  $.ajax({
-	        url:'powerDel',
+	        url:'unitRelease',
 	        method:'post',
 	        dataType:'json',
 	        data:{"id":data.id},
@@ -222,7 +229,7 @@
 	        	  //数据刷新
 	        	 layer.close(index); 
 	        	 table.reload('unit-table-page');
- 	             layer.msg("模块已删除!",{
+ 	             layer.msg("单位已解散!",{
 		 	            time:1000
 			 	  });
 	        },
@@ -232,29 +239,29 @@
         }); 
   }
   
-  function openEditPower(node){
+  function openEditUnit(node){
 	  var $ = layui.$;
 	  var table = layui.table;
 	  layer.open({
           type: 2
          ,title: '编辑权限'
-         ,content: 'powerView?powerViewType=powerEdit&amp;id='+node.id.toString()+''
+         ,content: 'unitView?unitViewType=unitEdit&amp;id='+node.id.toString()+''
          ,maxmin: true
          ,area: ['500px', '200px']
          ,btn: ['确定', '取消']
          ,yes: function(index, layero){
        	  var iframeWindow = window['layui-layer-iframe'+ index]
-       	  ,submitID = 'LAY-power-edit-submit'
+       	  ,submitID = 'LAY-unit-front-submit'
              ,submit = layero.find('iframe').contents().find('#'+ submitID);
        	  //监听提交
              iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
                var field = data.field; //获取提交的字段
                //提交 Ajax 成功后，静态更新表格中的数据
-             	$.ajax({
-		        url:'powerEdit',
+                $.ajax({
+		        url:'unitEdit',
 		        method:'post',
 		        dataType:'json',
-		        data:{"editPower":JSON.stringify(field)},
+		        data:{"editUnit":JSON.stringify(field)},
 		        success:function(date){
 		       	 layer.close(index); 
 		       	 table.reload('unit-table-page');

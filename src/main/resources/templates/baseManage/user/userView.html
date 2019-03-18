@@ -11,23 +11,19 @@
   <link rel="stylesheet" th:href="@{/static/layuiadmin/style/admin.css}" media="all"/>
 </head>
 <body>
-
+   
+  <input id="unitId" type="hidden" th:value="${unitId}"/>
   <div class="layui-fluid">   
     <div class="layui-card">
       <div class="layui-form layui-card-header layuiadmin-card-header-auto">
         <div class="layui-form-item">
           <div class="layui-inline">
-            <label class="layui-form-label">公司名</label>
+            <label class="layui-form-label">用户名</label>
             <div class="layui-input-block">
-              <input type="text" name="companyName" placeholder="请输入" autocomplete="off" class="layui-input"></input>
+              <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input"></input>
             </div>
-          </div>
-          <div class="layui-inline">
-            <label class="layui-form-label">公司账号</label>
-            <div class="layui-input-block">
-              <input type="text" name="companyAccount" placeholder="请输入" autocomplete="off" class="layui-input"></input>
-            </div>
-          </div>
+           </div>
+  
            <div class="layui-inline">
             <label class="layui-form-label">状态</label>
             <div class="layui-input-block" style="width: 80px;">
@@ -103,7 +99,7 @@
     //按钮button
     table.render({
         elem: '#test-table-page'
-        ,url: layui.setter.base + '../../login/findAllUser'
+        ,url: layui.setter.base + '../../baseManage/peoplePage?unitId='+$("#unitId").val()
         ,cols: [[
            {title: '序号',templet: '#indexTpl',align:'center'}
           ,{field:'id',  title: '公司名',align:'center'}
@@ -118,7 +114,7 @@
     //事件
     var active = {
       del: function(){
-    	var checkStatus = table.checkStatus('test-table-page')
+    	  var checkStatus = table.checkStatus('test-table-page')
         ,checkData = checkStatus.data; //得到选中的数据
        
         if(checkData.length === 0){
