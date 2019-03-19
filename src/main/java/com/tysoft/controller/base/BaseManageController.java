@@ -15,7 +15,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.JsonObject;
@@ -56,28 +59,7 @@ public class BaseManageController extends BaseController{
 		private String unitView="baseManage/unit/unitView";
 		private String unitAdd="baseManage/unit/unit-add"; 
 		private String roleView="baseManage/role/roleView";
-		private String roleAdd="baseManage/power/role-add"; 
-		   
-	    //人员管理界面
-	  	@RequestMapping("userView")
-	  	public String userView(HttpServletRequest request){
-	  		return userView;
-	  	}
-	  	
-	 	//新增人员界面
-	  	@RequestMapping("userAddView")
-		public String companyAddView(HttpServletRequest request){
-	  		return userAdd;
-	  	}
-	  	
-	    //人员增加
-	  	@RequestMapping("userAdd")
-		@ResponseBody
-		public Map<String, Object> companyAdd(HttpServletRequest request){
-	  		Map<String,Object> tipMsg=new HashedMap<>();
-	  		tipMsg.put("msg", 1);
-	        return   tipMsg;
-	  	}
+	 
 	  	
 	    //权限界面
 	  	@RequestMapping("powerView")
@@ -285,7 +267,7 @@ public class BaseManageController extends BaseController{
 	  		 return resultMap;
 	  	}
 	  	
-	    //添加单位
+	    //单位分页
 	  	@RequestMapping("unitPage")
 		@ResponseBody
 		public Object unitPage(HttpServletRequest request) {
@@ -361,26 +343,7 @@ public class BaseManageController extends BaseController{
 	  		return null;
 	  	}
 	  	
-		//删除单位-人员
-	  	@RequestMapping("peopleDelet")
-		@ResponseBody
-		public String peopleDelet(HttpServletRequest request) {
-	  		
-	  		
-	  		return null;
-	  	}
-	  	
-	  	
-	    //修改单位-人员
-	  	@RequestMapping("peopleEdit")
-		@ResponseBody
-		public String peopleEdit(HttpServletRequest request) {
-	  		
-	  		
-	  		return null;
-	  	}
-	  	
-		@RequestMapping("peoplePage")
+		@RequestMapping("userPage")
 		@ResponseBody
 		public Object peoplePage(HttpServletRequest request) {
 			Map<String, Object> resultMap = new LinkedHashMap<String,Object>();
@@ -403,8 +366,9 @@ public class BaseManageController extends BaseController{
 					map = new HashMap<String, Object>();
 					String id=user.getId();
 					String userName=user.getName();
-					int phone=user.getPhone();
+					String phone=user.getPhone();
 					map.put("id", id);
+					map.put("state",user.getState());
 					map.put("userName", userName);
 					map.put("phone",phone);
 				    listMap.add(map);
@@ -417,5 +381,96 @@ public class BaseManageController extends BaseController{
 			peopleMap.put("data", listMap);
 			return peopleMap;
 		}
-	
+		
+		 //人员管理界面
+	  	@RequestMapping("userView")
+	  	public String userView(HttpServletRequest request){
+	  		return userView;
+	  	}
+	  	
+	 	//新增人员界面
+	  	@RequestMapping("userAddView")
+		public String userAddView(HttpServletRequest request){
+	  		String unitId=request.getParameter("unitId");
+	  		String id=request.getParameter("id");
+	  		User user=null;
+	  		if(StringUtil.isNotBlank(id)) {
+	  			user=this.userService.findUserById(id);
+	  		}else {
+	  			user=new User();
+	  		}
+	  		request.setAttribute("user",user);
+	  		request.setAttribute("unitId",unitId);
+	  		return userAdd;
+	  	}
+	  	
+	    //人员增加
+	  	@RequestMapping(value="userAdd",method=RequestMethod.POST)
+		@ResponseBody
+		public Map<String, Object> userAdd(HttpServletRequest request,User user){
+	  		String unitId=request.getParameter("unitId");
+	  		String editFlag=request.getParameter("editFlag");
+	  		Map<String,Object> tipMsg=new HashedMap<>();
+	  		//编辑标记
+	  		Unit unit=this.unitService.findUnitById(unitId);
+	  		if(StringUtil.isNotBlank(editFlag)) {
+	  		String beforeLoginName=request.getParameter("beforeLoginName");
+	  		String nowLonginName=user.getLoginName();
+	  		//编辑
+	  		if(beforeLoginName.equals(nowLonginName)) {
+	  			user.setUnit(unit);
+	  			tipMsg.put("msg",1);
+	  			this.userService.saveUser(user);
+	  		}else {
+	  			User isUser=this.userService.findIsUser(user);
+	  			if(isUser!=null) {
+		  			tipMsg.put("msg", 0);
+		  		}else {
+		  			user.setUnit(unit);
+		  			tipMsg.put("msg",1);
+		  			this.userService.saveUser(user);
+		  		}
+	  		}
+	  		}else {
+		  		user.setState(0);
+		  		user.setLoginPsw(MD5Util.encode(this.initPsw));
+		  		user.setUnit(unit);
+		  		User isUser=this.userService.findIsUser(user);
+		  		if(isUser!=null) {
+		  			tipMsg.put("msg", 0);
+		  		}else {
+		  			tipMsg.put("msg",1);
+		  			this.userService.saveUser(user);
+		  		}
+	  		}
+	  		
+	        return   tipMsg;
+	  	}
+	  	
+		//删除单位-人员
+	  	@RequestMapping("userDelet")
+		@ResponseBody
+		public String peopleDelet(HttpServletRequest request) {
+	  		String id=request.getParameter("id");
+	  		this.userService.deleteUserByIds(id);
+	  		return Success;
+	  	}
+	  	
+	    //人员状态
+	  	@RequestMapping("userStateOpen")
+		@ResponseBody
+		public String userStateOpen(HttpServletRequest request) {
+	  		String id=request.getParameter("id");
+	  		User user=this.userService.findUserById(id);
+	  		int chang=0;
+	  		int state=user.getState();
+	  		if(state==0) {
+	  			chang=1;//禁用
+	  		}else {
+	  			chang=0;//启用
+	  		}
+	  		user.setState(chang);
+	  		this.userService.saveUser(user);
+	  		return Success;
+	  	}
 }

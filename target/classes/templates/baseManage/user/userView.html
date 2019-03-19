@@ -20,14 +20,15 @@
           <div class="layui-inline">
             <label class="layui-form-label">用户名</label>
             <div class="layui-input-block">
-              <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input"></input>
+              <input type="text" id="userName"  name="name" placeholder="请输入" autocomplete="off" class="layui-input"></input>
             </div>
            </div>
   
            <div class="layui-inline">
             <label class="layui-form-label">状态</label>
-            <div class="layui-input-block" style="width: 80px;">
-              <select name="state">
+            <div class="layui-input-block" style="width:100px;">
+              <select id="state"  name="state">
+                <option value="">=请选择=</option>
                 <option value="0">启用</option>
                 <option value="1">禁用</option>
               </select>
@@ -37,29 +38,31 @@
             <button  style="margin-left:50px;"    class="layui-btn layuiadmin-btn-admin" lay-submit="" lay-filter="LAY-user-back-search">
               <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
             </button>
+            <button class="layui-btn layuiadmin-btn-admin" data-type="clear">清空</button>
             <button class="layui-btn layuiadmin-btn-admin" data-type="add">添加</button>
+            <button class="layui-btn layuiadmin-btn-admin" data-type="batchDelet">批量删除</button>
           </div>
         </div>
       </div>
       
       <div class="layui-card-body">
-          <table class="layui-hide" id="test-table-page"></table>
+          <table class="layui-hide" id="user-table-page" lay-filter="user-table-page"></table>
           <script type="text/html" id="indexTpl">
           {{d.LAY_TABLE_INDEX+1}}
           </script>
-           <script type="text/html" id="company-isOpen">
+           <script type="text/html" id="people-isOpen">
            {{# if (d.state=== 0) { }}
-           <input type="checkbox" name="isOpen" lay-skin="switch" lay-text="启用|禁用" lay-filter="LAY-user-back-switch" ></input>
+           <input lay-event="switchOpen" type="checkbox"  id="{{d.id}}" name="isOpen" lay-skin="switch" lay-text="启用|禁用" lay-filter="switchOpen" ></input>
            {{# } else if(d.state=== 1) { }}
-           <input type="checkbox" name="isOpen" lay-skin="switch" lay-text="启用|禁用" lay-filter="LAY-user-back-switch"  checked=""></input>
+           <input lay-event="switchOpen"  type="checkbox" id="{{d.id}}" name="isOpen" lay-skin="switch" lay-text="启用|禁用" lay-filter="switchOpen"  checked=""></input>
            {{# } }}
           </script>
           
            <script type="text/html" id="addBut">
-		   <a lay-event="edit" title="编辑" onClick="edit(this)" href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe642;</i></a>	
+		   <a lay-event="edit" title="编辑"  href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe642;</i></a>	
 		    &nbsp;
             &nbsp;
-           <a lay-event="del" title="删除"  onClick="del(this)" href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe640;</i></a>	
+           <a lay-event="del" title="删除"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe640;</i></a>	
            </script>
       </div>
     </div>
@@ -79,74 +82,103 @@
     form.on('submit(LAY-user-back-search)', function(data){
       var field = data.field;
       //执行重载
-      table.reload('test-table-page', {
+      table.reload('user-table-page', {
         where: field
       });
     });
+   
     
   //layUi 判断是否选中lay-filter就相当于id
-  form.on('switch(LAY-user-back-switch)', function(data){
-	  //获取当前控件                                                                
-	  var selectIfKey=data.othis; 
+  form.on('switch(switchOpen)', function(data){
+	  //获取当前控件
+	  var id=$(this).attr("id");
+	  isOpen(id);
+	  //var selectIfKey=data.othis; 
       //获取当前行
-      var parentTr = selectIfKey.parents("tr");
+      //var parentTr = selectIfKey.parents("tr");
       //获取当前所在行的索引
-      var parentTrIndex = parentTr.attr("data-index");    
+      //var parentTrIndex = parentTr.attr("data-index");    
       //获取id
-      var dataField = $(parentTr).find("td:eq(0)").find(".layui-table-cell").text(); 
+      //var dataField = $(parentTr).find("td:eq(0)").find(".layui-table-cell").text();
+     
     });  
     
     //按钮button
     table.render({
-        elem: '#test-table-page'
-        ,url: layui.setter.base + '../../baseManage/peoplePage?unitId='+$("#unitId").val()
+        elem: '#user-table-page'
+        ,url: layui.setter.base + '../../baseManage/userPage?unitId='+$("#unitId").val()
         ,cols: [[
            {title: '序号',templet: '#indexTpl',align:'center'}
-          ,{field:'id',  title: '公司名',align:'center'}
-          ,{field:'name', title: '账号',align:'center'}
-          ,{field:'state', title: '状态编码',align:'center'}
-          ,{field:'state1', title: '状态', minWidth: 150,templet:'#company-isOpen',align:'center'}
+          ,{field:'userName',  title: '姓名',align:'center'}
+          ,{field:'phone',  title:'电话',align:'center'}
+          ,{field:'state', title: '状态', minWidth: 150,templet:'#people-isOpen',align:'center'}
           ,{field:'sign', title: '操作', minWidth: 150,align:'center',templet:'#addBut'}
         ]]
         ,page: true
       });
     
+    //操作列
+    table.on('tool(user-table-page)', function(obj){
+    	var data = obj.data;
+        if(obj.event === 'del'){
+        	delet(data);
+        }else if(obj.event === 'edit'){
+        	edit(data);
+        }
+      });
     //事件
     var active = {
-      del: function(){
-    	  var checkStatus = table.checkStatus('test-table-page')
-        ,checkData = checkStatus.data; //得到选中的数据
-       
-        if(checkData.length === 0){
-          return layer.msg('请选择数据');
-        }
-        
-        layer.prompt({
-          formType: 1
-          ,title: '敏感操作，请输入管理员密码'
-        }, function(value, index){
-          layer.close(index);
-          
-          layer.confirm('确定删除吗？', function(index) {
-            table.reload('LAY-user-back-manage');
-            layer.msg('已删除');
-          });
-        }); 
-      }
-      ,add: function(){
+      add: function(){
     	  layer.open({
                type: 2
-              ,title: '添加公司'
-              ,content: 'companyAddView'
+              ,title: '添加人员'
+              ,content: 'userAddView?unitId='+$("#unitId").val()
               ,maxmin: true
-              ,area: ['420px', '300px']
+              ,area: ['420px', '350px']
               ,btn: ['确定', '取消']
               ,yes: function(index, layero){
                 //点击确认触发 iframe 内容中的按钮提交
-                var submit = layero.find('iframe').contents().find("#company-add-form-submit");
-                submit.click();
+                var body = layer.getChildFrame('body', index);
+                //获取iframe中的指定元素
+            	  var iframeWindow = window['layui-layer-iframe'+ index]
+            	  ,submitID = 'people-add-form-submit'
+                  ,submit = layero.find('iframe').contents().find('#'+ submitID);
+            	   iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                         var field = data.field; //获取提交的字段
+                         var myForm=body.find('#myForm');
+                         //提交 Ajax 成功后，静态更新表格中的数据
+                       	$.ajax({
+     			        url:'userAdd',
+     			        method:'post',
+     			        dataType:'json',
+     			        data:myForm.serialize(),
+     			        success:function(date){
+     				      if(date.msg==0){
+     				    	  layer.msg("账号已存在,请重新输入!",{
+     				 	            time:1000
+     				 	      });
+     				      }else if(date.msg==1){
+     				    	  table.reload('user-table-page'); //数据刷新
+     				    	  layer.msg("保存成功!",{
+     				 	            time:1000
+     				 	      });
+     				    	  layer.close(index); //关闭弹层
+     				      }
+     			        },
+     			        error:function(){
+     				    alert('请求超时或系统错误');
+     			        }
+     		            }); 
+                     
+                       });
+                       submit.trigger('click');  
               }
             });
+      },clear:function(){
+    	  $("#userName").val("");
+    	  $("#state option:first").prop("selected", 'selected');
+    	  //var a = document.getElementById("state"); //mySelect是select 的Id
+    	  //a.options[0].selected = true;
       }
     }  
     $('.layui-btn.layuiadmin-btn-admin').on('click', function(){
@@ -155,19 +187,101 @@
     });
   });
   
-  function del(node){
-	    layer.prompt({
-	          formType: 1
-	          ,title: '敏感操作，请输入管理员密码'
-	        }, function(value, index){
-	          layer.close(index);
-	          
-	            layer.confirm('确定删除吗？', function(index) {
-	            
-	            layer.msg('已删除');
-	          });
-	        });
+  //常用数据
+  
+  function delet(node){
+	  var $ = layui.$;
+	  var table = layui.table;
+	  $.ajax({
+	        url:'userDelet',
+	        method:'post',
+	        dataType:'json',
+	        data:{"id":node.id},
+	        success:function(data2){
+	        	  //数据刷新
+	        	 table.reload('user-table-page');
+ 	             layer.msg("用户已删除!",{
+		 	            time:1000
+			 	  });
+	        },
+	        error:function(){
+		    alert('请求超时或系统错误');
+	        }
+        }); 
   }
+  
+  //编辑用户信息
+  function edit(node){
+	  var $ = layui.$;
+	  var table = layui.table;
+	  layer.open({
+          type: 2
+         ,title: '编辑人员'
+         ,content: 'userAddView?unitId='+$("#unitId").val()+"&amp;id="+node.id
+         ,maxmin: true
+         ,area: ['420px', '280px']
+         ,btn: ['确定', '取消']
+         ,yes: function(index, layero){
+           //点击确认触发 iframe 内容中的按钮提交
+           var body = layer.getChildFrame('body', index);
+           //获取iframe中的指定元素
+       	  var iframeWindow = window['layui-layer-iframe'+ index]
+       	  ,submitID = 'people-add-form-submit'
+             ,submit = layero.find('iframe').contents().find('#'+ submitID);
+       	   iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                    var field = data.field; //获取提交的字段
+                    var myForm=body.find('#myForm');
+                    //提交 Ajax 成功后，静态更新表格中的数据
+                  	$.ajax({
+			        url:'userAdd',
+			        method:'post',
+			        dataType:'json',
+			        data:myForm.serialize(),
+			        success:function(date){
+			        	if(date.msg==0){
+    				    	  layer.msg("账号已存在,请重新输入!",{
+    				 	            time:1000
+    				 	      });
+    				      }else if(date.msg==1){
+    				    	  table.reload('user-table-page'); //数据刷新
+    				    	  layer.msg("保存成功!",{
+    				 	            time:1000
+    				 	      });
+    				    	  layer.close(index); //关闭弹层
+    				      }
+			        	
+			        },
+			        error:function(){
+				    alert('请求超时或系统错误');
+			        }
+		            }); 
+                
+                  });
+                  submit.trigger('click');  
+         }
+       });
+	  
+  }
+  
+  //状态改变
+  function isOpen(id){
+	  var $ = layui.$;
+	  var table = layui.table;
+	  $.ajax({
+	        url:'userStateOpen',
+	        method:'post',
+	        dataType:'json',
+	        data:{"id":id},
+	        success:function(data2){
+	        },
+	        error:function(){
+		    alert('请求超时或系统错误');
+	        }
+        }); 
+	  
+  }
+  
+  
   </script>
 </body>
 </html>

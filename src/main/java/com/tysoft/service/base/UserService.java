@@ -71,4 +71,11 @@ public interface UserService {
      * @return
      */
     public User findUser(String loginName,String loginPwd);
+    
+    /**
+     * 判断用户是否存在
+     * @param user
+     * @return
+     */
+    public User findIsUser(User user);
 }

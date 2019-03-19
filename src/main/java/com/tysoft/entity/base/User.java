@@ -86,7 +86,7 @@ public class User implements Serializable{
     /**
      * 电话
      */
-    private java.lang.Integer phone;
+    private java.lang.String phone;
 
     /**
      * 使用单位 单位表
@@ -173,13 +173,13 @@ public class User implements Serializable{
     /**
      *@return:java.lang.Integer 电话
      */
-    public java.lang.Integer getPhone(){
+    public java.lang.String getPhone(){
       return this.phone;
     }
     /**
      *@param:java.lang.Integer 电话
      */
-    public void setPhone(java.lang.Integer phone){ 
+    public void setPhone(java.lang.String phone){ 
       this.phone=phone;
     }
 

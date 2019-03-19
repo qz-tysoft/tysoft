@@ -114,6 +114,18 @@ public class UserServiceImpl implements UserService {
 		criteria.add(Restrictions.eq("state", 0, false));
 		return this.userRepository.findOne(criteria);
     }
+    
+    
+    /**
+     * 查看用户是否存在
+     * @param user
+     * @return
+     */
+    public User findIsUser(User user) {
+    	Criteria<User> criteria = new Criteria<User>();
+		criteria.add(Restrictions.eq("loginName", user.getLoginName(), false));
+		return this.userRepository.findOne(criteria);
+    }
 
 
 }
