@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections4.map.HashedMap;
+import org.hibernate.criterion.Expression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -59,7 +60,7 @@ public class BaseManageController extends BaseController{
 		private String unitView="baseManage/unit/unitView";
 		private String unitAdd="baseManage/unit/unit-add"; 
 		private String roleView="baseManage/role/roleView";
-	 
+		private String userUnitPowerSet="baseManage/user/user-unit-power-set";
 	  	
 	    //权限界面
 	  	@RequestMapping("powerView")
@@ -351,10 +352,23 @@ public class BaseManageController extends BaseController{
 			String page=request.getParameter("page");
 			String limit=request.getParameter("limit");
 			String name=request.getParameter("name");
+			String state=request.getParameter("state");
 			Criteria<User> criteria=new Criteria<>();
 			criteria.add(Restrictions.eq("unit",this.unitService.findUnitById(unitId), false));
+		    Unit unit=this.unitService.findUnitById(unitId);
+		    String unitName=unit.getUnitName();
+		    //默认不是未分配人员
+		    int unitNameFlag=0;
+		    if(unitName.equals(firstUnit)) {
+		    	unitNameFlag=1;
+		    }
+			
 			if(StringUtil.isNotBlank(name)) {
 			  criteria.add(Restrictions.like("name", name, false));
+			}
+			
+			if(StringUtil.isNotBlank(state)) {
+				  criteria.add(Restrictions.eq("state", Integer.valueOf(state), false));
 			}
 			Order order = new Order(Direction.DESC, "id");// 根据id排序
 			Sort sort = new Sort(order);
@@ -371,6 +385,7 @@ public class BaseManageController extends BaseController{
 					map.put("state",user.getState());
 					map.put("userName", userName);
 					map.put("phone",phone);
+					map.put("unitNameFlag",unitNameFlag);
 				    listMap.add(map);
 				}
 			}
@@ -471,6 +486,38 @@ public class BaseManageController extends BaseController{
 	  		}
 	  		user.setState(chang);
 	  		this.userService.saveUser(user);
+	  		return Success;
+	  	}
+	  	
+	  	//用户批量删除
+	  	@RequestMapping("userBatchDelet")
+		@ResponseBody
+		public String userBatchDelet(HttpServletRequest request) {
+	  		String ids=request.getParameter("ids");
+	  		String idsArr[]=ids.split(",");
+	  		for(int i=0;i<idsArr.length;i++) {
+	  		this.userService.deleteUserByIds(idsArr[i]);
+	  		}
+	  	    return Success;
+	  	}
+	  	
+	  	//用户分配部门界面
+	  	@RequestMapping("userUnitPowerSet")
+	  	public String userUnitPowerSet(HttpServletRequest request) {
+	  		//List<Unit> units=t
+	  		Criteria<Unit> criteria=new Criteria<>();
+	  		criteria.add(Restrictions.ne("unitName", firstUnit, false));
+	  		List<Unit> units=this.unitService.queryUnitByCondition(criteria, null);
+	  		request.setAttribute("units", units);
+	  		return userUnitPowerSet;
+	  	}
+	  	
+	  	
+	     //分配功能
+	  	@RequestMapping("userUnitSet")
+	  	@ResponseBody
+	  	public String userUnitSet(HttpServletRequest request) {
+	  		
 	  		return Success;
 	  	}
 }

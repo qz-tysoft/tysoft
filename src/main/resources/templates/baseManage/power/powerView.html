@@ -25,7 +25,7 @@
           
           <div class="layui-inline">
             <div style="height: 1px;width: 40px"></div>
-            <button  style="margin-left:50px;"    class="layui-btn layuiadmin-btn-admin" lay-submit="" lay-filter="LAY-user-back-search">
+            <button  style="margin-left:50px;"    class="layui-btn layuiadmin-btn-admin" lay-submit="" lay-filter="LAY-power-back-search">
               <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
             </button>
             <button class="layui-btn layuiadmin-btn-admin" data-type="clear">清空</button>
@@ -66,7 +66,7 @@
     ,form = layui.form
     ,table = layui.table;
     //监听搜索
-    form.on('submit(LAY-user-back-search)', function(data){
+    form.on('submit(LAY-power-back-search)', function(data){
       var field = data.field;
       //执行重载
       table.reload('power-table-page', {

@@ -51,6 +51,7 @@ import net.sf.json.JSONObject;
 public abstract class BaseController {
 	public static  String Success="0";
 	public static  String Fail="1";
+	//未分配人员
 	public static  String firstUnit="未分配人员";
 	public static  String initPsw="6";
 	@Value("${web.upload-path}")

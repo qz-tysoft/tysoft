@@ -35,7 +35,7 @@
             </div>
           </div>
           <div class="layui-inline">
-            <button  style="margin-left:50px;"    class="layui-btn layuiadmin-btn-admin" lay-submit="" lay-filter="LAY-user-back-search">
+            <button  style="margin-left:50px;"    class="layui-btn layuiadmin-btn-admin" lay-submit="" lay-filter="userSearch">
               <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
             </button>
             <button class="layui-btn layuiadmin-btn-admin" data-type="clear">清空</button>
@@ -52,9 +52,9 @@
           </script>
            <script type="text/html" id="people-isOpen">
            {{# if (d.state=== 0) { }}
-           <input lay-event="switchOpen" type="checkbox"  id="{{d.id}}" name="isOpen" lay-skin="switch" lay-text="启用|禁用" lay-filter="switchOpen" ></input>
+           <input lay-event="switchOpen" type="checkbox"  id="{{d.id}}" name="isOpen" lay-skin="switch" lay-text="启用|禁用" lay-filter="switchOpen"  checked=""></input>
            {{# } else if(d.state=== 1) { }}
-           <input lay-event="switchOpen"  type="checkbox" id="{{d.id}}" name="isOpen" lay-skin="switch" lay-text="启用|禁用" lay-filter="switchOpen"  checked=""></input>
+           <input lay-event="switchOpen"  type="checkbox" id="{{d.id}}" name="isOpen" lay-skin="switch" lay-text="启用|禁用" lay-filter="switchOpen" ></input>
            {{# } }}
           </script>
           
@@ -62,8 +62,16 @@
 		   <a lay-event="edit" title="编辑"  href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe642;</i></a>	
 		    &nbsp;
             &nbsp;
+            {{# if (d.unitNameFlag=== 0) { }}
+            <a lay-event="setPower" title="分配角色"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe620;</i></a>	
+            {{# } else if(d.unitNameFlag=== 1) { }}
+            <a lay-event="setUnit" title="分配部门"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe620;</i></a>	
+            {{# } }}   
+            &nbsp;
+            &nbsp;
            <a lay-event="del" title="删除"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe640;</i></a>	
-           </script>
+           
+       </script>
       </div>
     </div>
   </div>
@@ -79,7 +87,7 @@
     ,form = layui.form
     ,table = layui.table;
     //监听搜索
-    form.on('submit(LAY-user-back-search)', function(data){
+    form.on('submit(userSearch)', function(data){
       var field = data.field;
       //执行重载
       table.reload('user-table-page', {
@@ -108,7 +116,8 @@
         elem: '#user-table-page'
         ,url: layui.setter.base + '../../baseManage/userPage?unitId='+$("#unitId").val()
         ,cols: [[
-           {title: '序号',templet: '#indexTpl',align:'center'}
+        	 {type:'checkbox'}
+          ,{title: '序号',templet: '#indexTpl',align:'center'}
           ,{field:'userName',  title: '姓名',align:'center'}
           ,{field:'phone',  title:'电话',align:'center'}
           ,{field:'state', title: '状态', minWidth: 150,templet:'#people-isOpen',align:'center'}
@@ -124,6 +133,8 @@
         	delet(data);
         }else if(obj.event === 'edit'){
         	edit(data);
+        }else if(obj.event==='setUnit'){
+        	setUnit(data);
         }
       });
     //事件
@@ -176,9 +187,16 @@
             });
       },clear:function(){
     	  $("#userName").val("");
-    	  $("#state option:first").prop("selected", 'selected');
-    	  //var a = document.getElementById("state"); //mySelect是select 的Id
-    	  //a.options[0].selected = true;
+    	  //复位重新渲染select
+    	  $("#state").val('');
+    	  form.render('select');
+      },batchDelet:function(){
+    	  var checkStatus = table.checkStatus('user-table-page')
+          ,checkData = checkStatus.data; //得到选中的数据
+          if(checkData.length === 0){
+            return layer.msg('请选择数据');
+          }
+          batchDelet(checkData);
       }
     }  
     $('.layui-btn.layuiadmin-btn-admin').on('click', function(){
@@ -188,7 +206,6 @@
   });
   
   //常用数据
-  
   function delet(node){
 	  var $ = layui.$;
 	  var table = layui.table;
@@ -279,6 +296,46 @@
 	        }
         }); 
 	  
+  }
+  
+  function batchDelet(data){
+	  var ids=[];
+	  var $ = layui.$;
+	  var table = layui.table;
+	  for (var i in data){
+            ids.push(data[i].id);
+      }
+	  $.ajax({
+	        url:'userBatchDelet',
+	        method:'post',
+	        dataType:'json',
+	        data:{"ids":ids.join(",")},
+	        success:function(data2){
+	        	 layer.msg("删除成功!",{
+		 	            time:1000
+		 	      });
+	         table.reload('user-table-page');
+	        },
+	        error:function(){
+		    alert('请求超时或系统错误');
+	        }
+      }); 
+  }
+  
+  function setUnit(node){
+	  var index = layer.open({
+	              type: 2
+	             ,title: '分配部门'
+	             ,content: 'userUnitPowerSet'
+	             ,maxmin: true
+	             ,area: ['350px', '200px']
+	             ,btn: ['确定', '取消']
+	             ,yes: function(index, layero){
+	                      
+	             }
+	           });
+	   layer.full(index);
+	 
   }
   
   
