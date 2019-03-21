@@ -13,6 +13,7 @@
 <body>
    
   <input id="unitId" type="hidden" th:value="${unitId}"/>
+  <input id="setUnitFlag" type="hidden" value="0"/>
   <div class="layui-fluid">   
     <div class="layui-card">
       <div class="layui-form layui-card-header layuiadmin-card-header-auto">
@@ -34,6 +35,7 @@
               </select>
             </div>
           </div>
+        
           <div class="layui-inline">
             <button  style="margin-left:50px;"    class="layui-btn layuiadmin-btn-admin" lay-submit="" lay-filter="userSearch">
               <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
@@ -140,6 +142,7 @@
     //事件
     var active = {
       add: function(){
+    	  //获取当父窗口索引
     	  layer.open({
                type: 2
               ,title: '添加人员'
@@ -173,6 +176,7 @@
      				    	  layer.msg("保存成功!",{
      				 	            time:1000
      				 	      });
+     				    	  parent.layui.$("#userFlag").val("1");
      				    	  layer.close(index); //关闭弹层
      				      }
      			        },
@@ -215,11 +219,14 @@
 	        dataType:'json',
 	        data:{"id":node.id},
 	        success:function(data2){
-	        	  //数据刷新
+	        	 //数据刷新
+	        	 //window.parent.location.reload();
+	        	 parent.layui.$("#userFlag").val("1");
 	        	 table.reload('user-table-page');
  	             layer.msg("用户已删除!",{
 		 	            time:1000
 			 	  });
+ 	         
 	        },
 	        error:function(){
 		    alert('请求超时或系统错误');
@@ -315,6 +322,7 @@
 		 	            time:1000
 		 	      });
 	         table.reload('user-table-page');
+	         parent.layui.$("#userFlag").val("1");
 	        },
 	        error:function(){
 		    alert('请求超时或系统错误');
@@ -326,12 +334,13 @@
 	  var index = layer.open({
 	              type: 2
 	             ,title: '分配部门'
-	             ,content: 'userUnitPowerSet'
+	             ,content: 'userUnitSetView?id='+node.id
 	             ,maxmin: true
 	             ,area: ['350px', '200px']
 	             ,btn: ['确定', '取消']
-	             ,yes: function(index, layero){
-	                      
+	             ,end: function(){
+	            	 var setUnitFlag=$("#setUnitFlag").val();
+	            	 alert(setUnitFlag);
 	             }
 	           });
 	   layer.full(index);

@@ -11,7 +11,7 @@
   <link rel="stylesheet" th:href="@{/static/layuiadmin/style/admin.css}" media="all"/>
 </head>
 <body>
-
+  <input type="hidden" id="userFlag" value="0"/>
   <div class="layui-fluid">   
     <div class="layui-card">
       <div class="layui-form layui-card-header layuiadmin-card-header-auto">
@@ -207,13 +207,25 @@
   
   function addUnitPeople(node){
 	  var unitName=node.unitName;
+	  var $ = layui.$;
+	  $("#userFlag").val("0");
+	  var table = layui.table;
 	  var index = layer.open({
-		  title: unitName+'-添加人员',
+		  title: unitName+'-人员管理',
 		  type: 2,
           content: 'unitView?unitViewType=unitAddPeople&amp;unitId='+node.id+'',
           area:[width+"px",height+"px"],
-          maxmin: true
+          maxmin: true,
+          end:function(){
+        	  var userFlag= $("#userFlag").val();
+        	  //做了删除或者添加
+        	  if(userFlag==1){
+            	  table.reload('unit-table-page');
+        	  }
+          }
         });
+	  
+	  layer.full(index);
       
   }
   

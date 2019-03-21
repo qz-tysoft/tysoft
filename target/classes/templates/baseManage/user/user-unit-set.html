@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <title>部门分配</title>
+  <meta name="renderer" content="webkit"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+  <link rel="stylesheet" th:href="@{/static/layuiadmin/layui/css/layui.css}" media="all"/>
+  <link rel="stylesheet" th:href="@{/static/layuiadmin/style/admin.css}" media="all"/>
+</head>
+<body>
+ 
+  <input type="hidden" id="userId" th:value="${userId}"/>
+  <div class="layui-fluid">   
+    <div class="layui-card">
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">单位名</label>
+            <div class="layui-input-block">
+              <input type="text" id="unitName" name="unitName" placeholder="请输入" autocomplete="off" class="layui-input"></input>
+            </div>
+          </div>
+          
+          <div class="layui-inline">
+            <div style="height: 1px;width: 40px"></div>
+            <button  style="margin-left:50px;"    class="layui-btn layuiadmin-btn-admin" lay-submit="" lay-filter="LAY-user-back-search">
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+            </button>
+            <button class="layui-btn layuiadmin-btn-admin" data-type="clear">清空</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="layui-card-body">
+          <table class="layui-hide" id="unit-table-page" lay-filter="unit-table-page"></table>
+          <script type="text/html" id="indexTpl">
+          {{d.LAY_TABLE_INDEX+1}}
+          </script>
+          
+           <script type="text/html" id="addBut">
+		   <a lay-event="sure" title="分配部门"  href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe605;</i></a>	
+           </script>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" th:src="@{/static/layuiadmin/layui/layui.js}"></script>
+  <script>
+  //var CTX = [[@{/}]];
+  var width=window.screen.availWidth*0.7;
+  var height=window.screen.availHeight*0.6;
+  layui.config({
+    base: '../static/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'useradmin', 'table','form'], function(){
+    var $ = layui.$
+    ,form = layui.form
+    ,table = layui.table;
+    //监听搜索
+    form.on('submit(LAY-user-back-search)', function(data){
+      var field = data.field;
+      //执行重载
+      table.reload('unit-table-page', {
+        where: field
+      });
+    });
+     
+    
+    //按钮button
+    table.render({
+        elem: '#unit-table-page'
+        ,url: layui.setter.base + '../../baseManage/unitPage?type=1'
+        ,cols: [[
+           {title: '序号',templet: '#indexTpl',align:'center'}
+          ,{field:'unitName', title: '单位名称',align:'center'}
+          ,{field:'sign', title: '操作', minWidth: 150,align:'center',templet:'#addBut'}
+        ]]
+        ,page: true
+      });
+    //监听表格点击事件
+    table.on('tool(unit-table-page)', function(obj){
+    	var data = obj.data;
+        if(obj.event === 'sure'){
+        	sure(data);
+        }
+      });
+  });
+
+
+  
+  function sure(data){
+	  var $ = layui.$;
+	  var table = layui.table
+	  var userId=$("#userId").val();
+	  $.ajax({
+	        url:'userUnitSet',
+	        method:'post',
+	        dataType:'json',
+	        data:{"unitId":data.id,"userId":userId},
+	        success:function(data2){
+	        	  //父窗口重载
+	              //window.parent.location.reload();
+	        	  //关闭当前层
+	        	  alert(parent.layui.$("#setUnitFlag").val());
+ 	              var index = parent.layer.getFrameIndex(window.name);
+ 	              parent.layui.$("#setUnitFlag").val("1");
+ 	              parent.layer.close(index);
+	        },
+	        error:function(){
+		    alert('请求超时或系统错误');
+	        }
+        }); 
+  }
+  
+  </script>
+</body>
+</html>
+

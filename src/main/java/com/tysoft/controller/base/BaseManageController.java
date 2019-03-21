@@ -60,7 +60,8 @@ public class BaseManageController extends BaseController{
 		private String unitView="baseManage/unit/unitView";
 		private String unitAdd="baseManage/unit/unit-add"; 
 		private String roleView="baseManage/role/roleView";
-		private String userUnitPowerSet="baseManage/user/user-unit-power-set";
+		private String userUnitSet="baseManage/user/user-unit-set";
+		private String userPowerSet="baseManage/user/user-power-set";
 	  	
 	    //权限界面
 	  	@RequestMapping("powerView")
@@ -275,6 +276,7 @@ public class BaseManageController extends BaseController{
 			String page=request.getParameter("page");
 			String limit=request.getParameter("limit");
 			String unitName=request.getParameter("unitName");
+			String type=request.getParameter("type");
 			Criteria<Unit> criteria=new Criteria<>();
 	    
 			if(StringUtil.isNotBlank(unitName)) {
@@ -296,7 +298,10 @@ public class BaseManageController extends BaseController{
 					map.put("unitName", name);
 					map.put("unitNum",unitNum);
 					if(name.equals(this.firstUnit)) {
-						listMap.add(0,map);
+						if(!StringUtil.isNotBlank(type)) {
+							listMap.add(0,map);
+						}
+						
 				    }else {
 				    	listMap.add(map);
 				    }
@@ -454,6 +459,9 @@ public class BaseManageController extends BaseController{
 		  		if(isUser!=null) {
 		  			tipMsg.put("msg", 0);
 		  		}else {
+		  			int unitNum=unit.getUnitNum();
+		  			unit.setUnitNum(unitNum+1);
+		  			this.unitService.saveUnit(unit);
 		  			tipMsg.put("msg",1);
 		  			this.userService.saveUser(user);
 		  		}
@@ -467,6 +475,10 @@ public class BaseManageController extends BaseController{
 		@ResponseBody
 		public String peopleDelet(HttpServletRequest request) {
 	  		String id=request.getParameter("id");
+	  		User user=this.userService.findUserById(id);
+	  		Unit unit=user.getUnit();
+	  		unit.setUnitNum(unit.getUnitNum()-1);
+	  		this.unitService.saveUnit(unit);
 	  		this.userService.deleteUserByIds(id);
 	  		return Success;
 	  	}
@@ -495,6 +507,10 @@ public class BaseManageController extends BaseController{
 		public String userBatchDelet(HttpServletRequest request) {
 	  		String ids=request.getParameter("ids");
 	  		String idsArr[]=ids.split(",");
+	  		User user=this.userService.findUserById(idsArr[0]);
+	  		Unit unit=user.getUnit();
+	  		unit.setUnitNum(unit.getUnitNum()-idsArr.length);
+	  		this.unitService.saveUnit(unit);
 	  		for(int i=0;i<idsArr.length;i++) {
 	  		this.userService.deleteUserByIds(idsArr[i]);
 	  		}
@@ -502,14 +518,11 @@ public class BaseManageController extends BaseController{
 	  	}
 	  	
 	  	//用户分配部门界面
-	  	@RequestMapping("userUnitPowerSet")
+	  	@RequestMapping("userUnitSetView")
 	  	public String userUnitPowerSet(HttpServletRequest request) {
-	  		//List<Unit> units=t
-	  		Criteria<Unit> criteria=new Criteria<>();
-	  		criteria.add(Restrictions.ne("unitName", firstUnit, false));
-	  		List<Unit> units=this.unitService.queryUnitByCondition(criteria, null);
-	  		request.setAttribute("units", units);
-	  		return userUnitPowerSet;
+            String userId=request.getParameter("id");
+            request.setAttribute("userId", userId);
+	  		return userUnitSet;
 	  	}
 	  	
 	  	
@@ -517,7 +530,18 @@ public class BaseManageController extends BaseController{
 	  	@RequestMapping("userUnitSet")
 	  	@ResponseBody
 	  	public String userUnitSet(HttpServletRequest request) {
-	  		
+	  		String unitId=request.getParameter("unitId");
+	  		String userId=request.getParameter("userId");
+	  		User user=this.userService.findUserById(userId);
+	  		Unit unit=this.unitService.findUnitById(unitId);
+	  		//未分配人员单位减1
+	  		Unit beforeUnit=user.getUnit();
+	  		beforeUnit.setUnitNum(beforeUnit.getUnitNum()-1);
+	  		this.unitService.saveUnit(beforeUnit);
+	  		unit.setUnitNum(unit.getUnitNum()+1);
+	  		Unit useUnit=this.unitService.saveUnit(unit);
+	  		user.setUnit(useUnit);
+	  		this.userService.saveUser(user);
 	  		return Success;
 	  	}
 }
