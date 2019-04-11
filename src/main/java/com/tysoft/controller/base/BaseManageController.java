@@ -29,6 +29,7 @@ import com.tysoft.common.MD5Util;
 import com.tysoft.common.Restrictions;
 import com.tysoft.controller.BaseController;
 import com.tysoft.entity.base.Power;
+import com.tysoft.entity.base.Role;
 import com.tysoft.entity.base.Unit;
 import com.tysoft.entity.base.User;
 import com.tysoft.service.base.PowerService;
@@ -60,6 +61,7 @@ public class BaseManageController extends BaseController{
 		private String unitView="baseManage/unit/unitView";
 		private String unitAdd="baseManage/unit/unit-add"; 
 		private String roleView="baseManage/role/roleView";
+		private String roleAddView="baseManage/role/roleAddView";
 		private String userUnitSet="baseManage/user/user-unit-set";
 		private String userPowerSet="baseManage/user/user-power-set";
 	  	
@@ -544,4 +546,105 @@ public class BaseManageController extends BaseController{
 	  		this.userService.saveUser(user);
 	  		return Success;
 	  	}
+	  	//分配角色界面
+		@RequestMapping("roleView")
+		public String roleView(HttpServletRequest request) {
+			String view="";
+	  		String roleViewType=request.getParameter("roleViewType");
+	  		if(roleViewType.equals("roleView")) {
+	  			view=roleView;	
+	  		}else if(roleViewType.equals("roleAddView")) {
+	  			view=roleAddView;
+	  		}else if(roleViewType.equals("roleEditView")) {
+	  			String id=request.getParameter("id");
+	  			Role role=this.roleService.findRoleById(id);
+	  			view=roleAddView;
+	  			request.setAttribute("role",role);
+	  		}
+	  		return view;
+	  	}
+		
+		@RequestMapping("rolePage")
+		@ResponseBody
+		public Object rolePage(HttpServletRequest request) {
+			String page=request.getParameter("page");
+			String limit=request.getParameter("limit");
+			String queryRoleName=request.getParameter("roleName");
+			Criteria<Role> criteria=new Criteria<>();
+			if(StringUtil.isNotBlank(queryRoleName)) {
+			  criteria.add(Restrictions.like("roleName", queryRoleName, false));
+			}
+			Order order = new Order(Direction.DESC, "id");// 根据id排序
+			Sort sort = new Sort(order);
+			List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+			Page<Role> pages=this.roleService.queryRoleByPage(criteria, sort, Integer.valueOf(page)-1, Integer.valueOf(limit));
+			if (pages.getTotalPages() > 0) {
+				Map<String, Object> map = null;
+				for (Role role : pages.getContent()) {
+					map = new HashMap<String, Object>();
+					String id=role.getId();
+					String roleName=role.getRoleName();
+					map.put("id", id);
+					map.put("roleName", roleName);
+					listMap.add(map);
+				}
+			}
+			Map<String, Object> roleMap = new LinkedHashMap<String,Object>();
+			roleMap.put("code", 0);
+			roleMap.put("msg", "");
+			roleMap.put("count",pages.getTotalElements());
+			roleMap.put("data", listMap);
+			return roleMap;
+		}
+		
+		//创建角色 
+	 	@RequestMapping("creatRole")
+	  	@ResponseBody
+	  	public Map<String, Object> creatRole(HttpServletRequest request) {
+	  		Map<String,Object> tipMsg=new HashedMap<>();
+	 		String roleName=request.getParameter("roleName");
+	 		Role role=this.roleService.isExistRole(roleName);
+ 	 		//当前没有此角色
+	 		if(role==null) {
+ 	 			//创建角色
+	 			Role newRole=new Role();
+	 			newRole.setRoleName(roleName);
+	 			tipMsg.put("msg", 0);
+	 			this.roleService.saveRole(newRole);
+ 	 		}else {
+ 	 			tipMsg.put("msg", 1);
+ 	 		}
+	 		return tipMsg;
+	 	}
+	 	//删除角色
+		@RequestMapping("deletRole")
+	  	@ResponseBody
+	  	public String deletRole(HttpServletRequest request) {
+	 		String id=request.getParameter("id");
+	 		//进行角色删除
+	 		this.roleService.deleteRoleByIds(id);
+			return Success;
+	 	}
+		
+		
+		
+		//编辑角色
+		@RequestMapping("editRole")
+	  	@ResponseBody
+	  	public String editRole(HttpServletRequest request) {
+	 		String editRole=request.getParameter("editRole");
+	 		JSONObject obj=JSONObject.fromObject(editRole);
+	  		Role role=(Role)JSONObject.toBean(obj, Role.class);
+	  	    //进行保存
+	  		this.roleService.saveRole(role);	
+			return Success;
+	 	}
+		
+		//角色-权限
+		 @RequestMapping("rolePower")
+	     @ResponseBody
+		 public String rolePower(HttpServletRequest request) {
+			 return Success;
+		 }
+	  	
 }

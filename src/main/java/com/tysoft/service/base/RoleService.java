@@ -64,5 +64,5 @@ public interface RoleService {
 	 */
     public Page<Role> queryRoleByPage(Criteria<Role> criteria,Sort sort, Integer pageNo, Integer pageSize);
 
-
+    public Role isExistRole(String roleName);
 }

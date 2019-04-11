@@ -20,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tysoft.common.Criteria;
+import com.tysoft.common.Restrictions;
 import com.tysoft.repository.base.RoleRepository;
+import com.tysoft.entity.base.Power;
 import com.tysoft.entity.base.Role;
 import com.tysoft.service.base.RoleService;
 
@@ -99,5 +101,9 @@ public class RoleServiceImpl implements RoleService {
 		return this.roleRepository.findAll(criteria, pageable);
 	}
 
-
+	 public Role isExistRole(String roleName) {
+		  Criteria<Role> criteria=new Criteria<>();
+		  criteria.add(Restrictions.eq("roleName", roleName, false));
+		  return this.roleRepository.findOne(criteria);
+	 }
 }
