@@ -37,6 +37,7 @@ import com.tysoft.service.base.RoleService;
 import com.tysoft.service.base.UnitService;
 import com.tysoft.service.base.UserService;
 
+import antlr.StringUtils;
 import jodd.util.StringUtil;
 import net.sf.json.JSONObject;
 
@@ -62,6 +63,7 @@ public class BaseManageController extends BaseController{
 		private String unitAdd="baseManage/unit/unit-add"; 
 		private String roleView="baseManage/role/roleView";
 		private String roleAddView="baseManage/role/roleAddView";
+		private String rolePowerSetView="baseManage/role/rolePowerSet";
 		private String userUnitSet="baseManage/user/user-unit-set";
 		private String userPowerSet="baseManage/user/user-power-set";
 	  	
@@ -550,7 +552,7 @@ public class BaseManageController extends BaseController{
 		@RequestMapping("roleView")
 		public String roleView(HttpServletRequest request) {
 			String view="";
-	  		String roleViewType=request.getParameter("roleViewType");
+			String roleViewType=request.getParameter("roleViewType");
 	  		if(roleViewType.equals("roleView")) {
 	  			view=roleView;	
 	  		}else if(roleViewType.equals("roleAddView")) {
@@ -560,6 +562,10 @@ public class BaseManageController extends BaseController{
 	  			Role role=this.roleService.findRoleById(id);
 	  			view=roleAddView;
 	  			request.setAttribute("role",role);
+	  		}else if(roleViewType.equals("rolePowerView")) {
+	  			String id=request.getParameter("id");
+	  			view=rolePowerSetView;
+	  			request.setAttribute("roleId", id);
 	  		}
 	  		return view;
 	  	}
@@ -635,16 +641,78 @@ public class BaseManageController extends BaseController{
 	 		String editRole=request.getParameter("editRole");
 	 		JSONObject obj=JSONObject.fromObject(editRole);
 	  		Role role=(Role)JSONObject.toBean(obj, Role.class);
-	  	    //进行保存
+	  		//进行保存
 	  		this.roleService.saveRole(role);	
 			return Success;
 	 	}
 		
-		//角色-权限
-		 @RequestMapping("rolePower")
+		//角色-权限树
+		 @RequestMapping("rolePowerData")
 	     @ResponseBody
-		 public String rolePower(HttpServletRequest request) {
+		 public Object rolePower(HttpServletRequest request) {
+			List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+			    String roleId=request.getParameter("roleId");
+			    Role role=this.roleService.findRoleById(roleId);
+			    List<Power> havePowers=role.getPowers();
+			    //查出所有权限
+			    Criteria<Power> criteria=new Criteria<>();
+				criteria.add(Restrictions.eq("pid", "menu", false));
+				//排序规则
+			    Order order = new Order(Direction.DESC, "id");// 根据id排序
+				Sort sort = new Sort(order);
+				List<Power> parent=this.powerService.queryPowerByCondition(criteria, sort);
+				for(int i=0;i<parent.size();i++) {
+					Power power=parent.get(i);
+				    Map<String,Object> map = new HashMap<String, Object>();
+				    map.put("name", power.getPowerName());
+				    map.put("value", power.getId());
+				    map.put("disabled", false);
+				    String childId=power.getId();
+					Criteria<Power> childCriteria=new Criteria<>();
+					childCriteria.add(Restrictions.eq("pid", childId, false));
+					List<Power> childList=this.powerService.queryPowerByCondition(childCriteria, sort);
+					List<Map<String, Object>> childDataMap = new ArrayList<Map<String, Object>>();
+					for(int j=0;j<childList.size();j++) {
+                    	Power child=childList.get(j);
+                    	//已选的权限
+        			    Map<String,Object> childMap = new HashMap<String, Object>();
+        			    childMap.put("name", child.getPowerName());
+        			    childMap.put("value", child.getId());
+        			    childMap.put("disabled", false);
+        				if(havePowers.indexOf(child)!=-1) {
+            			    childMap.put("checked", true);
+            			    map.put("checked", true);
+                    	}
+        			    childDataMap.add(childMap);
+                    }
+					map.put("list", childDataMap);
+					listMap.add(map);
+				}
+				Map<String, Object> roleMap = new LinkedHashMap<String,Object>();
+				roleMap.put("code", 0);
+				roleMap.put("msg", "获取成功");
+				roleMap.put("data", listMap);
+				return roleMap;
+		 }
+		  
+		 //角色权限设置
+		 @RequestMapping("rolePowerSet")
+		 @ResponseBody
+		 public String rolePowerSet(HttpServletRequest request) {
+			 String roleId=request.getParameter("roleId");
+			 String powerId=request.getParameter("powerId");
+			 Role role=this.roleService.findRoleById(roleId);
+			 List<Power> powerList=new ArrayList<>();
+			 if(StringUtil.isNotBlank(powerId)) {
+				 String powerIds[]=powerId.split(",");
+				 for(int i=0;i<powerIds.length;i++) {
+					 String id=powerIds[i];
+					 Power power=this.powerService.findPowerById(id);
+					 powerList.add(power);
+				 }
+			 }
+			 role.setPowers(powerList);
+			 this.roleService.saveRole(role);
 			 return Success;
 		 }
-	  	
 }

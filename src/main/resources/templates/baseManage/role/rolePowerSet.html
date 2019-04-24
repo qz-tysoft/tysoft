@@ -9,31 +9,62 @@
   <link rel="stylesheet" th:href="@{/static/layuiadmin/layui/css/layui.css}" media="all"/>
 </head>
 <body>
+	<!-- 此扩展能递归渲染一个权限树，点击深层次节点，父级节点中没有被选中的节点会被自动选中，单独点击父节点，子节点会全部 选中/去选中 -->
  <div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
-    <div class="layui-form-item">
-      <label class="layui-form-label">角色权限配置</label>
-      <div class="layui-input-inline">
-        <input type="hidden"  name="id" th:value="${id}"/>
-        <input type="text" name="roleName" lay-verify="required" placeholder="" autocomplete="off" class="layui-input"/>
+	   <div class="layui-input-inline">
+       <input type="hidden" id="roleId" name="roleId" th:value="${roleId}"/>
+	   <input type="hidden" id="powerId" name="powerId"/>
       </div>
+	
+	
+    <div class="layui-form-item">
+        <label class="layui-form-label">选择权限</label>
+        <div class="layui-input-block">
+            <div id="LAY-auth-tree-index"></div>
+        </div>
     </div>
-    
     <div class="layui-form-item layui-hide">
-      <input type="button" lay-submit="" lay-filter="LAY-power-front-submit" id="LAY-power-front-submit" value="确认"></input>
+      <input type="button" lay-submit="LAY-rolePower-front-submit" lay-filter="LAY-rolePower-front-submit" id="LAY-rolePower-front-submit" value="确认"></input>
     </div>
-  </div>
+    </div>
  <script type="text/javascript" th:src="@{/static/layuiadmin/layui/layui.js}"></script>
   <script>
 
   layui.config({
     base: '../static/layuiadmin/' //静态资源所在路径
   }).extend({
-    index: 'lib/index' //主入口模块
-  }).use(['index', 'form'], function(){
-    var $ = layui.$
-    ,form = layui.form;
-    
-
+    index: 'lib/index',
+    authtree: 'lib/extend/authtree'
+//主入口模块
+  }).use(['jquery', 'authtree','index','form', 'layer'], function(){
+	    var $ = layui.jquery;
+		var authtree = layui.authtree;
+		var form = layui.form;
+		var layer = layui.layer;
+		var roleId=$("#roleId").val();
+		$.ajax({
+		    url: 'rolePowerData',
+			dataType: 'json',
+			data:{roleId:roleId},
+			success: function(data){
+	            var trees = data.data;
+	            // 如果后台返回的不是树结构，请使用 authtree.listConvert 转换
+	            authtree.render('#LAY-auth-tree-index', trees, {
+					inputname: 'authids[]', 
+					layfilter: 'lay-check-auth', 
+					autowidth: true,
+				});
+	        	//权限进行回传
+	            authtree.on('change(lay-check-auth)', function(data) {
+					// 获取所有已选中节点
+					var checked = authtree.getChecked('#LAY-auth-tree-index');
+				    $("#powerId").val(checked);
+				});
+			},
+			error: function(xml, errstr, err) {
+				layer.alert(errstr+'，获取样例数据失败，请检查是否部署在本地服务器中！');
+			}
+		});
   })
   </script>
 </body>

@@ -44,6 +44,9 @@
 		   <a lay-event="edit" title="编辑"  href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe642;</i></a>	
 		    &nbsp;
             &nbsp;
+           <a lay-event="anthTree" title="设置权限"  href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe716;</i></a>	
+            &nbsp;
+            &nbsp;
            <a lay-event="del" title="删除"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe640;</i></a>	
  </script>
       </div>
@@ -102,6 +105,8 @@
         	deletRole(data);
         }else if(obj.event==='edit'){
         	openEditRole(data);
+        }else if(obj.event==='anthTree'){
+        	openRolePower(data);
         }
       });
     
@@ -241,6 +246,50 @@
          }
        });
   }
+  
+  //打开权限角色操作
+  function openRolePower(node){
+	  var $ = layui.$;
+	  var table = layui.table;
+	  var width=window.screen.availWidth*0.7;
+	  var height=window.screen.availHeight*0.6;
+	  var index=layer.open({
+          type: 2
+         ,title: '角色权限设置'
+         ,content: 'roleView?roleViewType=rolePowerView&amp;id='+node.id.toString()+''
+         ,maxmin: true
+         ,btn: ['确定', '取消']
+         ,yes: function(index, layero){
+          var iframeWindow = window['layui-layer-iframe'+ index]
+         ,submitID = 'LAY-rolePower-front-submit'
+         ,submit = layero.find('iframe').contents().find('#'+ submitID);
+         //监听提交
+          iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+              var field = data.field; //获取提交的字段
+              var roleId=field.roleId;
+              var powerId=field.powerId;
+      		  $.ajax({
+    	        url:'rolePowerSet',
+    	        method:'post',
+    	        dataType:'json',
+    	        data:{"roleId":roleId,"powerId":powerId},
+    	        success:function(date){
+    	             layer.msg("设置成功!",{
+    	 	            time:1000
+    		 	  });
+    	             layer.close(index);
+    	        },
+    	        error:function(){
+    		    alert('请求超时或系统错误');
+    	        }
+                });
+              
+            });
+          submit.trigger('click');
+        }
+      });
+	  layer.full(index);
+ }
   
   function deletRole(node){
 	  var $ = layui.$;
