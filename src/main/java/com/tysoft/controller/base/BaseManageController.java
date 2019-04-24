@@ -66,7 +66,7 @@ public class BaseManageController extends BaseController{
 		private String rolePowerSetView="baseManage/role/rolePowerSet";
 		private String userUnitSet="baseManage/user/user-unit-set";
 		private String userPowerSet="baseManage/user/user-power-set";
-	  	
+	  	private String menuView="baseManage/menu/menuSet";
 	    //权限界面
 	  	@RequestMapping("powerView")
 	  	public String powerView(HttpServletRequest request){
@@ -632,8 +632,6 @@ public class BaseManageController extends BaseController{
 			return Success;
 	 	}
 		
-		
-		
 		//编辑角色
 		@RequestMapping("editRole")
 	  	@ResponseBody
@@ -715,4 +713,11 @@ public class BaseManageController extends BaseController{
 			 this.roleService.saveRole(role);
 			 return Success;
 		 }
+		 
+		 @RequestMapping("menuView")
+  	     public String menuView(HttpServletRequest request){
+		
+		 return menuView;
+		 }	
 }
+
