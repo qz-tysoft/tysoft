@@ -25,7 +25,7 @@ logging:
     com.microsoft: warn
   
 server: 
-  port: 8181
+  port: 8182
   context-path: /${spring.application.name}
   
 

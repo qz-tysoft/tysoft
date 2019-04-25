@@ -1,296 +1,259 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <!-- Tell the browser to be responsive to screen width -->
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
-    <title>组织机构</title>
-    <link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
-    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
-    <link rel="stylesheet" th:href="@{/static/css/common.css}"/>
-    <link rel="stylesheet" th:href="@{/static/plugins/select2/select2.css}"/>
-    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.css}"/>
-    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.css}"/>
-    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-validator/css/bootstrapValidator.min.css}"/>
-    <link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.css}"/>
-    <link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
-    <link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}"/>
-    <link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}"/>
-    <link rel="stylesheet" th:href="@{/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css}"/>
-    <!-- datetime picker -->
-    <link rel="stylesheet" th:href="@{/static/plugins/datetimepicker/css/bootstrap-datetimepicker.min.css}"/>
-    <!-- iCheck for checkboxes and radio inputs -->
-    <link rel="stylesheet" th:href="@{/static/plugins/iCheck/all.css}"/>
-    <!-- daterange picker -->
-    <link rel="stylesheet" th:href="@{/static/plugins/daterangepicker/daterangepicker.css}"/>
-    <!-- Theme style -->
-    <link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.min.css}"/>
-    <link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}"/>
-    <link rel="stylesheet" th:href="@{/static/css/common.css}"/>
-    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.css}"/>
-    <!-- Bootstrap 3.3.7 -->
-    <link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" th:href="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.css}"/>
-    <link rel="stylesheet" th:href="@{/static/plugins/datetimepicker/css/bootstrap-datetimepicker.css}"/>
-    <link rel="stylesheet" th:href="@{/static/plugins/datetimepicker/css/bootstrap-datetimepicker.min.css}"/>
-    <style type="text/css">
-        html, body {
-            overflow-x: hidden;
-        }
-
-        body {
-            padding-top: 5px;
-        }
-
-        .up_icon img {
-            max-height: 100%;
-        }
-
-        .up_icon span {
-            position: absolute;
-            bottom: 0;
-            left: 0;
+  <meta charset="utf-8"/>
+  <title>菜单管理</title>
+  <meta name="renderer" content="webkit"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+  <link rel="stylesheet" th:href="@{/static/layuiadmin/layui/css/layui.css}" media="all"/>
+<style type="text/css">
+ body {
+            height: 100%;
             width: 100%;
-            height: 20px;
-            line-height: 20px;
-            background: #8e8e8e;
-            text-align: center;
-            color: #fff;
-            font-size: 12px;
-            border-radius: 0px 0px 6px 6px;
-            background-color: rgba(0, 0, 0, 0.5);
+            /*overflow: hidden;*/
+            background-size: cover;
+            margin: 0 auto;
         }
 
-        .col-sm-10 span {
-            word-break: break-all;
-            word-wrap: break-word;
-            white-space: normal;
+        .body_bg {
+            /*height: 1000px;;*/
+            text-align: center;
             display: block;
-            float: left;
-            height: 34px;
-            padding: 6px 12px 6px 0px;
-            font-size: 14px;
-            line-height: 1.42857143;
-            color: #777;
+            padding-left: 15px;
+            padding-right: 15px;
         }
-    </style>
+
+        .t_title {
+            height: 65px;
+            font-size: 20px;
+            display: block;
+            /*padding: 10px;*/
+            text-align: left;
+        }
+
+        .t_test {
+            background-color: white;
+            width: 100%;
+
+        }
+
+        .table_scroll {
+            height: 505px;
+            overflow-y: auto;
+        }
+
+        td {
+            font-size: 12px !important;
+        }
+
+        .layui-form-checkbox span {
+            height: 30px;
+        }
+
+        .layui-field-title {
+            border-top: 1px solid white;
+        }
+
+        table {
+            width: 100% !important;
+        }
+</style>
 </head>
 <body>
-<div class="container-fluid" style="width:100%; height: 100%">
-    <!-- 左侧菜单信息-->
-    <div class="col-sm-3">
-        <div class="row">
-            <div class="nav-tabs-custom">
-                <!-- Tabs within a box -->
-                <ul class="nav nav-tabs">
-                    <li class="active" onclick="changeView('org')"><a href="#revenue-chart" data-toggle="tab">组织架构</a></li>
-                    <li onclick="changeView('role')"><a href="#sales-chart" data-toggle="tab">角色</a></li>
-                </ul>
-                <div class="tab-content no-padding">
-                    <!-- Morris chart - Sales -->
-                    <div class="tab-pane active" id="revenue-chart">
-                        <div>
-                            <div class="box-header with-border" style="background-color: #d2d6de;">
-                                <h3 class="box-title"><i class="fa fa-user"></i>&nbsp;&nbsp;组织架构</h3>
-                            </div>
-                        </div>
-                        <!-- 组织架构树-->
-                        <div class="" id="org_tree_content" style="overflow: auto">
-                            <div id="orgMenuTree" data-toggle="context" data-target="#org-context-menu"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  
+<div style="height: 100%">
+    <div class="dHead">
+        <a class="layui-btn layui-btn-primary layui-btn-xs layui-btn-xstree"  onclick="window.location.href='index.html';">刷新</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs layui-btn-xstree"  onclick="reload()">reload</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs layui-btn-xstree"  onclick="query()">query</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs layui-btn-xstree"  onclick="add(null);">新增一行</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs layui-btn-xstree"  onclick="openorclose();">隐藏或打开香蕉节点</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs layui-btn-xstree"  onclick="getCheckData();">获取选中行数据</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs layui-btn-xstree"  onclick="getCheckLength();">获取选中数目</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs layui-btn-xstree"  onclick="print();">打印缓存对象</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs layui-btn-xstree"  onclick="openAll();">展开或折叠全部</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs layui-btn-xstree"  onclick="radioStatus();">获取单选数据</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs layui-btn-xstree"  onclick="test();">test</a>
+        <br/>
+        <br/>
     </div>
-
-    <!-- 右侧组织架构、角色表格信息-->
-    <div class="col-sm-9">
-        <!-- 组织架构表格-->
-        <div id="orgTable">
-            <div class="box box-default collapsed-box box-solid" style="margin-bottom:5px;">
-                <div class="box-header with-border">
-                    <h3 class="box-title" id="orgName">组织架构</h3>
-                    <form id="formSearch" type="hidden" class="form-horizontal">
-                        <input type="hidden" id="orgId" name="useunit.id"/>
-                    </form>
-                </div>
-            </div>
-            <div id="toolbar" class="btn-group">
-                <button id="btn_add_member" type="button" class="btn btn-default btn-primary" disabled="disabled"
-                        onclick="goAddSysuer()">
-                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增成员
-                </button>
-                <button id="btn_delete_member" type="button" class="btn btn-default btn-danger" disabled="disabled" onclick="disableSysuser()">
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>批量禁用
-                </button>
-            </div>
-            <table id="orgTableContent"></table>
-        </div>
- 
-    </div>
-
-    <!-- 组织架构右键菜单-->
-    <div id="org-context-menu">
-        <ul class="dropdown-menu" role="menu">
-            <!-- 添加删除菜单-->
-            <li><a tabindex="-1" id="addMenu"><em id="addMenu" class="glyphicon glyphicon-plus"></em>添加菜单</a></li>
-            <li><a tabindex="-1" id="removeMenu"><em id="removeMenu" class="glyphicon glyphicon-remove"></em>删除菜单</a></li>
-        </ul>
+    <div class="dBody">
+        <table class="layui-hidden" id="treeTable" lay-filter="treeTable"></table>
     </div>
 </div>
 
-<!-- 模态窗体-->
+ <script type="text/javascript" th:src="@{/static/layuiadmin/layui/layui.js}"></script>
+  <script>
+  var editObj=null,ptable=null,treeGrid=null,tableId='treeTable',layer=null;
+  layui.config({
+    base: '../static/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index'
+//主入口模块
+  }).use(['element', 'tree', 'layer', 'form', 'upload', 'treeGrid'], function(){
+	  var $=layui.jquery;
+      treeGrid = layui.treeGrid;//很重要
+      layer=layui.layer;
+      ptable=treeGrid.render({
+    	  id:tableId
+          ,elem: '#'+tableId
+          ,url:'query-menu-tree'
+          ,cellMinWidth: 100
+          ,idField:'id'//必須字段
+          ,treeId:'id'//树形id字段名称
+          ,treeUpId:'pId'//树形父id字段名称
+          ,treeShowName:'name'//以树形式显示的字段
+          ,heightRemove:[".dHead",10]//不计算的高度,表格设定的是固定高度，此项不生效
+          ,height:'100%'
+          ,isFilter:false
+          ,iconOpen:true//是否显示图标【默认显示】
+          ,isOpenDefault:true//节点默认是展开还是折叠【默认展开】
+          ,loading:true
+          ,method:'post'
+          ,isPage:false
+          ,cols: [[
+              {type:'numbers'}
+              ,{type:'radio'}
+              ,{type:'checkbox',sort:true}
+              ,{field:'name', width:300, title: '水果名称',edit:'text',sort:true}
+              ,{field:'id',width:100, title: 'id',sort:true}
+              ,{field:'pId', title: 'pid',sort:true}
+              ,{width:100,title: '操作', align:'center'/*toolbar: '#barDemo'*/
+                  ,templet: function(d){
+                      var html='';
+                      var addBtn='<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="add">添加</a>';
+                      var delBtn='<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+                      return addBtn+delBtn;
+                  }
+              }
+          ]]
+          ,parseData:function (res) {//数据加载后回调
+              return res;
+          }
+          ,onClickRow:function (index, o) {
+              console.log(index,o,"单击！");
+              //msg("单击！,按F12，在控制台查看详细参数！");
+          }
+          ,onDblClickRow:function (index, o) {
+              console.log(index,o,"双击");
+              msg("双击！,按F12，在控制台查看详细参数！");
+          }
+          ,onCheck:function (obj,checked,isAll) {//复选事件
+              console.log(obj,checked,isAll,"复选");
+              msg("复选,按F12，在控制台查看详细参数！");
+          }
+          ,onRadio:function (obj) {//单选事件
+              console.log(obj,"单选");
+              msg("单选,按F12，在控制台查看详细参数！");
+          }
+      });
 
-<!-- 添加、编辑公司 -->
-<div class="modal fade" id="useunit_edit_modalwin" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static"
-     aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 id="add_company_titile" class="modal-title">新建子公司</h4>
-            </div>
-            <div class="modal-body">
-                <form id="useunitForm" role="form" method="post" class="form-horizontal">
-                    <input type="hidden" name="id"/>
-                    <input type="hidden" name="manageType" value="1"/>
-                    <input type="hidden" name="parentId"/>
-                    <input type="hidden" name="lesseeId"/>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label" for="useunit_name">公司类型<font color="red">*</font></label>
-                        <div class="col-sm-9">
-                            <select class="form-control" name="useunitType.id">
-                                <option value="">请选择类型</option>
-                                <option th:each="utype : ${useunitTypes}" th:value="${utype.id}"
-                                        th:text="${utype.typeName}"></option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label" for="useunit_name">公司名称<font color="red">*</font></label>
-                        <div class="col-sm-9">
-                            <input id="useunit_name" name="name" type="text" class="form-control"
-                                   placeholder="企业名称不能超过20个字"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label" for="useunit_shortName">公司简称<font
-                                color="red">*</font></label>
-                        <div class="col-sm-9">
-                            <input id="useunit_shortName" name="shortName" type="text" class="form-control"
-                                   placeholder="企业简称不能超过20个字"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">备&nbsp;&nbsp;&nbsp;注&nbsp;</label>
-                        <div class="col-sm-9">
-                            <input name="remark" type="text" class="form-control" placeholder="企业备注"/>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" onclick="goSaveUseunit(this)">保存</button>
-            </div>
-        </div>
-    </div>
-</div>
+      treeGrid.on('tool('+tableId+')',function (obj) {
+          if(obj.event === 'del'){//删除行
+              del(obj);
+          }else if(obj.event==="add"){//添加行
+              add(obj);
+          }
+      });
+  });
 
-<!-- 添加、编辑部门-->
-<div class="modal fade" id="dept_edit_modalwin" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static"
-     aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title" id="dept_mode_title">新增部门</h4>
-            </div>
-            <div class="modal-body">
-                <form id="deptForm" role="form" method="post" class="form-horizontal">
-                    <input type="hidden" name="id"/>
-                    <input type="hidden" name="manageType" value="1"/>
-                    <input type="hidden" name="parentId"/>
-                    <input type="hidden" name="lesseeId"/>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label" for="dept_name">部门名称<font color="red">*</font></label>
-                        <div class="col-sm-9">
-                            <input id="dept_name" name="name" type="text" class="form-control"
-                                   placeholder="部门名称不能超过32个字"/>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" onclick="goSaveDept(this)">保存</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!--删除公司、部门提示框-->
-<div class="modal fade" id="delete_useunit_modalwin" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static"
-     aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title" id="delete_useunit_title">删除部门</h4>
-            </div>
-            <div class="modal-body">
-                <form role="form" class="form-horizontal">
-                    <input type="hidden" id="delete_useunit_id"/>
-                    <div class="form-group">
-                        <div class="col-sm-8">
-                            <h4 id="delete_useunit_tip">确认删除部门？</h4>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-8">
-                            <h5>没有子部门且没有成员的部门才可以被删除。</h5>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="deleteUseunit()">确定</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-            </div>
-        </div>
-    </div>
-</div>
+  function del(obj) {
+      layer.confirm("你确定删除数据吗？如果存在下级节点则一并删除，此操作不能撤销！", {icon: 3, title:'提示'},
+          function(index){//确定回调
+              obj.del();
+              layer.close(index);
+          },function (index) {//取消回调
+             layer.close(index);
+          }
+      );
+  }
 
 
+  var i=1000000;
+  //添加
+  function add(pObj) {
+      var pdata=pObj?pObj.data:null;
+      var param={};
+      param.name='水果'+Math.random();
+      param.id=++i;
+      param.pId=pdata?pdata.id:null;
+      treeGrid.addRow(tableId,pdata?pdata[treeGrid.config.indexName]+1:0,param);
+  }
+
+  function print() {
+      console.log(treeGrid.cache[tableId]);
+      msg("对象已打印，按F12，在控制台查看！");
+  }
+
+  function msg(msg) {
+      var loadIndex=layer.msg(msg, {
+          time:3000
+          ,offset: 'b'//顶部
+          ,shade: 0
+      });
+  }
+  
+  function openorclose() {
+      var map=treeGrid.getDataMap(tableId);
+      var o= map['102'];
+      treeGrid.treeNodeOpen(tableId,o,!o[treeGrid.config.cols.isOpen]);
+  }
 
 
-</body>
-<script type="text/javascript" th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
-<script type="text/javascript" th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
-<script type="text/javascript" th:src="@{/static/plugins/select2/select2.js}"></script>
-<script type="text/javascript" th:src="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.js}"></script>
-<script type="text/javascript" th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
-<script type="text/javascript" th:src="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.js}"></script>
-<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/bootstrap-contextmenu.js}"></script>
-<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/prettify.js}"></script>
-<script type="text/javascript" th:src="@{/static/plugins/attention/zDialog/zDrag.js}"></script>
-<!--<script type="text/javascript" th:src="@{/static/plugins/attention/zDialog/zDialog.js}"></script>-->
-<scriptm type="text/javascript" th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></scriptm>
-<script type="text/javascript" th:src="@{/static/plugins/bootstrap-table/dist/bootstrap-table.min.js}"></script>
-<script type="text/javascript" th:src="@{/static/plugins/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
-<script type="text/javascript" th:src="@{/static/plugins/jQuery/jquery.serializejson.min.js}"></script>
-<script type="text/javascript" th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></script>
-<script type="text/javascript" th:src="@{/static/plugins/datetimepicker/js/bootstrap-datetimepicker.js}"></script>
-<script type="text/javascript" th:src="@{/static/plugins/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js}"></script>
-<script type="text/javascript" th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js}"></script>
-<script type="text/javascript" th:src="@{/static/plugins/bootstrap-table/dist/extensions/export/tableExport.js}"></script>
-<script type="text/javascript" th:inline="javascript">
-    var CTX = [[@{/}]];
-        var STATIC = [[@{/static/}]];
+  function openAll() {
+      var treedata=treeGrid.getDataTreeList(tableId);
+      treeGrid.treeOpenAll(tableId,!treedata[0][treeGrid.config.cols.isOpen]);
+  }
+
+  function getCheckData() {
+      var checkStatus = treeGrid.checkStatus(tableId)
+          ,data = checkStatus.data;
+      layer.alert(JSON.stringify(data));
+  }
+  function radioStatus() {
+      var data = treeGrid.radioStatus(tableId)
+      layer.alert(JSON.stringify(data));
+  }
+  function getCheckLength() {
+      var checkStatus = treeGrid.checkStatus(tableId)
+          ,data = checkStatus.data;
+      layer.msg('选中了：'+ data.length + ' 个');
+  }
+
+  function reload() {
+      treeGrid.reload(tableId,{
+          page:{
+              curr:1
+          }
+      });
+  }
+  function query() {
+      treeGrid.query(tableId,{
+          where:{
+              name:'测试1'
+          }
+      });
+  }
+  
+  function test() {
+      console.log(treeGrid.cache[tableId],treeGrid.getClass(tableId));
+
+
+      /*var map=treeGrid.getDataMap(tableId);
+      var o= map['102'];
+      o.name="更新";
+      treeGrid.updateRow(tableId,o);*/
+  }
 </script>
-<script type="text/javascript" th:src="@{/static/modules/base/organization-manage.js}"></script>
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?e2af8415b6ffbaeb52de4d080cb4ba85";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+  })();
+  </script>
+</body>
 </html>

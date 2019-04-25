@@ -15,7 +15,7 @@
        <input type="hidden" id="roleId" name="roleId" th:value="${roleId}"/>
 	   <input type="hidden" id="powerId" name="powerId"/>
       </div>
-	
+
 	
     <div class="layui-form-item">
         <label class="layui-form-label">选择权限</label>
@@ -62,7 +62,7 @@
 				});
 			},
 			error: function(xml, errstr, err) {
-				layer.alert(errstr+'，获取样例数据失败，请检查是否部署在本地服务器中！');
+				layer.alert('网络异常,请稍后重试!');
 			}
 		});
   })

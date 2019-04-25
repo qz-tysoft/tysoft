@@ -2,9 +2,11 @@ package com.tysoft.controller.base;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,10 +30,12 @@ import com.tysoft.common.JsonUtils;
 import com.tysoft.common.MD5Util;
 import com.tysoft.common.Restrictions;
 import com.tysoft.controller.BaseController;
+import com.tysoft.entity.base.Menu;
 import com.tysoft.entity.base.Power;
 import com.tysoft.entity.base.Role;
 import com.tysoft.entity.base.Unit;
 import com.tysoft.entity.base.User;
+import com.tysoft.service.base.MenuService;
 import com.tysoft.service.base.PowerService;
 import com.tysoft.service.base.RoleService;
 import com.tysoft.service.base.UnitService;
@@ -53,6 +57,8 @@ public class BaseManageController extends BaseController{
 		protected  UnitService unitService;
 		@Autowired
 		protected  UserService userService;
+		@Autowired
+		protected  MenuService menuService;
 		private String userView="baseManage/user/userView"; 
 		private String userAdd="baseManage/user/user-add"; 
 		private String powerView="baseManage/power/powerView";
@@ -719,5 +725,49 @@ public class BaseManageController extends BaseController{
 		
 		 return menuView;
 		 }	
+		 
+		 
+		 //查询菜单按钮
+		 @RequestMapping("query-menu-tree")
+		 @ResponseBody
+		 public Object queryOrgTrees(HttpServletRequest request, String useunitName) throws Exception {
+			 List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+			    for(int i=0;i<5;i++) {
+				    Map<String, Object> map = new HashMap<>();
+				    map.put("id", i);
+				    if(i==0) {
+				    	  map.put("pId",null);	
+				    }else if(i!=2) {
+				    	 map.put("pId",0);	
+				    }else {
+				    	 map.put("pId",0);	
+				    }
+				    map.put("name","测试"+i);
+				    listMap.add(map);
+			    }
+			    
+			    
+			    for(int i=6;i<12;i++) {
+				    Map<String, Object> map = new HashMap<>();
+				    map.put("id", i);
+				    if(i==6) {
+				    	  map.put("pId",null);	
+				    }else {
+				    	 map.put("pId",6);	
+				    }
+				    map.put("name","第二组测试"+i);
+				    map.put("lay_is_open",false);	
+				    listMap.add(map);
+			    }
+			   
+			    Map<String, Object> msgMap = new LinkedHashMap<String,Object>();
+				msgMap.put("code", 0);
+				msgMap.put("is", true);
+				msgMap.put("msg", "");
+				msgMap.put("tip", "操作成功");
+				msgMap.put("count",924);
+				msgMap.put("data", listMap);
+				return msgMap;
+		 }
 }
 
