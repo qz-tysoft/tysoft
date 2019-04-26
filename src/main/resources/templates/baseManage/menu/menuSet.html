@@ -14,6 +14,7 @@
             /*overflow: hidden;*/
             background-size: cover;
             margin: 0 auto;
+            background: #ffffff;
         }
 
         .body_bg {
@@ -91,7 +92,7 @@
   }).extend({
     index: 'lib/index'
 //主入口模块
-  }).use(['element', 'tree', 'layer', 'form', 'upload', 'treeGrid'], function(){
+  }).use(['element','index','tree', 'layer', 'form', 'upload', 'treeGrid'], function(){
 	  var $=layui.jquery;
       treeGrid = layui.treeGrid;//很重要
       layer=layui.layer;
@@ -180,9 +181,41 @@
   var i=1000000;
   //添加
   function add(pObj) {
-      var pdata=pObj?pObj.data:null;
-      var param={name:'水果',id:'4028209a6956cf31016956d164d300023',pId:'4028209a6956cf31016956d164d30000'};
-      treeGrid.addRow(tableId,pdata?pdata[treeGrid.config.indexName]+1:0,param);
+      //打开菜单添加界面
+      var index=layer.open({
+               type: 2
+              ,title: '添加菜单权限'
+              ,content: 'powerView?powerViewType=powerChoose&amp;pid='+pObj.data.pId
+              ,maxmin: true
+              ,area: ['500px', '200px']
+              ,btn: ['确定', '取消']
+              ,yes: function(index, layero){
+            	  var iframeWindow = window['layui-layer-iframe'+ index]
+            	  ,submitID = 'LAY-menu-submit'
+                  ,submit = layero.find('iframe').contents().find('#'+ submitID);
+            	  //监听提交
+            	   choosePowerId='';
+            	   menuName='';
+                  iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                    var field = data.field; //获取提交的字段
+                    var choosePowerId=field.choosePowerId;
+                    var menuName=field.menuName;
+                    if(menuName==''||choosePowerId==''){
+                    	layer.msg("请选择权限和填写菜单名!",{
+			 	            time:1000
+			 	      });
+                    	return
+                    }
+                    layer.close(index);
+                  });
+                  
+                  submit.trigger('click');
+              }
+            });
+      layer.full(index);
+	 // var pdata=pObj?pObj.data:null;
+     // var param={name:'水果',id:'4028209a6956cf31016956d164d300023',pId:'4028209a6956cf31016956d164d30000'};
+     // treeGrid.addRow(tableId,pdata?pdata[treeGrid.config.indexName]+1:0,param);
   }
 
   function print() {
@@ -242,12 +275,6 @@
   
   function test() {
       console.log(treeGrid.cache[tableId],treeGrid.getClass(tableId));
-
-
-      /*var map=treeGrid.getDataMap(tableId);
-      var o= map['102'];
-      o.name="更新";
-      treeGrid.updateRow(tableId,o);*/
   }
 </script>
 <script>

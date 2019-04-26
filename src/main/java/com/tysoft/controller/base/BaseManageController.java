@@ -72,7 +72,12 @@ public class BaseManageController extends BaseController{
 		private String rolePowerSetView="baseManage/role/rolePowerSet";
 		private String userUnitSet="baseManage/user/user-unit-set";
 		private String userPowerSet="baseManage/user/user-power-set";
-	  	private String menuView="baseManage/menu/menuSet";
+	    //菜单操作
+		private String menuView="baseManage/menu/menuSet";
+	  	private String menuAddView="baseManage/menu/menu-add";
+	  	//菜单-权限选择界面
+	  	private String powerChoose="baseManage/power/power-choose";
+	  	
 	    //权限界面
 	  	@RequestMapping("powerView")
 	  	public String powerView(HttpServletRequest request){
@@ -94,6 +99,10 @@ public class BaseManageController extends BaseController{
 				Power  power=this.powerService.findPowerById(id);
 				request.setAttribute("power",power);
 				view=powerEdit;
+			}else if(powerViewType.equals("powerChoose")) {
+				String pid=request.getParameter("pid");
+				request.setAttribute("pid", pid);
+				view=powerChoose;
 			}
 			
 	  		return view;
@@ -107,11 +116,18 @@ public class BaseManageController extends BaseController{
 			String limit=request.getParameter("limit");
 			String pid=request.getParameter("pid");
 			String queryPowerName=request.getParameter("powerName");
+			String isChoosePower=request.getParameter("chooseFlag");
 			Criteria<Power> criteria=new Criteria<>();
-	        if(StringUtil.isNotBlank(pid)) {
+	        //当不是菜单选择权限的时候
+			if(!StringUtil.isNotBlank(isChoosePower)) {
+			 //正常情况下的权限选择
+			  if(StringUtil.isNotBlank(pid)) {
 				criteria.add(Restrictions.eq("pid", pid, false));
-			}else {
+			 }else {
 				criteria.add(Restrictions.eq("pid", "menu", false));
+			 }
+			 }else {
+				criteria.add(Restrictions.ne("pid", "menu", false));
 			}
 			if(StringUtil.isNotBlank(queryPowerName)) {
 			  criteria.add(Restrictions.like("powerName", queryPowerName, false));
@@ -723,10 +739,15 @@ public class BaseManageController extends BaseController{
 		 
 		 @RequestMapping("menuView")
   	     public String menuView(HttpServletRequest request){
-		
-		 return menuView;
+		 String menuViewType=request.getParameter("menuViewType");
+		 String view="";
+		 if(menuViewType.equals("menuAdd")) {
+			 view=menuAddView;
+		 }else {
+			 view=menuView;
+		 }
+		    return  view;
 		 }	
-		 
 		 
 		 //查询菜单按钮
 		 @RequestMapping("query-menu-tree")
@@ -751,34 +772,6 @@ public class BaseManageController extends BaseController{
 				 listMap.add(map);
 			 }
 			 
-			    for(int i=0;i<5;i++) {
-				    Map<String, Object> map = new HashMap<>();
-				    map.put("id", i);
-				    if(i==0) {
-				    	  map.put("pId",null);	
-				    }else if(i!=2) {
-				    	 map.put("pId",0);	
-				    }else {
-				    	 map.put("pId",0);	
-				    }
-				    map.put("name","测试"+i);
-				    listMap.add(map);
-			    }
-			    
-			    
-			    for(int i=6;i<12;i++) {
-				    Map<String, Object> map = new HashMap<>();
-				    map.put("id", i);
-				    if(i==6) {
-				    	  map.put("pId",null);	
-				    }else {
-				    	 map.put("pId",6);	
-				    }
-				    map.put("name","第二组测试"+i);
-				    map.put("lay_is_open",false);	
-				    listMap.add(map);
-			    }
-			   
 			    Map<String, Object> msgMap = new LinkedHashMap<String,Object>();
 				msgMap.put("code", 0);
 				msgMap.put("is", true);
