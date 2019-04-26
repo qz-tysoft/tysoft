@@ -27,7 +27,6 @@ layui.config({
                     ,isShow:'lay_is_show'//是否显示节点
                     ,level:'lay_level'//节点的层级关系（不需要设置）
                     ,children:'children'//存放下级的变量
-                    ,isRowCheck:'lay_is_row_check'//行选中
 
                     ,cheDisabled:'lay_che_disabled'//禁止多选（true，false）
                     ,radDisabled:'lay_rad_disabled'//禁止单选（true，false）
@@ -484,7 +483,7 @@ layui.config({
                     //1、处理父级  2、处理treeObj 3、层级
                     var uo=that.treeFindUpData(data);
                     if(uo) {
-                        if(!uo.children){uo.children=[]}
+                        var clist=uo.children;
                         uo.children.push(data);
                         data[table.config.cols.level]=uo[table.config.cols.level]+1;
                     }else{
@@ -493,28 +492,15 @@ layui.config({
                     }
                 }
                 //生成html
-                var _result=that.renderTr(data,data[table.config.indexName]);// laxse@outlook.com 增加行浮动
-                var tds=_result._tds,tds_fixed = _result._tds_l,tds_fixed_r = _result._tds_r;
+                var tds=that.renderTr(data,data[table.config.indexName]);
                 var trs='<tr data-index="'+ data[table.config.indexName] +'"'+that.renderTrUpids(data)+'>'+ tds.join('') + '</tr>';
-                var trs_l='<tr data-index="'+ i1 +'">'+ tds_fixed.join('') + '</tr>';
-                var trs_r='<tr data-index="'+ i1 +'">'+ tds_fixed_r.join('') + '</tr>';
                 if(index==0){//在第一个位置插入
                     var  tbody=that.layBody.find('table tbody');
-                    var  tlbody=that.layFixLeft.find('table tbody');
-                    var  trbody=that.layFixRight.find('table tbody');
                     $(tbody).prepend(trs);
-                    $(tlbody).prepend(trs_l);
-                    $(trbody).prepend(trs_r);
                     that.layBody.find(".layui-none").remove();
-                    that.layFixLeft.find(".layui-none").remove();
-                    that.layFixRight.find(".layui-none").remove();
                 }else{
                     var o=that.layBody.find('[data-index='+(index-1)+']');//父节点dom树
-                    var l=that.layFixLeft.find('[data-index='+(index-1)+']');//父节点dom树
-                    var r=that.layFixRight.find('[data-index='+(index-1)+']');//父节点dom树
                     $(o).after(trs);
-                    $(l).after(trs_l);
-                    $(r).after(trs_r);
                 }
                 that.renderForm();
                 if(options.isPage)that.renderPage(that.config.page.count+1);//分页渲染
@@ -602,14 +588,9 @@ layui.config({
                 }
                 //更新页面
                 var oi=thisobj[table.config.indexName];
-                var  _result=that.renderTr(thisobj,oi);
-                var tds = _result._tds,tds_fixed = _result._tds_l,tds_fixed_r = _result._tds_r
+                var  tds=that.renderTr(thisobj,oi);
                 var tr=that.layBody.find('tr[data-index='+oi+']');
-                var tr_l=that.layFixLeft.find('tr[data-index='+oi+']');//laxse@outlook.com 
-                var tr_r=that.layFixRight.find('tr[data-index='+oi+']');
                 $(tr).html(tds);
-                $(tr_l).html(tds_fixed);
-                $(tr_r).html(tds_fixed_r);
             }
             ,treeNodeOpen:function (tableId,o, isOpen) {
                 var that=table.getClass(tableId);
@@ -698,53 +679,11 @@ layui.config({
                 });
                 return idField;
             }
-            /**
-             * icon渲染
-             * @param tableId
-             * @param o
-             * @return {*}
-             */
             ,treeIconRender:function (tableId, o) {
                 var that=table.getClass(tableId);
                 if(!that||!o)return [];
                 return that.treeIconRender(o,false);
             }
-            /**
-             * 获取当前选中的行
-             * @param tableId
-             */
-            ,treeFindRowCheck:function (tableId) {
-                var rowchecks=[];
-                var list=table.getDataList(tableId);
-                if(list){
-                    list.forEach(function (temo) {
-                        if(temo[table.config.cols.isRowCheck]){
-                            rowchecks.push(temo);
-                        }
-                    });
-                }
-                return rowchecks;
-            }
-            /**
-             * 当前选中的行
-             * @param tableId
-             */
-            ,treeRowCheck:function (tableId,index) {
-                var that=table.getClass(tableId);
-                if(!that)return;
-                var list=table.getDataList(that.config.id);
-                var o=list[index];
-                if(that.config.model=="tree"){
-                    list.forEach(function (temo) {
-                        temo[table.config.cols.isRowCheck]=false;
-                    });
-                    o[table.config.cols.isRowCheck]=true;
-                    that.layBody.find("tr").css("background-color","");
-                    that.getTr(index).css("background-color","#ccc");
-                }
-                typeof that.config.onClickRow === 'function' && that.config.onClickRow(index,o);
-            }
-
             /**
              * 工具方法对象
              */
@@ -851,7 +790,7 @@ layui.config({
             ,'<tbody></tbody>'
             ,'</table>'].join('')
         //主模板
-        ,TPL_MAIN = ['<div class="layui-form layui-border-box {{d.VIEW_CLASS}} {{d.data.id}}" lay-filter="LAY-table-{{d.index}}" style="{{# if(d.data.width){ }}width:{{d.data.width}}px;{{# } }} {{# if(d.data.height){ }}height:{{d.data.height}}px;{{# } }}">'
+        ,TPL_MAIN = ['<div class="layui-form layui-border-box {{d.VIEW_CLASS}}" lay-filter="LAY-table-{{d.index}}" style="{{# if(d.data.width){ }}width:{{d.data.width}}px;{{# } }} {{# if(d.data.height){ }}height:{{d.data.height}}px;{{# } }}">'
 
             ,'{{# if(d.data.toolbar){ }}'
             ,'<div class="layui-table-tool"></div>'
@@ -952,8 +891,6 @@ layui.config({
         ,isTree:true//默认为树表格
         ,isPage:false//不分页
         ,height:'100%'//默认高度100%
-        ,model:''//模型（''默认；'tree'树组件形式）
-        ,editModel:'click'//编辑模式('click':单击编辑；'dblclick':双击编辑)
     };
     Class.prototype.configFirst={};//页面定义时原始参数
     //表格渲染
@@ -1085,27 +1022,6 @@ layui.config({
             }
         }
         return o;
-    };
-
-    /**
-     * 获取tr
-     * @param tableId
-     */
-    Class.prototype.getTr = function(index){
-        var that = this;
-        var tr = that.layBody.find('tr[data-index="'+ index +'"]')
-        return tr;
-    };
-
-    /**
-     * 获取td
-     * @param tableId
-     */
-    Class.prototype.getTd = function(index,field){
-        var that = this;
-        var tr=that.getTr(index);
-        var td=$(tr).find('td[data-field="'+ field +'"]');
-        return td;
     };
 
     //表格重载
@@ -1424,8 +1340,7 @@ layui.config({
                 var nbspHtml="<i>"//一次位移
                 for(var i=1;i<o[table.config.cols.level];i++) {
                     nbspHtml = nbspHtml + "&nbsp;&nbsp;&nbsp;&nbsp;";
-                } 
-
+                }
                 nbspHtml=nbspHtml+"</i>";
                 return nbspHtml;
             }()
@@ -1548,10 +1463,10 @@ layui.config({
             ,request = options.request
             ,response = options.response
             ,sort = function(){
-            if(typeof options.initSort === 'object'){
-                that.sort(options.initSort.field, options.initSort.type);
-            }
-        };
+                if(typeof options.initSort === 'object'){
+                    that.sort(options.initSort.field, options.initSort.type);
+                }
+            };
         that.startTime = new Date().getTime(); //渲染开始时间
         if(options.url){ //Ajax请求
             var params = {};
@@ -1564,7 +1479,6 @@ layui.config({
                 ,url: options.url
                 ,data: $.extend(params, options.where)
                 ,dataType: 'json'
-                ,headers:options.headers
                 ,success: function(res){
                     if(!res[response.dataName]){//返回是未定义或null时转成[]
                         res[response.dataName]=[]
@@ -1589,7 +1503,6 @@ layui.config({
                     loadIndex && layer.close(loadIndex);
                     that.events();
                     typeof options.done === 'function' && options.done(res, curr, res[response.countName]);
-                    that.renderRowCheck();
                 }
                 ,error: function(e, m){
                     that.layMain.html('<div class="'+ NONE +'">数据接口请求异常</div>');
@@ -1600,12 +1513,10 @@ layui.config({
         } else if(options.data && options.data.constructor === Array){ //已知数据
             var res = {},startLimit = curr*options.limit - options.limit
             res[response.dataName] = options.data.concat().splice(startLimit, options.limit);
-            that.resetDatas(res[response.dataName]);
             res[response.countName] = options.data.length;
             that.renderData(res, curr, options.data.length);
             that.events();
             typeof options.done === 'function' && options.done(res, curr, res[response.countName]);
-            that.renderRowCheck();
         }
     };
     /**
@@ -1719,44 +1630,6 @@ layui.config({
     }
 
     /**
-     * 单元格编辑模式渲染
-     */
-    Class.prototype.renderTdEdit = function(index,field){
-        var that = this
-            ,othis=$(that.getTd(index,field)).last()
-            ,options = that.config
-            ,field = othis.data('field')
-            ,editType = othis.data('edit')
-            ,index = othis.parents('tr').eq(0).data('index')
-            ,val=othis.find("div.layui-table-cell p").eq(0).text()
-            ,data = table.getDataList(that.key)[index];
-        if(editType === 'select') { //选择框
-            var dropName=othis.data('drop');
-            var rowsField=dl.ui.table.drop.findFieldObj(options.cols[0],field);
-            var o=dl.cache.code.get(rowsField.drop);
-            var html='';
-            var scv=o.syscodevaluecache;
-            for(var i in scv){
-                var isSelected="";
-                if(scv[i].scv_value==data[field]){
-                    isSelected="selected='selected'";
-                }
-                //选中
-                html+='<option '+isSelected+'  value="'+scv[i].scv_value+'">'+scv[i].scv_show_name+'</option>'
-            }
-            var select = $('<select class="'+ ELEM_EDIT +'" lay-ignore>' +
-                html+
-                '</select>');
-            othis.find('.'+ELEM_EDIT)[0] || othis.append(select);
-        } else { //输入框
-            var input = $('<input class="layui-input '+ ELEM_EDIT +'">');
-            input[0].value = $.trim(val);//  othis.data('content') || elemCell.text();
-            othis.find('.'+ELEM_EDIT)[0] || othis.append(input);
-            input.focus();
-        }
-    };
-
-    /**
      * 插件内css
      */
     Class.prototype.renderCss = function(){
@@ -1770,15 +1643,6 @@ layui.config({
             +function () {
                 var ret=".layui-tree-head{cursor: pointer;}";//树图标点击样式
                 ret+=".layui-table-view {margin:0;}";
-
-                if(options.model){
-                    if(options.model=="tree"){//树组件
-                        that.layHeader.hide();//隐藏头部
-                        that.layFilter.hide();//隐藏行内过滤
-                        ret+="."+options.id+" .layui-table td,."+options.id+"{border-style: none;padding:0;}"
-                        ret+="."+options.id+" .layui-table-view .layui-table{width:100%;}"
-                    }
-                }
                 return ret;
             }()+'</style>';
         hasRender.append(styel);
@@ -1893,18 +1757,17 @@ layui.config({
     Class.prototype.renderTr=function (obj,numbers) {
         var that = this
             ,options = that.config;
-        var tds= [],tds_l=[],tds_r=[];
+        var tds= [];
         that.eachCols(function(i3, cols){//cols列定义
             var field = cols.field || i3, content = obj[field];
             if(cols.colspan > 1) return;
             var td = that.renderTd(obj,cols,numbers,i3);//td内容
             tds.push(td);
-            if(cols.fixed && cols.fixed !== 'right') tds_l.push(td);
-            if(cols.fixed === 'right') tds_r.push(td);
+            // if(item3.fixed && item3.fixed !== 'right') tds_fixed.push(td);
+            // if(item3.fixed === 'right') tds_fixed_r.push(td);
         });
-        return {_tds:tds,_tds_l:tds_l,_tds_r:tds_r};
+        return tds;
     };
-   
     /**
      * 表格数据部分渲染入口
      * @param res
@@ -1937,10 +1800,7 @@ layui.config({
                     if(!sort){
                         obj[table.config.indexName] = i1;
                     }
-                    var _result=that.renderTr(obj,numbers);
-                    tds = _result._tds;
-                    tds_fixed = _result._tds_l;
-                    tds_fixed_r = _result._tds_r;
+                    tds=that.renderTr(obj,numbers);
                     trs.push('<tr style="'+display+'" data-index="'+ i1 +'" '+that.renderTrUpids(obj)+'>'+ tds.join('') + '</tr>');
                     trs_fixed.push('<tr data-index="'+ i1 +'">'+ tds_fixed.join('') + '</tr>');
                     trs_fixed_r.push('<tr data-index="'+ i1 +'">'+ tds_fixed_r.join('') + '</tr>');
@@ -2054,27 +1914,6 @@ layui.config({
         v.push('</form>');
         return v.join('');
     };
-
-    /**
-     * 行选中渲染
-     */
-    Class.prototype.renderRowCheck = function(){
-        var that = this
-            ,options = that.config
-            ,index=that.index; //索引
-        var list=table.getDataList(options.id);
-        if(list){
-            list.forEach(function (temo) {
-                var tr=that.layBody.find('tr[data-index='+temo[table.config.indexName]+']');
-                if(temo[table.config.cols.isRowCheck]){
-                    tr.css("background-color","#ccc");
-                }else{
-                    tr.css("background-color","");
-                }
-            });
-        }
-    };
-
     //找到对应的列元素
     Class.prototype.getColElem = function(parent, field){
         var that = this
@@ -2096,7 +1935,7 @@ layui.config({
         cols.forEach(function (t) {
             if(t.sortType){
                 var tem={
-                    "field":t.field
+                   "field":t.field
                     ,"sort":t.sortType
                 }
                 sort.push(tem);
@@ -2145,18 +1984,18 @@ layui.config({
         } catch(e){
             return hint.error('Table modules: Did not match to field');
         }
-        /* //记录排序索引和类型
-         that.sortKey = {
-             field: field
-             ,sort: type
-         };
-         if(type === 'asc'){ //升序
-         } else if(type === 'desc'){ //降序
-             thisData = layui.sort(data, field, true);
-         } else { //清除排序
-             thisData = layui.sort(data, table.config.indexName);
-         }
-         */
+       /* //记录排序索引和类型
+        that.sortKey = {
+            field: field
+            ,sort: type
+        };
+        if(type === 'asc'){ //升序
+        } else if(type === 'desc'){ //降序
+            thisData = layui.sort(data, field, true);
+        } else { //清除排序
+            thisData = layui.sort(data, table.config.indexName);
+        }
+        */
         var cols=that.getCols(field);
         if(cols){
             cols.sortType=type
@@ -2190,33 +2029,33 @@ layui.config({
     };
     //同步全选按钮状态
     Class.prototype.syncCheckAll = function(){
-        var that = this
-            ,options = that.config;
-        var list=table.getDataList(that.config.id);
-        if(!list)return;
-        var temis=true;//全选
-        var checkNum=0;//选中的个数
-        list.forEach(function (t) {
-            if(!t[table.config.cols.cheDisabled]){
-                if(t[table.config.cols.isCheckName]){
-                    var  checkAllElem = that.layBody.find('tr[data-index='+t[table.config.indexName]+']').find('input[name="'+TABLE_CHECKBOX_ID+'"]');
-                    checkAllElem.prop('checked', true);
-                    checkNum++;
-                }else{
-                    temis=false;
-                    var  checkAllElem = that.layBody.find('tr[data-index='+t[table.config.indexName]+']').find('input[name="'+TABLE_CHECKBOX_ID+'"]');
-                    checkAllElem.prop('checked', false);
+            var that = this
+                ,options = that.config;
+            var list=table.getDataList(that.config.id);
+            if(!list)return;
+            var temis=true;//全选
+            var checkNum=0;//选中的个数
+            list.forEach(function (t) {
+                if(!t[table.config.cols.cheDisabled]){
+                    if(t[table.config.cols.isCheckName]){
+                        var  checkAllElem = that.layBody.find('tr[data-index='+t[table.config.indexName]+']').find('input[name="'+TABLE_CHECKBOX_ID+'"]');
+                        checkAllElem.prop('checked', true);
+                        checkNum++;
+                    }else{
+                        temis=false;
+                        var  checkAllElem = that.layBody.find('tr[data-index='+t[table.config.indexName]+']').find('input[name="'+TABLE_CHECKBOX_ID+'"]');
+                        checkAllElem.prop('checked', false);
+                    }
                 }
+            });
+            if(temis){//设置全选
+                var  checkAllElem = that.layHeader.find('input[name="'+TABLE_CHECKBOX_ID+'"]');
+                checkAllElem.prop('checked', true);
             }
-        });
-        if(temis){//设置全选
-            var  checkAllElem = that.layHeader.find('input[name="'+TABLE_CHECKBOX_ID+'"]');
-            checkAllElem.prop('checked', true);
-        }
-        if(checkNum<(list.length-options.cheDisabledNum)){
-            var  checkAllElem = that.layHeader.find('input[name="'+TABLE_CHECKBOX_ID+'"]');
-            checkAllElem.prop('checked', false);
-        }
+            if(checkNum<(list.length-options.cheDisabledNum)){
+                var  checkAllElem = that.layHeader.find('input[name="'+TABLE_CHECKBOX_ID+'"]');
+                checkAllElem.prop('checked', false);
+            }
         // console.time("pullData");
         // console.timeEnd("pullData");
         that.renderForm('checkbox');
@@ -2374,7 +2213,7 @@ layui.config({
         //tbody区域高度
         // bodyHeight = parseFloat(height) - parseFloat(that.layHeader.height()) - 1;//原本代码
         var theader=options.isFilter?76:38;//没有行内过滤区域
-        bodyHeight = parseFloat(height) - (that.config.model=="tree"?0:theader) - 1;//###注意：现在写死表头固定高度为38px，即不支持多表头方式（在tab方式下无法获取正确的高度，待处理）
+        bodyHeight = parseFloat(height) - theader - 1;//###注意：现在写死表头固定高度为38px，即不支持多表头方式（在tab方式下无法获取正确的高度，待处理）
         if(options.toolbar){
             bodyHeight = bodyHeight - that.layTool.outerHeight();
         }
@@ -2457,7 +2296,9 @@ layui.config({
         //行点击事件
         bodytr.unbind('click').on('click',function (e) {
             var index=$(this).attr("data-index");
-            table.treeRowCheck(that.config.id,index);
+            var list=table.getDataList(that.config.id);
+            var o=list[index];
+            typeof options.onClickRow === 'function' && options.onClickRow(index,o);
         });
         //行双击事件
         bodytr.unbind('dblclick').on('dblclick',function (e) {
@@ -2609,8 +2450,31 @@ layui.config({
             if(othis.data('off')) return;
 
             //显示编辑表单
-            if(editType&&options.editModel=="click"){
-                that.renderTdEdit(index,field);
+            if(editType){
+                if(editType === 'select') { //选择框
+                    var dropName=othis.data('drop');
+                    var rowsField=dl.ui.table.drop.findFieldObj(options.cols[0],field);
+                    var o=dl.cache.code.get(rowsField.drop);
+                    var html='';
+                    var scv=o.syscodevaluecache;
+                    for(var i in scv){
+                        var isSelected="";
+                        if(scv[i].scv_value==data[field]){
+                            isSelected="selected='selected'";
+                        }
+                        //选中
+                        html+='<option '+isSelected+'  value="'+scv[i].scv_value+'">'+scv[i].scv_show_name+'</option>'
+                    }
+                    var select = $('<select class="'+ ELEM_EDIT +'" lay-ignore>' +
+                        html+
+                        '</select>');
+                    othis.find('.'+ELEM_EDIT)[0] || othis.append(select);
+                } else { //输入框
+                    var input = $('<input class="layui-input '+ ELEM_EDIT +'">');
+                    input[0].value = $.trim($(this).text());//  othis.data('content') || elemCell.text();
+                    othis.find('.'+ELEM_EDIT)[0] || othis.append(input);
+                    input.focus();
+                }
                 return;
             }
 
@@ -2647,23 +2511,6 @@ layui.config({
                         }
                     });
                 }
-            }
-        });
-        //单元格事件
-        that.layBody.on('dblclick','td div.layui-table-cell p',function(){
-            var othis = $(this).parent().parent()
-                ,field = othis.data('field')
-                ,editType = othis.data('edit')
-                ,index = othis.parents('tr').eq(0).data('index')
-                ,data = table.getDataList(that.key)[index]
-                ,elemCell = othis.children(ELEM_CELL);
-            var  options = that.config;
-            layer.close(that.tipsIndex);
-            if(othis.data('off')) return;
-            //显示编辑表单
-            if(editType&&options.editModel=="dblclick"){
-                that.renderTdEdit(index,field);
-                return;
             }
         });
         that.layBody.on('change','.'+ELEM_EDIT, function(){

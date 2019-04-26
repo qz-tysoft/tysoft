@@ -113,18 +113,25 @@
           ,method:'post'
           ,isPage:false
           ,cols: [[
-              {type:'numbers'}
-              ,{type:'radio'}
-              ,{type:'checkbox',sort:true}
-              ,{field:'name', width:300, title: '水果名称',edit:'text',sort:true}
-              ,{field:'id',width:100, title: 'id',sort:true}
+               {type:'numbers'}
+              ,{field:'name', width:300,align:'center',title: '菜单名'}
+              ,{field:'id',width:100,align:'center', title: '权限名'}
               ,{field:'pId', title: 'pid',sort:true}
-              ,{width:100,title: '操作', align:'center'/*toolbar: '#barDemo'*/
+              ,{width:200,title: '操作', align:'center'/*toolbar: '#barDemo'*/
                   ,templet: function(d){
-                      var html='';
-                      var addBtn='<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="add">添加</a>';
-                      var delBtn='<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
-                      return addBtn+delBtn;
+                      var pid=d.pId;
+                      var delBtn='';
+                      var addBtn=''
+                      var editBtn=''
+                      if(pid!='first'){
+                          delBtn='<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+                          addBtn='<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="add">添加</a>';
+                          editBtn='<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</a>';
+                      }else{
+                          addBtn='<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="add">添加</a>';
+                      }
+                	  var html='';
+                      return addBtn+delBtn+editBtn;
                   }
               }
           ]]
@@ -153,7 +160,7 @@
           if(obj.event === 'del'){//删除行
               del(obj);
           }else if(obj.event==="add"){//添加行
-              add(obj);
+        	  add(obj);
           }
       });
   });
@@ -174,10 +181,7 @@
   //添加
   function add(pObj) {
       var pdata=pObj?pObj.data:null;
-      var param={};
-      param.name='水果'+Math.random();
-      param.id=++i;
-      param.pId=pdata?pdata.id:null;
+      var param={name:'水果',id:'4028209a6956cf31016956d164d300023',pId:'4028209a6956cf31016956d164d30000'};
       treeGrid.addRow(tableId,pdata?pdata[treeGrid.config.indexName]+1:0,param);
   }
 

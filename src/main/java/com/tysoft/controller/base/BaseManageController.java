@@ -95,6 +95,7 @@ public class BaseManageController extends BaseController{
 				request.setAttribute("power",power);
 				view=powerEdit;
 			}
+			
 	  		return view;
 	  	}
 	  	
@@ -732,6 +733,24 @@ public class BaseManageController extends BaseController{
 		 @ResponseBody
 		 public Object queryOrgTrees(HttpServletRequest request, String useunitName) throws Exception {
 			 List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+			 //查询所有的菜单
+			 List<Menu> menuList=this.menuService.queryAllMenu();
+			 //进行数据的下发 
+			 for(int i=0;i<menuList.size();i++) {
+				 Menu menu=menuList.get(i);
+				 Map<String, Object> map = new HashMap<>();
+				 if(menu.getPid().equals("first")) {
+					 map.put("pId","first");
+				 }else if(menu.getPid().equals("menu")){
+					 map.put("pId",null);
+				 }else {
+					 map.put("pId",menu.getPid());
+				 }
+				 map.put("id",menu.getId());
+				 map.put("name",menu.getMenuName());
+				 listMap.add(map);
+			 }
+			 
 			    for(int i=0;i<5;i++) {
 				    Map<String, Object> map = new HashMap<>();
 				    map.put("id", i);
