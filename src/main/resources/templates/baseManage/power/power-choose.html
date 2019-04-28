@@ -11,12 +11,11 @@
   <link rel="stylesheet" th:href="@{/static/layuiadmin/style/admin.css}" media="all"/>
 </head>
 <body>
-   <input type="hidden" id="pid" th:value="${pid}"></input>
   <div class="layui-fluid">   
     <div class="layui-card">
       <div class="layui-form layui-card-header layuiadmin-card-header-auto">
         <div class="layui-form-item">
-            <div class="layui-row">
+            <div class="layui-row" style="margin-top:12px;">
           
           <div class="layui-col-md3">
           <div class="layui-inline">
@@ -24,13 +23,14 @@
             <div class="layui-input-block">
               <input type="text" id="powerName" name="powerName" placeholder="请输入" autocomplete="off" class="layui-input"></input>
               <input type="hidden" id="choosePowerId" name="choosePowerId" value=''/>
+             <input type="hidden" id="pid" name="pid" th:value="${pid}"></input>
+         
             </div>
           </div>
           </div>
           
            <div class="layui-col-md3">
           <div class="layui-inline">
-            <div style="height: 1px;width: 40px"></div>
             <button  style="margin-left:50px;"    class="layui-btn layuiadmin-btn-admin" lay-submit="" lay-filter="LAY-user-back-search">
               <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
             </button>
@@ -105,7 +105,7 @@
     	 elem: '#power-table-page'
         ,url: layui.setter.base + '../../baseManage/powerPage'
         ,where:{chooseFlag:1}
-        ,height: 'full-100'
+        ,height: 'full-120'
         ,cols: [[
         {type:'radio'}
           ,{title: '序号',templet: '#indexTpl',align:'center'}

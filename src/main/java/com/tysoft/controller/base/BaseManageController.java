@@ -77,6 +77,8 @@ public class BaseManageController extends BaseController{
 	  	private String menuAddView="baseManage/menu/menu-add";
 	  	//菜单-权限选择界面
 	  	private String powerChoose="baseManage/power/power-choose";
+		private String menuPower="baseManage/menu/menu-power";
+		private String menuEdit="baseManage/menu/menu-edit";
 	  	
 	    //权限界面
 	  	@RequestMapping("powerView")
@@ -100,8 +102,6 @@ public class BaseManageController extends BaseController{
 				request.setAttribute("power",power);
 				view=powerEdit;
 			}else if(powerViewType.equals("powerChoose")) {
-				String pid=request.getParameter("pid");
-				request.setAttribute("pid", pid);
 				view=powerChoose;
 			}
 			
@@ -743,6 +743,16 @@ public class BaseManageController extends BaseController{
 		 String view="";
 		 if(menuViewType.equals("menuAdd")) {
 			 view=menuAddView;
+		 }else if(menuViewType.equals("menuPower")){
+			 String pid=request.getParameter("pid");
+			 request.setAttribute("pid", pid);
+			 view=menuPower;
+		 }else if(menuViewType.equals("menuEdit")) {
+			 String menuId=request.getParameter("id");
+			 Menu menu=this.menuService.findMenuById(menuId);
+			 request.setAttribute("menu", menu);
+			 request.setAttribute("power",menu.getPower());
+			 view=menuEdit;
 		 }else {
 			 view=menuView;
 		 }
@@ -752,7 +762,7 @@ public class BaseManageController extends BaseController{
 		 //查询菜单按钮
 		 @RequestMapping("query-menu-tree")
 		 @ResponseBody
-		 public Object queryOrgTrees(HttpServletRequest request, String useunitName) throws Exception {
+		 public Object queryMenuTree(HttpServletRequest request) throws Exception {
 			 List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
 			 //查询所有的菜单
 			 List<Menu> menuList=this.menuService.queryAllMenu();
@@ -780,6 +790,59 @@ public class BaseManageController extends BaseController{
 				msgMap.put("count",924);
 				msgMap.put("data", listMap);
 				return msgMap;
+		 }
+		 //菜单添加
+		 @RequestMapping("menu-add")
+		 @ResponseBody
+		 public Object menuAdd(HttpServletRequest request) throws Exception {
+             //获得相关数据
+			 String data=request.getParameter("data");
+		 	 JSONObject obj=JSONObject.fromObject(data);
+			 Menu menu=new Menu();
+			 menu.setPid((String)obj.get("pid"));
+			 menu.setMenuName((String)obj.get("menuName"));
+			 Power power=this.powerService.findPowerById((String)obj.get("choosePowerId"));
+			 menu.setPower(power);
+			 //进行保存
+			 Menu saveMenu=this.menuService.saveMenu(menu);
+			 return saveMenu;
+		 }
+		 
+		 //菜单删除
+		 @RequestMapping("menu-delet")
+		 @ResponseBody
+		 public Object menuDelet(HttpServletRequest request) throws Exception {
+           String menuId=request.getParameter("id");
+        	   Criteria<Menu> criteria=new Criteria<>();
+        	   criteria.add(Restrictions.eq("pid", menuId, false));
+        	   List<Menu> childrenMenu=this.menuService.queryMenuByCondition(criteria, null);
+        	   String ids=menuId;
+        	   //子节点先删除
+        	   for(int i=0;i<childrenMenu.size();i++) {
+        		   Menu menu=childrenMenu.get(i);
+        		   String id=menu.getId();
+        		   //拼接
+        		   ids+=","+id;
+        	   }
+        	   this.menuService.deleteMenuByIds(ids);
+		       return Success;
+		 }
+		 
+		 //菜单编辑
+		 @RequestMapping("menu-edit")
+		 @ResponseBody
+		 public Object menuEdit(HttpServletRequest request) throws Exception {
+
+		   return null;
+		 }
+		 
+		 
+		 //菜单图标选择
+		 @RequestMapping("menu-icon")
+		 @ResponseBody
+		 public Object menuIcon(HttpServletRequest request) throws Exception {
+
+		   return null;
 		 }
 }
 

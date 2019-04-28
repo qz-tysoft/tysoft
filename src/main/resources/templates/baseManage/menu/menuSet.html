@@ -64,6 +64,8 @@
 <body>
   
 <div style="height: 100%">
+<!-- 初始化删除标记-->
+<input type="hidden" id="delFlag" value="0" />
     <div class="dHead">
         <a class="layui-btn layui-btn-primary layui-btn-xs layui-btn-xstree"  onclick="window.location.href='index.html';">刷新</a>
         <a class="layui-btn layui-btn-primary layui-btn-xs layui-btn-xstree"  onclick="reload()">reload</a>
@@ -108,7 +110,7 @@
           ,heightRemove:[".dHead",10]//不计算的高度,表格设定的是固定高度，此项不生效
           ,height:'100%'
           ,isFilter:false
-          ,iconOpen:true//是否显示图标【默认显示】
+          ,iconOpen:false//是否显示图标【默认显示】
           ,isOpenDefault:true//节点默认是展开还是折叠【默认展开】
           ,loading:true
           ,method:'post'
@@ -139,8 +141,8 @@
           ,parseData:function (res) {//数据加载后回调
               return res;
           }
-          ,onClickRow:function (index, o) {
-              console.log(index,o,"单击！");
+        /*   ,onClickRow:function (index, o) {
+              //console.log(index,o,"单击！");
               //msg("单击！,按F12，在控制台查看详细参数！");
           }
           ,onDblClickRow:function (index, o) {
@@ -154,7 +156,7 @@
           ,onRadio:function (obj) {//单选事件
               console.log(obj,"单选");
               msg("单选,按F12，在控制台查看详细参数！");
-          }
+          } */
       });
 
       treeGrid.on('tool('+tableId+')',function (obj) {
@@ -162,19 +164,35 @@
               del(obj);
           }else if(obj.event==="add"){//添加行
         	  add(obj);
+          }else if(obj.event==='edit'){
+        	  edit(obj);
           }
       });
   });
+  
+  function edit(obj){
+	  var $ = layui.$;
+  }
 
   function del(obj) {
-      layer.confirm("你确定删除数据吗？如果存在下级节点则一并删除，此操作不能撤销！", {icon: 3, title:'提示'},
-          function(index){//确定回调
-              obj.del();
-              layer.close(index);
-          },function (index) {//取消回调
-             layer.close(index);
-          }
-      );
+	  var $ = layui.$;
+	  var isChildSize=obj.data.children.length;
+	  var delFlag=$("#delFlag").val();
+	  var type=0;
+	  if(isChildSize!=0){
+		  layer.confirm("当前存在下级节点将会一并删除，此操作不能撤销!是否删除", {icon: 3, title:'提示'},
+			   function(index){//确定回调
+			   delMenu(obj);
+		        layer.close(index);
+		      },function (index) {//取消回调
+		         layer.close(index);
+		      } 
+		  ); 
+	  }else{
+		 //普通节点不用进行判读
+		 delMenu(obj);
+		// obj.del();
+	  }
   }
 
 
@@ -182,13 +200,16 @@
   //添加
   function add(pObj) {
       //打开菜单添加界面
+      var $ = layui.$;
+      var width=window.screen.availWidth*0.7;
+ 	  var height=window.screen.availHeight*0.6;
       var index=layer.open({
                type: 2
               ,title: '添加菜单权限'
-              ,content: 'powerView?powerViewType=powerChoose&amp;pid='+pObj.data.pId
+              ,content: 'menuView?menuViewType=menuPower&amp;pid='+pObj.data.id
               ,maxmin: true
-              ,area: ['500px', '200px']
               ,btn: ['确定', '取消']
+              //,area:[width+"px",height+"px"]
               ,yes: function(index, layero){
             	  var iframeWindow = window['layui-layer-iframe'+ index]
             	  ,submitID = 'LAY-menu-submit'
@@ -200,12 +221,37 @@
                     var field = data.field; //获取提交的字段
                     var choosePowerId=field.choosePowerId;
                     var menuName=field.menuName;
-                    if(menuName==''||choosePowerId==''){
-                    	layer.msg("请选择权限和填写菜单名!",{
+                    if(menuName==''){
+                    	layer.msg("请填写菜单名!",{
 			 	            time:1000
 			 	      });
                     	return
                     }
+                    if(choosePowerId==''){
+                    	layer.msg("请选择权限!",{
+			 	            time:1000
+			 	      });
+                    	return
+                    }
+                    //进行ajax添加菜单
+                      $.ajax({
+	                  url:'menu-add',
+	                  method:'post',
+	                  dataType:'json',
+	                  data:{"data":JSON.stringify(field)},
+	                  success:function(data){
+		    	       var id=data.id;
+	                   var pdata=pObj?pObj.data:null;
+		    	       var param={name:data.menuName,id:data.id,pId:data.pid};
+		    	       treeGrid.addRow(tableId,pdata?pdata[treeGrid.config.indexName]+1:0,param);
+		    	       layer.msg("添加成功!",{
+		   	            time:1000
+		   	 	       });
+	                  },
+	                  error:function(){
+		              alert('请求超时或系统错误');
+	                  }
+                     }); 
                     layer.close(index);
                   });
                   
@@ -213,9 +259,6 @@
               }
             });
       layer.full(index);
-	 // var pdata=pObj?pObj.data:null;
-     // var param={name:'水果',id:'4028209a6956cf31016956d164d300023',pId:'4028209a6956cf31016956d164d30000'};
-     // treeGrid.addRow(tableId,pdata?pdata[treeGrid.config.indexName]+1:0,param);
   }
 
   function print() {
@@ -275,6 +318,25 @@
   
   function test() {
       console.log(treeGrid.cache[tableId],treeGrid.getClass(tableId));
+  }
+  
+  function delMenu(obj){
+	  var $ = layui.$;
+	  $.ajax({
+          url:'menu-delet',
+          method:'post',
+          dataType:'json',
+          data:{"id":obj.data.id},
+          success:function(data){
+	       obj.del();
+	       layer.msg("删除成功!",{
+	            time:1000
+	 	  });
+          },
+          error:function(){
+          alert('请求超时或系统错误');
+          }
+         }); 
   }
 </script>
 <script>
