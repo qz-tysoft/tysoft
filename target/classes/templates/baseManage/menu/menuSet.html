@@ -141,10 +141,11 @@
           ,parseData:function (res) {//数据加载后回调
               return res;
           }
-        /*   ,onClickRow:function (index, o) {
+          ,onClickRow:function (index, o) {
               //console.log(index,o,"单击！");
               //msg("单击！,按F12，在控制台查看详细参数！");
           }
+          /*
           ,onDblClickRow:function (index, o) {
               console.log(index,o,"双击");
               msg("双击！,按F12，在控制台查看详细参数！");
@@ -172,6 +173,32 @@
   
   function edit(obj){
 	  var $ = layui.$;
+      //打开菜单添加界面
+      var $ = layui.$;
+      var width=window.screen.availWidth*0.7;
+ 	  var height=window.screen.availHeight*0.6;
+      var index=layer.open({
+               type: 2
+              ,title: '修改菜单权限'
+              ,content: 'menuView?menuViewType=menuEdit&amp;id='+obj.data.id
+              ,maxmin: true
+              ,btn: ['确定', '取消']
+              ,area:["500px","250px"]
+              ,yes: function(index, layero){
+            	  var iframeWindow = window['layui-layer-iframe'+ index]
+            	  ,submitID = 'LAY-menu-submit'
+                  ,submit = layero.find('iframe').contents().find('#'+ submitID);
+            	  //监听提交
+            	   choosePowerId='';
+            	   menuName='';
+                  iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                    var field = data.field; //获取提交的字段
+                    layer.close(index);
+                  });
+                  
+                  submit.trigger('click');
+              }
+            });
   }
 
   function del(obj) {

@@ -752,6 +752,7 @@ public class BaseManageController extends BaseController{
 			 Menu menu=this.menuService.findMenuById(menuId);
 			 request.setAttribute("menu", menu);
 			 request.setAttribute("power",menu.getPower());
+			 request.setAttribute("powerName","权限名称  "+"( "+menu.getPower().getPowerName()+" )");
 			 view=menuEdit;
 		 }else {
 			 view=menuView;

@@ -1,10 +1,52 @@
+
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+  <meta charset="utf-8"/>
+  <title>编辑菜单权限</title>
+  <meta name="renderer" content="webkit"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+  <link rel="stylesheet" th:href="@{/static/layuiadmin/layui/css/layui.css}" media="all"/>
 </head>
 <body>
+ <div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">菜单名称</label>
+      <div class="layui-input-inline">
+        <input type="text" th:value="${menu.menuName}" name="menuName" lay-verify="required" placeholder="" autocomplete="off" class="layui-input"/>
+      </div>
+    </div>
+    
+  <div class="layui-form-item">
+     
+        <input type="hidden"  name="id" th:value="${power.id}"/>
+        <div class="layui-input-inline" style="margin-left: 40px;">
+         <font  id="powerName" th:text="${powerName}" style="margin-top: 100px" ></font>
+        </div>
+        <a lay-event="editPower" title="编辑权限"  onclick="editPower()" href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe642;</i></a>	
+        
+     </div>
+    <div class="layui-form-item layui-hide">
+      <input type="button" lay-submit="" lay-filter="LAY-power-edit-submit" id="LAY-power-edit-submit" value="确认"></input>
+    </div>
+  </div>
+ <script type="text/javascript" th:src="@{/static/layuiadmin/layui/layui.js}"></script>
+  <script>
 
+  layui.config({
+    base: '../static/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form'], function(){
+    var $ = layui.$
+    ,form = layui.form;
+    
+  })
+  
+  function editPower(){
+	  alert(1);
+  }
+  </script>
 </body>
 </html>
