@@ -62,6 +62,10 @@ public class Menu implements Serializable{
     private java.lang.String menuName;
 
     /**
+     * 图标名称
+     */
+    private java.lang.String icon;
+    /**
      * pid
      */
     private java.lang.String pid;
@@ -102,6 +106,21 @@ public class Menu implements Serializable{
     public void setMenuName(java.lang.String menuName){ 
       this.menuName=menuName;
     }
+    
+
+    /**
+     *@return:java.lang.String 图标名称
+     */
+    @Column(length=100)
+    public java.lang.String getIcon(){
+      return this.icon;
+    }
+    /**
+     *@param:java.lang.String 图标名称
+     */
+    public void setIcon(java.lang.String icon){ 
+      this.icon=icon;
+    }
 
     /**
      *@return:java.lang.String pid
@@ -132,6 +151,7 @@ public class Menu implements Serializable{
         vo.setId(this.id);
         vo.setMenuName(this.menuName);
         vo.setPid(this.pid);
+        vo.setIcon(this.icon);
        return vo;
     }
 
@@ -144,6 +164,8 @@ public class Menu implements Serializable{
         sb.append("\"menuName\":\"").append(this.getMenuName()).append("\"");
         sb.append(",");
         sb.append("\"pid\":\"").append(this.getPid()).append("\"");
+        sb.append("\"icon\":\"").append(this.getIcon()).append("\"");
+        sb.append(",");
         sb.append("}");
         return sb.toString();
     }
@@ -155,6 +177,7 @@ public class Menu implements Serializable{
         jsonMap.put("id",this.id);
         jsonMap.put("menuName",this.menuName);
         jsonMap.put("pid",this.pid);
+        jsonMap.put("icon",this.icon);
         jsonMap.put("power", this.power==null?null:this.power.poToMap());
         return jsonMap;
     }

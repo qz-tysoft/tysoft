@@ -18,7 +18,7 @@
         <div class="layui-form-item">
             <div class="layui-row" style="margin-top:12px;">
           
-          <div class="layui-col-md4" align="left">
+          <div class="layui-col-md3" align="left">
             <label class="layui-form-label">权限名称</label>
             <div class="layui-input-block">
               <input type="text" id="powerName" th:if="${power}!=null" th:value="${power.powerName}"  name="powerName" placeholder="请输入" autocomplete="off" class="layui-input"></input>
@@ -29,22 +29,29 @@
             </div>
           </div>
           
-           <div class="layui-col-md2">
+           <div class="layui-col-md1">
             <button  style="margin-left:50px;"    class="layui-btn layuiadmin-btn-admin" lay-submit="" lay-filter="LAY-user-back-search">
               <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
             </button>
            </div>
            
-           <div class="layui-col-md6">
-          </div>
-         <div class="layui-col-md6" align="center">
+         <div class="layui-col-md3" align="center">
           <div class="layui-inline">
             <label class="layui-form-label">菜单名称</label>
             <div class="layui-input-block">
-              <input type="text" id="menuName" th:value="${menu.menuName}" name="menuName" placeholder="请输入菜单名" autocomplete="off" class="layui-input"></input>
-              <input type="hidden" id="menuId" name="menuId" th:value="${menu.id}"/>
+            <input type="text" id="menuName" th:value="${menu.menuName}" name="menuName" placeholder="请输入菜单名" autocomplete="off" class="layui-input"></input>
+            <input type="hidden" id="menuId" name="menuId" th:value="${menu.id}"/>
             </div>
           </div>
+          </div>
+         
+          <div class="layui-col-md5" align="center">
+           <div align="left">
+              <label class="layui-form-label" style="margin-right: 20px;">选择图标</label>
+           </div>
+           <div style="margin-left: -100px;">
+                <input type="text" id="iconPicker" value="layui-icon-face-smile-fine" lay-filter="iconPicker" class="hide"/>
+         </div>
           </div>
            </div>
         
@@ -68,11 +75,13 @@
   layui.config({
     base: '../static/layuiadmin/' //静态资源所在路径
   }).extend({
-    index: 'lib/index' //主入口模块
-  }).use(['index', 'useradmin', 'table','form'], function(){
+    index: 'lib/index'
+  }).use(['index', 'useradmin', 'table','iconPicker','form'], function(){
     var $ = layui.$
     ,form = layui.form
+    ,iconPicker = layui.iconPicker
     ,table = layui.table;
+  
     //按钮button
       //监听搜索
     form.on('submit(LAY-user-back-search)', function(data){
@@ -104,6 +113,28 @@
         ]]
         ,page: true
       });
+    
+    //插件初始化
+    iconPicker.render({
+        // 选择器，推荐使用input
+        elem: '#iconPicker',
+        // 数据类型：fontClass/unicode，推荐使用fontClass
+        type: 'fontClass',
+        // 是否开启搜索：true/false，默认true
+        search: true,
+        // 是否开启分页：true/false，默认true
+        page: true,
+        // 每页显示数量，默认12
+        limit: 12,
+        // 点击回调
+        click: function (data) {
+            console.log(data);
+        },
+        // 渲染成功后的回调
+        success: function(d) {
+            console.log(d);
+        }
+    });
   })
   
   </script>

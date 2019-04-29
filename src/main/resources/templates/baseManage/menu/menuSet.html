@@ -106,7 +106,7 @@
   }).extend({
     index: 'lib/index'
 //主入口模块
-  }).use(['element','index','tree', 'layer', 'form', 'upload', 'treeGrid'], function(){
+  }).use(['element','index','tree', 'layer', 'form', 'upload', 'treeGrid','iconPicker'], function(){
 	  var $=layui.jquery;
       treeGrid = layui.treeGrid;//很重要
       layer=layui.layer;
@@ -131,8 +131,14 @@
                {type:'numbers'}
               ,{field:'name', width:300,align:'center',title: '菜单名'}
               ,{field:'powerName',width:100,align:'center', title: '权限名'}
-              ,{field:'url', title: 'pid',sort:true}
-              ,{width:200,title: '操作', align:'center'/*toolbar: '#barDemo'*/
+              ,{field:'url', title: 'url',sort:true}
+              ,{field:'icon', title: 'icon',sort:true,templet: function(d){
+                  var  icon='<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</a>';
+            	  var html='';
+                  return icon;
+              }}
+              
+              ,{width:200,title: '操作', align:'center'
                   ,templet: function(d){
                       var pid=d.pId;
                       var delBtn='';
