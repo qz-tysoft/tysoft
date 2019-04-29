@@ -10,27 +10,58 @@
   <link rel="stylesheet" th:href="@{/static/layuiadmin/layui/css/layui.css}" media="all"/>
 </head>
 <body>
- <div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
-    <div class="layui-form-item">
-      <label class="layui-form-label">菜单名称</label>
-      <div class="layui-input-inline">
-        <input type="text" th:value="${menu.menuName}" name="menuName" lay-verify="required" placeholder="" autocomplete="off" class="layui-input"/>
-      </div>
-    </div>
-    
-  <div class="layui-form-item">
-     
-        <input type="hidden"  name="id" th:value="${power.id}"/>
-        <div class="layui-input-inline" style="margin-left: 40px;">
-         <font  id="powerName" th:text="${powerName}" style="margin-top: 100px" ></font>
-        </div>
-        <a lay-event="editPower" title="编辑权限"  onclick="editPower()" href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe642;</i></a>	
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+
+           <div class="layui-fluid">   
+    <div class="layui-card">
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+            <div class="layui-row" style="margin-top:12px;">
+          
+          <div class="layui-col-md4" align="left">
+            <label class="layui-form-label">权限名称</label>
+            <div class="layui-input-block">
+              <input type="text" id="powerName" th:if="${power}!=null" th:value="${power.powerName}"  name="powerName" placeholder="请输入" autocomplete="off" class="layui-input"></input>
+              <input type="text" id="powerName" th:if="${power}==null" value=""  name="powerName" placeholder="请输入" autocomplete="off" class="layui-input"></input>
+              <input type="hidden" id="choosePowerId" th:if="${power}!=null" name="choosePowerId"  th:value="${power.id}"/>
+              <input type="hidden" id="choosePowerId" th:if="${power}==null" name="choosePowerId"  value=""/>
+              <input type="hidden" id="pid" name="pid" th:value="${pid}"></input>
+            </div>
+          </div>
+          
+           <div class="layui-col-md2">
+            <button  style="margin-left:50px;"    class="layui-btn layuiadmin-btn-admin" lay-submit="" lay-filter="LAY-user-back-search">
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+            </button>
+           </div>
+           
+           <div class="layui-col-md6">
+          </div>
+         <div class="layui-col-md6" align="center">
+          <div class="layui-inline">
+            <label class="layui-form-label">菜单名称</label>
+            <div class="layui-input-block">
+              <input type="text" id="menuName" th:value="${menu.menuName}" name="menuName" placeholder="请输入菜单名" autocomplete="off" class="layui-input"></input>
+              <input type="hidden" id="menuId" name="menuId" th:value="${menu.id}"/>
+            </div>
+          </div>
+          </div>
+           </div>
         
-     </div>
-    <div class="layui-form-item layui-hide">
-      <input type="button" lay-submit="" lay-filter="LAY-power-edit-submit" id="LAY-power-edit-submit" value="确认"></input>
+        <div class="layui-form-item layui-hide">
+      <input type="button" lay-submit="" lay-filter="LAY-menu-submit" id="LAY-menu-submit" value="确认"></input>
+       </div>
+      </div>
+      </div>
+          <table class="layui-hide" id="power-table-page" lay-filter="power-table-page"></table>
+          <script type="text/html" id="indexTpl">
+          {{d.LAY_TABLE_INDEX+1}}
+          </script>
+         
     </div>
   </div>
+
+      </div>
  <script type="text/javascript" th:src="@{/static/layuiadmin/layui/layui.js}"></script>
   <script>
 
@@ -38,15 +69,43 @@
     base: '../static/layuiadmin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'form'], function(){
+  }).use(['index', 'useradmin', 'table','form'], function(){
     var $ = layui.$
-    ,form = layui.form;
+    ,form = layui.form
+    ,table = layui.table;
+    //按钮button
+      //监听搜索
+    form.on('submit(LAY-user-back-search)', function(data){
+      var field = data.field;
+      //执行重载
+      table.reload('power-table-page', {
+        where: field
+      });
+    });
     
+    //监听表格点击事件
+    table.on('radio(power-table-page)', function(obj){
+       var data=obj.data;
+       var id=data.id;
+       $("#choosePowerId").val(id);
+      });
+    
+    
+    table.render({
+    	 elem: '#power-table-page'
+        ,url: layui.setter.base + '../../baseManage/powerPage?menuId='+$("#menuId").val()
+        ,where:{chooseFlag:1}
+        ,height: 'full-120'
+        ,cols: [[
+           {type:'radio'}
+          ,{title: '序号',templet: '#indexTpl',align:'center'}
+          ,{field:'powerName', title: '权限名称',align:'center'}
+          ,{field:'url', title: 'url',align:'center'}
+        ]]
+        ,page: true
+      });
   })
   
-  function editPower(){
-	  alert(1);
-  }
   </script>
 </body>
 </html>

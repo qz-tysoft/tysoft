@@ -1,5 +1,6 @@
 package com.tysoft.controller.base;
 
+import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -117,6 +118,7 @@ public class BaseManageController extends BaseController{
 			String pid=request.getParameter("pid");
 			String queryPowerName=request.getParameter("powerName");
 			String isChoosePower=request.getParameter("chooseFlag");
+			String menuId=request.getParameter("menuId");
 			Criteria<Power> criteria=new Criteria<>();
 	        //当不是菜单选择权限的时候
 			if(!StringUtil.isNotBlank(isChoosePower)) {
@@ -138,10 +140,19 @@ public class BaseManageController extends BaseController{
 			Page<Power> pages=this.powerService.queryPowerByPage(criteria, sort, Integer.valueOf(page)-1, Integer.valueOf(limit));
 			if (pages.getTotalPages() > 0) {
 				Map<String, Object> map = null;
+				    Menu menu=null;
+                    if(StringUtil.isNotBlank(menuId)) {
+                    	menu=this.menuService.findMenuById(menuId);
+                    }
 				for (Power power : pages.getContent()) {
 					map = new HashMap<String, Object>();
 					String id=power.getId();
 					String powerName=power.getPowerName();
+					if(menu!=null&&menu.getPower()!=null) {
+						if(id.equals(menu.getPower().getId())) {
+							map.put("LAY_CHECKED",true);
+						};
+					}
 					String icon=power.getIcon();
 					map.put("id", id);
 					map.put("powerName", powerName);
@@ -752,10 +763,11 @@ public class BaseManageController extends BaseController{
 			 Menu menu=this.menuService.findMenuById(menuId);
 			 request.setAttribute("menu", menu);
 			 request.setAttribute("power",menu.getPower());
-			 request.setAttribute("powerName","权限名称  "+"( "+menu.getPower().getPowerName()+" )");
 			 view=menuEdit;
-		 }else {
+		 }else if(menuViewType.equals("menuView")){
 			 view=menuView;
+		 }else if(menuViewType.equals("powerChoose")) {
+			 view=powerChoose;
 		 }
 		    return  view;
 		 }	
@@ -764,12 +776,27 @@ public class BaseManageController extends BaseController{
 		 @RequestMapping("query-menu-tree")
 		 @ResponseBody
 		 public Object queryMenuTree(HttpServletRequest request) throws Exception {
+			 String menuName=request.getParameter("menuName");
+			 List<Menu> menuList=new ArrayList<>();
+			 if(StringUtil.isNotBlank(menuName)) {
+				    Criteria<Menu> criteria=new Criteria<>();
+				    criteria.add(Restrictions.like("menuName", menuName, false));
+				    menuList=this.menuService.queryMenuByCondition(criteria, null);
+			 }else {
+				  menuList=this.menuService.queryAllMenu();
+			 }
 			 List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
 			 //查询所有的菜单
-			 List<Menu> menuList=this.menuService.queryAllMenu();
 			 //进行数据的下发 
 			 for(int i=0;i<menuList.size();i++) {
 				 Menu menu=menuList.get(i);
+				 Power power=menu.getPower();
+				 String powerName="";
+				 String url="";
+				 if(power!=null) {
+					 powerName=power.getPowerName(); 
+					 url=power.getUrl();
+				 }
 				 Map<String, Object> map = new HashMap<>();
 				 if(menu.getPid().equals("first")) {
 					 map.put("pId","first");
@@ -778,8 +805,11 @@ public class BaseManageController extends BaseController{
 				 }else {
 					 map.put("pId",menu.getPid());
 				 }
+				 
 				 map.put("id",menu.getId());
 				 map.put("name",menu.getMenuName());
+				 map.put("powerName",powerName);
+				 map.put("url",url);
 				 listMap.add(map);
 			 }
 			 
@@ -788,18 +818,18 @@ public class BaseManageController extends BaseController{
 				msgMap.put("is", true);
 				msgMap.put("msg", "");
 				msgMap.put("tip", "操作成功");
-				msgMap.put("count",924);
 				msgMap.put("data", listMap);
 				return msgMap;
 		 }
 		 //菜单添加
-		 @RequestMapping("menu-add")
+		 @RequestMapping("menu-add-edit")
 		 @ResponseBody
 		 public Object menuAdd(HttpServletRequest request) throws Exception {
              //获得相关数据
 			 String data=request.getParameter("data");
 		 	 JSONObject obj=JSONObject.fromObject(data);
 			 Menu menu=new Menu();
+			 menu.setId((String)obj.get("menuId"));
 			 menu.setPid((String)obj.get("pid"));
 			 menu.setMenuName((String)obj.get("menuName"));
 			 Power power=this.powerService.findPowerById((String)obj.get("choosePowerId"));
