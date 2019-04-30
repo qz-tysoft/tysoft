@@ -35,7 +35,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * 菜单表 
- * 创建日期 2019-4-25 9:16:22
+ * 创建日期 2019-4-30 14:55:27
  */
 @Entity
 @Table(name="bs_menu")
@@ -62,13 +62,19 @@ public class Menu implements Serializable{
     private java.lang.String menuName;
 
     /**
-     * 图标名称
-     */
-    private java.lang.String icon;
-    /**
      * pid
      */
     private java.lang.String pid;
+
+    /**
+     * icon
+     */
+    private java.lang.String icon;
+
+    /**
+     * iconFlag
+     */
+    private java.lang.Integer iconFlag;
 
     /**
      *  权限表
@@ -106,21 +112,6 @@ public class Menu implements Serializable{
     public void setMenuName(java.lang.String menuName){ 
       this.menuName=menuName;
     }
-    
-
-    /**
-     *@return:java.lang.String 图标名称
-     */
-    @Column(length=100)
-    public java.lang.String getIcon(){
-      return this.icon;
-    }
-    /**
-     *@param:java.lang.String 图标名称
-     */
-    public void setIcon(java.lang.String icon){ 
-      this.icon=icon;
-    }
 
     /**
      *@return:java.lang.String pid
@@ -134,6 +125,33 @@ public class Menu implements Serializable{
      */
     public void setPid(java.lang.String pid){ 
       this.pid=pid;
+    }
+
+    /**
+     *@return:java.lang.String icon
+     */
+    @Column(length=1024)
+    public java.lang.String getIcon(){
+      return this.icon;
+    }
+    /**
+     *@param:java.lang.String icon
+     */
+    public void setIcon(java.lang.String icon){ 
+      this.icon=icon;
+    }
+
+    /**
+     *@return:java.lang.Integer iconFlag
+     */
+    public java.lang.Integer getIconFlag(){
+      return this.iconFlag;
+    }
+    /**
+     *@param:java.lang.Integer iconFlag
+     */
+    public void setIconFlag(java.lang.Integer iconFlag){ 
+      this.iconFlag=iconFlag;
     }
 
     @ManyToOne( cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY )
@@ -152,6 +170,7 @@ public class Menu implements Serializable{
         vo.setMenuName(this.menuName);
         vo.setPid(this.pid);
         vo.setIcon(this.icon);
+        vo.setIconFlag(this.iconFlag);
        return vo;
     }
 
@@ -164,8 +183,10 @@ public class Menu implements Serializable{
         sb.append("\"menuName\":\"").append(this.getMenuName()).append("\"");
         sb.append(",");
         sb.append("\"pid\":\"").append(this.getPid()).append("\"");
+        sb.append(",");
         sb.append("\"icon\":\"").append(this.getIcon()).append("\"");
         sb.append(",");
+        sb.append("\"iconFlag\":\"").append(this.getIconFlag()).append("\"");
         sb.append("}");
         return sb.toString();
     }
@@ -178,6 +199,7 @@ public class Menu implements Serializable{
         jsonMap.put("menuName",this.menuName);
         jsonMap.put("pid",this.pid);
         jsonMap.put("icon",this.icon);
+        jsonMap.put("iconFlag",this.iconFlag);
         jsonMap.put("power", this.power==null?null:this.power.poToMap());
         return jsonMap;
     }

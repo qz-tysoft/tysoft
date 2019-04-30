@@ -96,3 +96,5 @@ CREATE TABLE `bs_role` (
 
 ALTER TABLE `bs_menu`
 ADD COLUMN `icon`  varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '图标名称' AFTER `pid`;
+ALTER TABLE `bs_menu`
+ADD COLUMN `icon_flag`  int(2) NULL AFTER `icon`;

@@ -10,7 +10,6 @@
   <link rel="stylesheet" th:href="@{/static/layuiadmin/layui/css/layui.css}" media="all"/>
 </head>
 <body>
-      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
 
            <div class="layui-fluid">   
     <div class="layui-card">
@@ -29,10 +28,13 @@
             </div>
           </div>
           
-           <div class="layui-col-md1">
-            <button  style="margin-left:50px;"    class="layui-btn layuiadmin-btn-admin" lay-submit="" lay-filter="LAY-user-back-search">
+           <div class="layui-col-md2">
+          <div class="layui-inline">
+            <button  style="margin-left: 20px;" class="layui-btn layuiadmin-btn-admin" lay-submit="" lay-filter="LAY-user-back-search">
               <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
             </button>
+            <button class="layui-btn layuiadmin-btn-admin"  onclick="clearBut()">清空</button>
+          </div>
            </div>
            
          <div class="layui-col-md3" align="center">
@@ -45,13 +47,27 @@
           </div>
           </div>
          
-          <div class="layui-col-md5" align="center">
-           <div align="left">
-              <label class="layui-form-label" style="margin-right: 20px;">选择图标</label>
-           </div>
-           <div style="margin-left: -100px;">
-                <input type="text" id="iconPicker" value="layui-icon-face-smile-fine" lay-filter="iconPicker" class="hide"/>
-         </div>
+           <div class="layui-col-md4" align="center">
+            <div class="layui-row" align="center">
+             <div class="layui-col-md3" align="center">
+                <label class="layui-form-label" >图标</label>
+             </div>
+              <div class="layui-col-md9" align="center">
+                  <div class="layui-row" align="center">
+                   <div class="layui-col-md6" align="center">
+                       <input th:if="${menu.icon}==null" type="text" id="iconPicker" lay-filter="iconPicker"  width="100px;" class="hide"/>
+                       <input th:if="${menu.icon}!=null" type="text" id="iconPicker" lay-filter="iconPicker" th:value="${menu.icon}" width="100px;" class="hide"/>
+                       <input type="hidden" id="icon" name="icon" th:value="${menu.icon}"/>
+                       <input type="hidden" id="iconFlag" name="iconFlag" th:value="${menu.iconFlag}"/>
+                   </div>
+                    <div class="layui-col-md6" align="left">
+                   <input th:if="${menu.iconFlag}==1" lay-event="switchOpen" style="margin-left: -200px;" type="checkbox" id="switchIcon" name="isOpen" lay-skin="switch" lay-text="启用图标|禁用图标" lay-filter="switchOpen" checked="checked"></input>
+                   <input th:if="${menu.iconFlag}==0" lay-event="switchOpen" style="margin-left: -200px;" type="checkbox" id="switchIcon" name="isOpen" lay-skin="switch" lay-text="启用图标|禁用图标" lay-filter="switchOpen" ></input>
+                   
+                   </div>
+                  </div>
+             </div>
+            </div>
           </div>
            </div>
         
@@ -68,7 +84,6 @@
     </div>
   </div>
 
-      </div>
  <script type="text/javascript" th:src="@{/static/layuiadmin/layui/layui.js}"></script>
   <script>
 
@@ -91,6 +106,15 @@
         where: field
       });
     });
+    
+    form.on('switch(switchOpen)', function(data){
+ 	   var iconFlag=$("#iconFlag").val();
+ 	   if(iconFlag==0){
+ 		   $("#iconFlag").val(1);
+ 	   }else{
+ 		   $("#iconFlag").val(0);
+ 	   }
+     });  
     
     //监听表格点击事件
     table.on('radio(power-table-page)', function(obj){
@@ -128,14 +152,16 @@
         limit: 12,
         // 点击回调
         click: function (data) {
-            console.log(data);
-        },
-        // 渲染成功后的回调
-        success: function(d) {
-            console.log(d);
+        	 $("#icon").val("layui-icon "+data.icon);
         }
     });
   })
+  
+  function clearBut(){
+	  var $ = layui.$;
+	  $("#powerName").val("");
+  }
+
   
   </script>
 </body>

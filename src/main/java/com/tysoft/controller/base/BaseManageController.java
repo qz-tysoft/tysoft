@@ -119,6 +119,7 @@ public class BaseManageController extends BaseController{
 			String queryPowerName=request.getParameter("powerName");
 			String isChoosePower=request.getParameter("chooseFlag");
 			String menuId=request.getParameter("menuId");
+			List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
 			Criteria<Power> criteria=new Criteria<>();
 	        //当不是菜单选择权限的时候
 			if(!StringUtil.isNotBlank(isChoosePower)) {
@@ -129,14 +130,21 @@ public class BaseManageController extends BaseController{
 				criteria.add(Restrictions.eq("pid", "menu", false));
 			 }
 			 }else {
-				criteria.add(Restrictions.ne("pid", "menu", false));
+				if(!StringUtil.isNotBlank(queryPowerName)) {
+				 Map<String, Object>  firstMap = new HashMap<String, Object>();
+				 firstMap.put("id", "clearPower");
+				 firstMap.put("powerName", "清空权限");
+				 firstMap.put("url", "空");
+				 listMap.add(firstMap);
+			     }
+				 criteria.add(Restrictions.ne("pid", "menu", false));
+					
 			}
 			if(StringUtil.isNotBlank(queryPowerName)) {
-			  criteria.add(Restrictions.like("powerName", queryPowerName, false));
+				criteria.add(Restrictions.like("powerName", queryPowerName, false));
 			}
 			Order order = new Order(Direction.DESC, "id");// 根据id排序
 			Sort sort = new Sort(order);
-			List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
 			Page<Power> pages=this.powerService.queryPowerByPage(criteria, sort, Integer.valueOf(page)-1, Integer.valueOf(limit));
 			if (pages.getTotalPages() > 0) {
 				Map<String, Object> map = null;
@@ -805,14 +813,13 @@ public class BaseManageController extends BaseController{
 				 }else {
 					 map.put("pId",menu.getPid());
 				 }
-				 
+				 map.put("icon",menu.getIcon());
 				 map.put("id",menu.getId());
 				 map.put("name",menu.getMenuName());
 				 map.put("powerName",powerName);
 				 map.put("url",url);
 				 listMap.add(map);
 			 }
-			 
 			    Map<String, Object> msgMap = new LinkedHashMap<String,Object>();
 				msgMap.put("code", 0);
 				msgMap.put("is", true);
@@ -831,8 +838,16 @@ public class BaseManageController extends BaseController{
 			 Menu menu=new Menu();
 			 menu.setId((String)obj.get("menuId"));
 			 menu.setPid((String)obj.get("pid"));
+			 if(obj.get("icon")!=null) {
+				 menu.setIcon((String)obj.get("icon"));
+			 }
+			 menu.setIconFlag(Integer.valueOf((String)obj.get("iconFlag")));
 			 menu.setMenuName((String)obj.get("menuName"));
-			 Power power=this.powerService.findPowerById((String)obj.get("choosePowerId"));
+			 Power power=null;
+			 String powerId=(String)obj.get("choosePowerId");
+			 if(!powerId.equals("clearPower")) {
+				  power=this.powerService.findPowerById((String)obj.get("choosePowerId"));
+			 }
 			 menu.setPower(power);
 			 //进行保存
 			 Menu saveMenu=this.menuService.saveMenu(menu);

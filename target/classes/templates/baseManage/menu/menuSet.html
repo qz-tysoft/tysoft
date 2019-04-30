@@ -130,10 +130,9 @@
           ,cols: [[
                {type:'numbers'}
               ,{field:'name', width:300,align:'center',title: '菜单名'}
-              ,{field:'powerName',width:100,align:'center', title: '权限名'}
-              ,{field:'url', title: 'url',sort:true}
-              ,{field:'icon', title: 'icon',sort:true,templet: function(d){
-                  var  icon='<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</a>';
+              ,{field:'powerName',width:300,align:'center', title: '权限名'}
+              ,{field:'icon', title: 'icon',width:100,sort:true,align:'center',templet: function(d){
+                  var  icon='  <i class="'+d.icon+'"></i>';
             	  var html='';
                   return icon;
               }}
@@ -303,7 +302,7 @@
 			 	      });
                     	return
                     }
-            
+                
                     //进行ajax添加菜单
                       $.ajax({
 	                  url:'menu-add-edit',

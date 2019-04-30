@@ -21,8 +21,7 @@
             <div class="layui-input-block">
               <input type="text" id="powerName" name="powerName" placeholder="请输入" autocomplete="off" class="layui-input"></input>
               <input type="hidden" id="choosePowerId" name="choosePowerId" value=''/>
-             <input type="hidden" id="pid" name="pid" th:value="${pid}"></input>
-         
+              <input type="hidden" id="pid" name="pid" th:value="${pid}"></input>
             </div>
           </div>
           </div>
@@ -56,20 +55,16 @@
                   <div class="layui-row" align="center">
                    <div class="layui-col-md6" align="center">
                        <input type="text" id="iconPicker" lay-filter="iconPicker" width="100px;" class="hide"/>
+                       <input type="hidden" id="icon" name="icon" value=""/>
+                       <input type="hidden" id="iconFlag" name="iconFlag" value="0"/>
                    </div>
-                   
                     <div class="layui-col-md6" align="left">
-                   <input lay-event="switchOpen" style="margin-left: -200px;" type="checkbox" id="{{d.id}}" name="isOpen" lay-skin="switch" lay-text="启用图标|禁用图标" lay-filter="switchOpen" ></input>
+                   <input lay-event="switchOpen" style="margin-left: -200px;" type="checkbox" id="switchIcon" name="isOpen" lay-skin="switch" lay-text="启用图标|禁用图标" lay-filter="switchOpen" onclick="switchIcon()" ></input>
                    </div>
                   </div>
              </div>
-             
-          <!--    <div class="layui-col-md4"  >
-             </div> -->
             </div>
-         
           </div>
-          
           
           
            </div>
@@ -113,15 +108,13 @@
     });
     
   //layUi 判断是否选中lay-filter就相当于id
-  form.on('switch(LAY-user-back-switch)', function(data){
-	  //获取当前控件                                                                
-	  var selectIfKey=data.othis; 
-      //获取当前行
-      var parentTr = selectIfKey.parents("tr");
-      //获取当前所在行的索引
-      var parentTrIndex = parentTr.attr("data-index");    
-      //获取id
-      var dataField = $(parentTr).find("td:eq(0)").find(".layui-table-cell").text(); 
+  form.on('switch(switchOpen)', function(data){
+	   var iconFlag=$("#iconFlag").val();
+	   if(iconFlag==0){
+		   $("#iconFlag").val(1);
+	   }else{
+		   $("#iconFlag").val(0);
+	   }
     });  
     
     //按钮button
@@ -158,7 +151,7 @@
         limit: 12,
         // 点击回调
         click: function (data) {
-            console.log(data);
+            $("#icon").val("layui-icon "+data.icon);
         }
     });
     
@@ -174,7 +167,6 @@
       active[type] ? active[type].call(this) : '';
     });
   });
-
 
 
   
