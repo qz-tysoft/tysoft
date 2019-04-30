@@ -439,7 +439,11 @@ public class BaseManageController extends BaseController{
 					map.put("state",user.getState());
 					map.put("userName", userName);
 					map.put("phone",phone);
+					if(user.getUnit()!=null) {
+						map.put("unitName",user.getUnit().getUnitName());
+					}
 					if(StringUtil.isNotBlank(unitId)) {
+						map.put("hide",true);
 						map.put("unitNameFlag",unitNameFlag);
 					}
 				    listMap.add(map);
