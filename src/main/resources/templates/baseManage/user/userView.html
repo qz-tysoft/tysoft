@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8"/>
-  <title>后台管理</title>
+  <title>人员管理</title>
   <meta name="renderer" content="webkit"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
@@ -64,11 +64,10 @@
 		   <a lay-event="edit" title="编辑"  href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe642;</i></a>	
 		    &nbsp;
             &nbsp;
-            {{# if (d.unitNameFlag=== 0) { }}
-            <a lay-event="setPower" title="分配角色"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe620;</i></a>	
-            {{# } else if(d.unitNameFlag=== 1) { }}
             <a lay-event="setUnit" title="分配部门"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe620;</i></a>	
-            {{# } }}   
+            &nbsp;
+            &nbsp;
+            <a lay-event="setPower" title="分配角色"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe64c;</i></a>	
             &nbsp;
             &nbsp;
            <a lay-event="del" title="删除"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe640;</i></a>	
@@ -118,7 +117,7 @@
         elem: '#user-table-page'
         ,url: layui.setter.base + '../../baseManage/userPage?unitId='+$("#unitId").val()
         ,cols: [[
-        	 {type:'checkbox'}
+           {type:'checkbox'}
           ,{title: '序号',templet: '#indexTpl',align:'center'}
           ,{field:'userName',  title: '姓名',align:'center'}
           ,{field:'phone',  title:'电话',align:'center'}

@@ -405,14 +405,17 @@ public class BaseManageController extends BaseController{
 			String name=request.getParameter("name");
 			String state=request.getParameter("state");
 			Criteria<User> criteria=new Criteria<>();
-			criteria.add(Restrictions.eq("unit",this.unitService.findUnitById(unitId), false));
-		    Unit unit=this.unitService.findUnitById(unitId);
-		    String unitName=unit.getUnitName();
-		    //默认不是未分配人员
-		    int unitNameFlag=0;
-		    if(unitName.equals(firstUnit)) {
-		    	unitNameFlag=1;
-		    }
+			int unitNameFlag=0;
+			if(StringUtil.isNotBlank(unitId)) {
+				criteria.add(Restrictions.eq("unit",this.unitService.findUnitById(unitId), false));
+			    Unit unit=this.unitService.findUnitById(unitId);
+			    String unitName=unit.getUnitName();
+			    //默认不是未分配人员
+			    if(unitName.equals(firstUnit)) {
+			    	unitNameFlag=1;
+			    }
+			}
+		
 			
 			if(StringUtil.isNotBlank(name)) {
 			  criteria.add(Restrictions.like("name", name, false));
@@ -436,7 +439,9 @@ public class BaseManageController extends BaseController{
 					map.put("state",user.getState());
 					map.put("userName", userName);
 					map.put("phone",phone);
-					map.put("unitNameFlag",unitNameFlag);
+					if(StringUtil.isNotBlank(unitId)) {
+						map.put("unitNameFlag",unitNameFlag);
+					}
 				    listMap.add(map);
 				}
 			}
