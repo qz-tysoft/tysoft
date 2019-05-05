@@ -67,4 +67,6 @@ public interface MenuService {
     public Page<Menu> queryMenuByPage(Criteria<Menu> criteria,Sort sort, Integer pageNo, Integer pageSize);
 
     public Map<String, Object> getMenuNodeMap(Menu menu);
+    
+    public Menu uniqueMenuByCondtion(Criteria<Menu> criteria);
 }

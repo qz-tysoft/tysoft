@@ -106,4 +106,9 @@ public class MenuServiceImpl implements MenuService {
         Map<String, Object> menuNodeMap = new HashMap<>();
         return menuNodeMap;
 	}
+	
+	 public Menu uniqueMenuByCondtion(Criteria<Menu> criteria) {
+		 
+		 return this.menuRepository.findOne(criteria);
+	 }
 }

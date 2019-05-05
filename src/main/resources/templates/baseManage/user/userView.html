@@ -102,14 +102,6 @@
 	  //获取当前控件
 	  var id=$(this).attr("id");
 	  isOpen(id);
-	  //var selectIfKey=data.othis; 
-      //获取当前行
-      //var parentTr = selectIfKey.parents("tr");
-      //获取当前所在行的索引
-      //var parentTrIndex = parentTr.attr("data-index");    
-      //获取id
-      //var dataField = $(parentTr).find("td:eq(0)").find(".layui-table-cell").text();
-     
     });  
     
     //按钮button
@@ -137,6 +129,8 @@
         	edit(data);
         }else if(obj.event==='setUnit'){
         	setUnit(data);
+        }else if(obj.event==='setPower'){
+        	setPower(data);
         }
       });
     //事件
@@ -344,8 +338,23 @@
 	             }
 	           });
 	   layer.full(index);
-	 
   }
+  
+  function setPower(node){
+	  var index = layer.open({
+	              type: 2
+	             ,title: '分配角色'
+	             ,content: 'userPowerSetView?id='+node.id
+	             ,maxmin: true
+	             ,area: ['350px', '200px']
+	             ,btn: ['确定', '取消']
+	             ,end: function(){
+	             }
+	           });
+	   layer.full(index);
+  }
+  
+  
   
   
   </script>
