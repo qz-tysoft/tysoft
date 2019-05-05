@@ -67,7 +67,7 @@
             <a lay-event="setUnit" title="分配部门"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe620;</i></a>	
             &nbsp;
             &nbsp;
-            <a lay-event="setPower" title="分配角色"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe64c;</i></a>	
+            <a lay-event="setRole" title="分配角色"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe64c;</i></a>	
             &nbsp;
             &nbsp;
            <a lay-event="del" title="删除"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe640;</i></a>	
@@ -108,6 +108,7 @@
     table.render({
         elem: '#user-table-page'
         ,url: layui.setter.base + '../../baseManage/userPage?unitId='+$("#unitId").val()
+        ,height: 'full-100'
         ,cols: [[
            {type:'checkbox'}
           ,{title: '序号',templet: '#indexTpl',align:'center'}
@@ -129,8 +130,8 @@
         	edit(data);
         }else if(obj.event==='setUnit'){
         	setUnit(data);
-        }else if(obj.event==='setPower'){
-        	setPower(data);
+        }else if(obj.event==='setRole'){
+        	setRole(data);
         }
       });
     //事件
@@ -245,7 +246,7 @@
            //获取iframe中的指定元素
        	  var iframeWindow = window['layui-layer-iframe'+ index]
        	  ,submitID = 'people-add-form-submit'
-             ,submit = layero.find('iframe').contents().find('#'+ submitID);
+          ,submit = layero.find('iframe').contents().find('#'+ submitID);
        	   iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
                     var field = data.field; //获取提交的字段
                     var myForm=body.find('#myForm');
@@ -273,7 +274,6 @@
 				    alert('请求超时或系统错误');
 			        }
 		            }); 
-                
                   });
                   submit.trigger('click');  
          }
@@ -327,7 +327,7 @@
   function setUnit(node){
 	  var index = layer.open({
 	              type: 2
-	             ,title: '分配部门'
+	             ,title: node.userName+'-部门分配'
 	             ,content: 'userUnitSetView?id='+node.id
 	             ,maxmin: true
 	             ,area: ['350px', '200px']
@@ -340,17 +340,42 @@
 	   layer.full(index);
   }
   
-  function setPower(node){
+  function setRole(node){
+	  var $ = layui.$;
 	  var index = layer.open({
 	              type: 2
-	             ,title: '分配角色'
-	             ,content: 'userPowerSetView?id='+node.id
+	             ,title: node.userName+'-角色分配'
+	             ,content: 'userRoleSetView?id='+node.id
 	             ,maxmin: true
 	             ,area: ['350px', '200px']
 	             ,btn: ['确定', '取消']
-	             ,end: function(){
-	             }
-	           });
+	             ,yes: function(index, layero){
+       	         var iframeWindow = window['layui-layer-iframe'+ index]
+       	        ,submitID = 'LAY-role-submit'
+                ,submit = layero.find('iframe').contents().find('#'+ submitID);
+       	          //监听提交
+                 iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                 var field = data.field; //获取提交的字段
+                 //提交 Ajax 
+                 $.ajax({
+		         url: 'userRoleSet',
+			     dataType: 'json',
+			     data:{userId:field.userId,roles:field.roles},
+			     success: function(data){
+			    	 layer.msg("设置成功!",{
+			 	            time:1000
+			 	      });
+	          layer.close(index);
+			 },
+			error: function() {
+				layer.alert('网络异常,请稍后重试!');
+			}
+		});
+           
+             });
+             submit.trigger('click');
+         }
+       });
 	   layer.full(index);
   }
   

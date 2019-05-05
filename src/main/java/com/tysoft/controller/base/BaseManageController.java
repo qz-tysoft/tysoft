@@ -1,13 +1,10 @@
 package com.tysoft.controller.base;
 
-import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -72,7 +69,7 @@ public class BaseManageController extends BaseController {
 	private String roleAddView = "baseManage/role/roleAddView";
 	private String rolePowerSetView = "baseManage/role/rolePowerSet";
 	private String userUnitSet = "baseManage/user/user-unit-set";
-	private String userPowerSet = "baseManage/user/user-power-set";
+    //private String userPowerSet = "baseManage/user/user-power-set";
 	// 菜单操作
 	private String menuView = "baseManage/menu/menuSet";
 	private String menuAddView = "baseManage/menu/menu-add";
@@ -81,7 +78,7 @@ public class BaseManageController extends BaseController {
 	private String menuPower = "baseManage/menu/menu-power";
 	private String menuEdit = "baseManage/menu/menu-edit";
 	//用户分配角色权限
-	private String userSetRole = "baseManage/menu/user-power-set";
+	private String userSetRole = "baseManage/user/user-role-set";
 
 	// 权限界面
 	@RequestMapping("powerView")
@@ -389,13 +386,6 @@ public class BaseManageController extends BaseController {
 		return Success;
 	}
 
-	// 添加单位-人员
-	@RequestMapping("peopleAdd")
-	@ResponseBody
-	public String peopleAdd(HttpServletRequest request) {
-
-		return null;
-	}
 
 	@RequestMapping("userPage")
 	@ResponseBody
@@ -582,14 +572,52 @@ public class BaseManageController extends BaseController {
 		return userUnitSet;
 	}
 	
-	
-	// 用户分配角色权限
-		@RequestMapping("userPowerSetView")
-		public String userPowerSetView(HttpServletRequest request) {
+		
+		// 用户分配角色
+		@RequestMapping("userRoleSetView")
+		public String userRoleSetView(HttpServletRequest request) {
 			String userId = request.getParameter("id");
+			User user = this.userService.findUserById(userId);
+			List<Role> roles=user.getRoles();
+			if(roles.size()>0) {
+				String roleIds="";
+				for(int i=0;i<roles.size();i++) {
+					String roleId =roles.get(i).getId();
+					if(i==0) {
+						roleIds=roleId;	
+					}else {
+						roleIds+=","+roleId;
+					}
+				}
+		    request.setAttribute("roleIds", roleIds);
+			}
+			request.setAttribute("roles", roles);
 			request.setAttribute("userId", userId);
-			return userPowerSet;
-    }
+			return userSetRole;
+       }
+		
+		// 用户分配角色
+		@RequestMapping("userRoleSet")
+		@ResponseBody
+		public String userRoleSet(HttpServletRequest request) {
+			String userId = request.getParameter("userId");
+			String roles=request.getParameter("roles");
+			User user =this.userService.findUserById(userId);
+			//当前选择的角色不为空
+			List<Role> roleList=new ArrayList<>();
+			if(StringUtil.isNotBlank(roles)) {
+				String roleArr[]=roles.split(",");
+				for(int i=0;i<roleArr.length;i++) {
+					String roleId=roleArr[i].replaceAll(" ", "");
+					Role role=this.roleService.findRoleById(roleId);
+					roleList.add(role);
+				}
+			}
+			user.setRoles(roleList);
+            this.userService.saveUser(user);
+			return Success;
+       }
+     
 
 	// 分配功能
 	@RequestMapping("userUnitSet")

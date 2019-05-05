@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <title>用户角色分配</title>
+  <meta name="renderer" content="webkit"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+  <link rel="stylesheet" th:href="@{/static/layuiadmin/layui/css/layui.css}" media="all"/>
+  <link rel="stylesheet" th:href="@{/static/layuiadmin/style/admin.css}" media="all"/>
+</head>
+<body>
+<form id="myForm" action="">
+ <div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-useradmin" >
+  <div class="layui-row">
+   <div class="layui-col-md3">
+    <div class="layui-fluid">   
+    <div class="layui-card">
+    <div  style="background-color:#ffffff;height: 500px;" >
+            <br></br>
+            <font style="margin-top:10px;margin-left:10px;margin-left: 10px;">已分配角色</font>
+            <div  id="myRoles" class="layui-btn-container">
+            <div th:each="m : ${roles}" th:id="${m.id}">
+            <br/>
+            <div  class="layui-btn-group" style="margin-left: 10px;margin-top:2px;">
+              <button th:text="${m.roleName}" class="layui-btn layui-btn-primary layui-btn-sm"></button>      
+              <button class="layui-btn layui-btn-primary layui-btn-sm" th:onclick="'delRole(\''+${m.id}+'\')'"><i class="layui-icon">&#xe640;</i></button>
+            </div>
+           </div>
+           </div>
+   </div>
+   </div>
+    </div>
+   </div>
+  <div class="layui-col-md9">
+  <div class="layui-fluid">   
+    <div style="background-color:#ffffff;height:100%;">
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">角色名</label>
+            <div class="layui-input-block">
+              <input type="text" id="roleName" name="roleName" placeholder="请输入" autocomplete="off" class="layui-input"></input>
+              <input type="hidden" id="userId" name="userId" th:value="${userId}"/>
+              <input type="hidden" id="roles" name="roles" />
+              <input type="hidden" id="roleIds" name="roleIds" th:value="${roleIds}"/>
+            </div>
+          </div>
+          
+          <div class="layui-inline">
+            <div style="height: 1px;width: 40px"></div>
+            <button  style="margin-left:50px;"    class="layui-btn layuiadmin-btn-admin" lay-submit="" lay-filter="LAY-power-back-search">
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+            </button>
+            <button class="layui-btn layuiadmin-btn-admin" data-type="clear">清空</button>
+            <button class="layui-btn layuiadmin-btn-admin" data-type="add">添加</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="layui-card-body">
+          <table class="layui-hide" id="role-table-page" lay-filter="role-table-page"></table>
+          <script type="text/html" id="indexTpl">
+          {{d.LAY_TABLE_INDEX+1}}
+          </script>
+            <script type="text/html" id="addBut">
+		    <a lay-event="chooseRole" title="选择角色"  href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe64c;</i></a>	
+            &nbsp;
+            &nbsp;
+           <a lay-event="delRole" title="去除角色"   href="javascript:;" class="ml-5" style="text-decoration:none"><i class="layui-icon">&#xe64d;</i></a>	           
+          </script>
+      </div>
+    </div>
+  </div>
+  </div>
+</div> 
+ 
+ <div class="layui-form-item layui-hide">
+      <input type="button" lay-submit="" lay-filter="LAY-role-submit" id="LAY-role-submit" value="确认"></input>
+    </div>
+</div> 
+</form>
+  <script type="text/javascript" th:src="@{/static/layuiadmin/layui/layui.js}"></script>
+  <script>
+  
+  //var CTX = [[@{/}]];
+  var width=window.screen.availWidth*0.7;
+  var height=window.screen.availHeight*0.6;
+  var userRoles=[];
+  layui.config({
+    base: '../static/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index','element','useradmin', 'table','form'], function(){
+    var $ = layui.$
+    ,form = layui.form
+    ,table = layui.table
+    ,element = layui.element;;
+    //监听搜索
+    form.on('submit(LAY-user-back-search)', function(data){
+      var field = data.field;
+      //执行重载
+      table.reload('unit-table-page', {
+        where: field
+      });
+    });
+    
+    //角色数据初始化
+     var roleIds=$("#roleIds").val(); 
+     userRoles = roleIds.split(",");
+    
+    //关联角色与删除角色
+    table.on('tool(role-table-page)', function(obj){
+    	var data = obj.data;
+        var roleId=data.id;
+        var strRoleId="'"+data.id+"'";
+        if(obj.event === 'chooseRole'){
+            if(userRoles.indexOf(roleId)==-1){
+                userRoles.push(roleId);
+                //添加完毕进行appen
+                $("#myRoles").append(
+                +'<br></br>'
+                +'<div id="'+roleId+'" class="layui-btn-group" style="margin-left: 10px;margin-top:2px;">'
+                +'<button class="layui-btn layui-btn-primary layui-btn-sm">'+data.roleName+'</button>'          
+                +'<button class="layui-btn layui-btn-primary layui-btn-sm" onclick="delRole('+strRoleId+')"><i class="layui-icon">&#xe640;</i></button>'
+                +'</div>'
+                );
+                $("#myRoles").append('<br></br>');
+                $("#roles").val(userRoles.join(","));
+             }
+        }else{
+        	 if(userRoles.indexOf(roleId)!=-1){
+        		 userRoles[ userRoles.indexOf(roleId)] = null;//删除数组中的附件id
+                 userRoles.splice( userRoles.indexOf( null ), 1 );//删除数组中的附件id
+                 $("#"+roleId).remove(); 
+                 $("#roles").val(userRoles.join(","));
+        	 }
+        }
+         
+      });
+     
+    
+    table.render({
+        elem: '#role-table-page'
+        ,url: layui.setter.base + '../../baseManage/rolePage'
+        ,height: 'full-110'
+        ,cols: [[
+            {title: '序号',templet: '#indexTpl',align:'center'}
+           ,{field:'roleName', title: '角色名',align:'center'}
+           ,{field:'sign', title: '操作', minWidth: 150,align:'center',templet:'#addBut'}
+        ]]
+        ,page: true
+        ,done: function(res, curr, count){
+            //双击点击事件
+        	$('#role-table-page').next().find('.layui-table-body').find("table" ).find("tbody").children("tr").on('dblclick',function(){
+            })
+          }
+      });
+
+  });
+ 
+  function delRole(data){
+	  var $ = layui.$;
+	  if(userRoles.indexOf(data)!=-1){
+ 		 userRoles[ userRoles.indexOf(data)] = null;//删除数组中的附件id
+         userRoles.splice( userRoles.indexOf( null ), 1 );//删除数组中的附件id
+         $("#"+data).remove(); 
+         $("#roles").val(userRoles.join(","));
+ 	  }
+  }
+  
+  </script>
+</body>
+</html>
+
