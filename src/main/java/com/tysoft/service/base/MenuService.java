@@ -69,4 +69,12 @@ public interface MenuService {
     public Map<String, Object> getMenuNodeMap(Menu menu);
     
     public Menu uniqueMenuByCondtion(Criteria<Menu> criteria);
+    
+    public Object treeMenu(List<Menu> menuList);
+    
+    public Object childMenu(List<Menu> menuList);
+    
+    public Object childMenuByFirstMenu(Menu menu);
+    //菜单拼接
+    public Object splitMenuMap(Map<Object,Object> map,Menu menu);
 }

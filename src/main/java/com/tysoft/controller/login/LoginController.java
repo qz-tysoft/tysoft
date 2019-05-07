@@ -48,6 +48,7 @@ public class LoginController {
 			if(user.getState()==0) {
 				tipMsg.put("msg", 0);
 				//加入session
+				this.userService.findUserMenu(user);
 				request.getSession().setAttribute("SYS_USER", user);
 			}else if(user.getState()==1) {
 				//用户被禁用

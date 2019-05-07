@@ -78,4 +78,8 @@ public interface UserService {
      * @return
      */
     public User findIsUser(User user);
+    
+    
+    public Object findUserMenu(User user);
+    
 }
