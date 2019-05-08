@@ -18,14 +18,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tysoft.common.JsonUtils;
 import com.tysoft.common.MD5Util;
+import com.tysoft.controller.BaseController;
+import com.tysoft.entity.base.Menu;
 import com.tysoft.entity.base.User;
+import com.tysoft.service.base.MenuService;
 import com.tysoft.service.base.UserService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 @Controller
 @RequestMapping("/login")
-public class LoginController {
+public class LoginController extends BaseController{
     
 	//后台主界面
 	private String mainView="index";
@@ -36,6 +39,9 @@ public class LoginController {
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+    MenuService menuService;
 	
 	@RequestMapping("validate")
 	@ResponseBody
@@ -48,8 +54,9 @@ public class LoginController {
 			if(user.getState()==0) {
 				tipMsg.put("msg", 0);
 				//加入session
-				this.userService.findUserMenu(user);
-				request.getSession().setAttribute("SYS_USER", user);
+			   List<Menu> firstMenuList=(List<Menu>) this.userService.findUserMenu(user);
+			   request.getSession().setAttribute("firstMenuList", firstMenuList);
+			   request.getSession().setAttribute("SYS_USER", user);
 			}else if(user.getState()==1) {
 				//用户被禁用
 				tipMsg.put("msg", 1);
@@ -64,11 +71,23 @@ public class LoginController {
 	@RequestMapping("mainView")
 	public String mainView(HttpServletRequest request){
 		User user=(User) request.getSession().getAttribute("SYS_USER");
+		List<Menu> firstMenuList=(List<Menu>)request.getSession().getAttribute("firstMenuList");
 		request.setAttribute("user", user);
+		request.setAttribute("firstMenuList", firstMenuList);
 		return mainView;
 	}
 	
-	
+	//查询子菜单
+	@RequestMapping("findChildMenu")
+	@ResponseBody
+	public Map<String, Object> findChildMenu(HttpServletRequest request) throws Exception{
+		String pid=request.getParameter("pid");
+		Map<String,Object> tipMsg=new HashedMap<>();
+		Map<String,Object> map=this.menuService.findChildMenuByPid(pid,this.getCurrentSystemUser(request));
+		tipMsg.put("flagList", (List<Integer>)map.get("flagList"));
+		/*tipMsg.put("sendMenu", (List<Menu>)map.get("sendMenu"));*/
+		return tipMsg;
+	}
 	
 	//404界面
 	@RequestMapping("noFindView")

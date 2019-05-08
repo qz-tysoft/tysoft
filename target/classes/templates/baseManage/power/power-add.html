@@ -28,6 +28,13 @@
       </div>
     </div>
     
+      <div class="layui-form-item" th:if="${pid}!=null">
+      <label class="layui-form-label">图标</label>
+      <div class="layui-input-inline">
+            <input type="text" id="iconPicker" lay-filter="iconPicker" width="100px;" class="hide"/>
+      </div>
+    </div>
+    
     <div class="layui-form-item layui-hide">
       <input type="button" lay-submit="" lay-filter="LAY-power-front-submit" id="LAY-power-front-submit" value="确认"></input>
     </div>
@@ -39,10 +46,28 @@
     base: '../static/layuiadmin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'form'], function(){
+  }).use(['index', 'form','iconPicker'], function(){
     var $ = layui.$
-    ,form = layui.form;
+    ,form = layui.form
+    ,iconPicker = layui.iconPicker;
     
+    //插件初始化
+    iconPicker.render({
+        // 选择器，推荐使用input
+        elem: '#iconPicker',
+        // 数据类型：fontClass/unicode，推荐使用fontClass
+        type: 'fontClass',
+        // 是否开启搜索：true/false，默认true
+        search: true,
+        // 是否开启分页：true/false，默认true
+        page: true,
+        // 每页显示数量，默认12
+        limit: 12,
+        // 点击回调
+        click: function (data) {
+        	 $("#icon").val("layui-icon "+data.icon);
+        }
+    });
 
   })
   </script>

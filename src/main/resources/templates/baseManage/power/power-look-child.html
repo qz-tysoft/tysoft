@@ -151,7 +151,7 @@
       }
       ,add: function(){
     	  var pid=$("#pid").val();
-    	  layer.open({
+    	 var index=layer.open({
                type: 2
               ,title: '添加子权限'
               ,content: 'powerView?powerViewType=powerAddView&amp;pid='+pid+''
@@ -189,6 +189,7 @@
                   submit.trigger('click');
               }
             });
+    	 layer.full(index);
       },clear:function(){
     	  var powerName=$("#powerName").val("");
       }

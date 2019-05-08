@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import com.tysoft.common.Criteria;
 import com.tysoft.entity.base.Menu;
+import com.tysoft.entity.base.User;
 
 /**
  * 菜单表管理服务接口类
@@ -74,7 +75,9 @@ public interface MenuService {
     
     public Object childMenu(List<Menu> menuList);
     
-    public Object childMenuByFirstMenu(Menu menu);
-    //菜单拼接
-    public Object splitMenuMap(Map<Object,Object> map,Menu menu);
+    public List<Menu> childMenuByFirstMenu(String pid);
+    //查询当前用户所拥有的所有菜单
+    public List<Menu> findUserAllMenu(User user,int type);
+    //根据父id查询拥有的子菜单那
+    public Map<String,Object> findChildMenuByPid(String pid,User user);
 }

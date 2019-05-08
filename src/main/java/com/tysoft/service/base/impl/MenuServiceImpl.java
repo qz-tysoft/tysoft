@@ -33,6 +33,9 @@ import com.tysoft.common.Criteria;
 import com.tysoft.common.Restrictions;
 import com.tysoft.repository.base.MenuRepository;
 import com.tysoft.entity.base.Menu;
+import com.tysoft.entity.base.Power;
+import com.tysoft.entity.base.Role;
+import com.tysoft.entity.base.User;
 import com.tysoft.service.base.MenuService;
 
 import jodd.util.StringUtil;
@@ -170,59 +173,95 @@ public class MenuServiceImpl implements MenuService {
 	        return allMenu;
 	    }
 	    
-	    public Object childMenuByFirstMenu(Menu menu) {
-	    	String id=menu.getId();
+	    public List<Menu> childMenuByFirstMenu(String pid) {
+	    	//String id=menu.getId();
 	    	Criteria<Menu> criteria=new Criteria<>();
-	    	criteria.add(Restrictions.eq("pid", id, false));
+	    	criteria.add(Restrictions.eq("pid", pid, false));
 	    	Order order = new Order(Direction.DESC, "id");// 根据id排序
 	 		Sort sort = new Sort(order);
 	    	List<Menu> menus=this.queryMenuByCondition(criteria, sort);
 	    	return menus;
 	    }
-	
-	    //菜单拼接
-	    @SuppressWarnings("unchecked")
-	    public Object splitMenuMap(Map<Object,Object> map,Menu menu) {
-	    	Iterator<Entry<Object, Object>> it = map.entrySet().iterator();
-			String allPara = "";
-			List<Object> splitObj=new ArrayList<>();
-			List<Object> obj=new ArrayList<>();
-			List<Menu> keyList=new ArrayList<>();
-			List<Menu> menus=(List<Menu>) this.childMenuByFirstMenu(menu);
-			while (it.hasNext()) {
-				Entry<Object, Object> entry = it.next();
-				Menu child = (Menu) entry.getKey();
-				List<Menu> menuList=new ArrayList<>();
-				menuList.add(child);
-				//查询子菜单
-				List<Menu> menuChild=(List<Menu>) this.childMenu(menuList);
-				obj.add(menuChild);
-				keyList.add(child);
-			}
-			
-			for(int i=0;i<obj.size();i++) {
-				List<Menu> menuList=(List<Menu>) obj.get(i);
-				//单独一个菜单
-				if(menuList.size()==1) {
-					if(keyList.contains(menuList.get(0))) {
-					if(StringUtil.isNotBlank(menuList.get(0).getPower().getUrl())) {
-					List<Object> childObj=new ArrayList<>();
-					HashMap<Object,List<Object>> hashMap=new HashMap<>();
-					HashMap <Object,Object> childMap=new HashMap<>();
-					childMap.put(menuList.get(0).getMenuName(), menuList.get(0).getPower().getUrl());
-					childObj.add(childMap);
-					hashMap.put(menuList.get(0).getMenuName(), childObj);
-					splitObj.add(hashMap);
-				  }
-				}
-			  }
-			    //多个菜单情况
-				if(menuList.size()>1) {
-				   Menu haveMenu=keyList.get(i);
-				    
-				}
-			}
-			
-	    	return null;
+	    
+	    
+	    public List<Menu> findUserAllMenu(User user,int type){
+	    	 List<Role> roles=user.getRoles();
+	         //存储所有的权限
+	         List<Power> powerList=new ArrayList<>();
+	         //当前角色不为空
+	         List<Menu> menuParentList=new ArrayList<>();
+	         if(roles.size()>0) {
+	           //拿出每个角色对应的权限
+	           for(int i=0;i<roles.size();i++) {
+	              Role role=roles.get(i);
+	              List<Power> powers=role.getPowers();
+	              if(powers.size()>0) {
+	             	 for(int j=0;j<powers.size();j++) {
+	             		 powerList.add(powers.get(j));
+	             	 }
+	              }
+	           }
+	           
+	           //根据权限查询所有子菜单
+	           List<Menu> menuList=new ArrayList<>();
+	           for(int i=0;i<powerList.size();i++) {
+	         	  Power power=powerList.get(i);
+	         	  if(power!=null) {
+	         	  Criteria<Menu> criteria=new Criteria<>();
+	         	  criteria.add(Restrictions.eq("power", power, false));
+	         	  List<Menu> menus=this.queryMenuByCondition(criteria, null);
+	         	  for(int j=0;j<menus.size();j++) {
+	         		  Menu menu=menus.get(j);
+	         		  if(menuList.contains(menu)==false) {
+	         			  menuList.add(menu);
+	         		  }
+	         	  }
+	         	 }
+	           }
+	           //查到所有拥有子菜单的级数
+	           if(type==0) {
+	           menuParentList=(List<Menu>)this.treeMenu(menuList);
+	           }else if(type==1){
+	        	   menuParentList=menuList;
+	           }
+	       }
+			return menuParentList;
 	    }
+	    
+	    public Map<String,Object> findChildMenuByPid(String pid,User user){
+	    	//当前父菜单所拥有所有子菜单
+	    	Map<String,Object> map=new HashMap<>();
+	    	List<Menu> menuList =this.childMenuByFirstMenu(pid);
+	    	//拥有所有的
+	    	List<Menu> haveMenuList =this.findUserAllMenu(user,1);
+	    	List<Menu> supplyHaveMenu =(List<Menu>)this.treeMenu(haveMenuList);
+	    	for(int i=0;i<supplyHaveMenu.size();i++) {
+	    		haveMenuList.add(supplyHaveMenu.get(i));
+	    	}
+	    	List<Menu> sendMenu =new ArrayList<>();
+	    	List<Integer>  flagList=new ArrayList<>();
+	    	for(int i=0;i<haveMenuList.size();i++) {
+	    		Menu menu=haveMenuList.get(i);
+	    		for(int j=0;j<menuList.size();j++) {
+	    			Menu isHaveMenu=menuList.get(j);
+	    			if(menu==isHaveMenu) {
+	    				sendMenu.add(isHaveMenu);
+	    				//标记判断是否有子菜单
+	    				List<Menu> nextChild =this.childMenuByFirstMenu(isHaveMenu.getId());
+	    				if(nextChild.size()>0) {
+	    					//有下级菜单
+	    					flagList.add(1);
+	    				}else {
+	    					//无下级菜单
+	    					flagList.add(0);
+	    				}
+	    			}
+	    		}
+	    	}
+	    	map.put("flagList", flagList);
+	    	map.put("sendMenu", sendMenu);
+	    	return map;
+	    }
+	         
+	    
 }

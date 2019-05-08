@@ -80,13 +80,28 @@
             <span th:text="欢迎您+${user.name}"></span>
           </div>
           
+          
           <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
-            <li data-name="home" class="layui-nav-item layui-nav-itemed">
-              <a href="javascript:;" lay-tips="主页" lay-direction="2">
+           
+           
+             <li data-name="home" class="layui-nav-item" th:each="menu: ${firstMenuList}">
+                <a  href="javascript:;" lay-tips="主页" lay-direction="2" th:id="${menu.id}" th:onclick="'appendMenu(this)'" >
+                <i th:if="${menu.iconFlag==1}" th:class="${menu.icon}"></i>
+                <i th:if="${menu.iconFlag==0}"></i>
+                <!-- <i class="layui-icon layui-icon-home"></i> -->
+                <cite><font th:text="${menu.menuName}"></font></cite>
+               </a>
+               <dl class="layui-nav-child" th:id="${menu.id}"></dl>
+               
+               
+             </li>
+         
+             <li data-name="home" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="主页" lay-direction="2" onclick="appendMenu(this)">
                 <i class="layui-icon layui-icon-home"></i>
                 <cite>主页</cite>
               </a>
-              <dl class="layui-nav-child">
+              <dl class="layui-nav-child" id="test">
                 <dd data-name="console" class="layui-this">
                   <a lay-href="home/console.html">首页</a>
                 </dd>
@@ -102,8 +117,13 @@
                 <dd data-name="console">
                   <a lay-href="../baseManage/userView">人员管理</a>
                 </dd>
-                
-                 <dd data-name="console">
+                   <dd data-name="grid">
+                  <a href="javascript:;">栅格</a>
+                  <dl class="layui-nav-child">
+                   
+                  </dl>
+                </dd>
+               <dd data-name="console">
                   <a lay-href="../baseManage/menuView?menuViewType=menuView">菜单管理</a>
                 </dd>
                 
@@ -151,11 +171,39 @@
 
   <script type="text/javascript" th:src="@{/static/layuiadmin/layui/layui.js}"></script>
   <script>
+  
    layui.config({
     base: '../static/layuiadmin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use('index'); 
+  }).use(['index', 'form','iconPicker','element'], function(){
+	    var $ = layui.$
+	    ,form = layui.form
+	    ,iconPicker = layui.iconPicker
+	    ,element=layui.element
+	    ;
+  }) 
+  
+  function appendMenu(node){
+	   var $ = layui.$
+	   	$.ajax({
+	        url:'findChildMenu',
+	        method:'post',
+	        dataType:'json',
+	        data:{"pid":node.id},
+	        success:function(data){
+	            /*  var flagList=data.flagList;
+	             alert(flagList.length); */
+	        },
+	        error:function(){
+		    alert('请求超时或系统错误');
+	        }
+            });
+	  /*  $("#test").append('<dd data-name="console">'
+			            +'<a lay-href="../baseManage/roleView?roleViewType=roleView">角色管理2</a>'
+	                    +'</dd>'
+	               ); */
+   }
   </script>
   
   <!-- 百度统计 -->
