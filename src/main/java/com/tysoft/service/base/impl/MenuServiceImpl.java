@@ -239,13 +239,20 @@ public class MenuServiceImpl implements MenuService {
 	    		haveMenuList.add(supplyHaveMenu.get(i));
 	    	}
 	    	List<Menu> sendMenu =new ArrayList<>();
+	    	List<String> sendUrl=new ArrayList<>();
 	    	List<Integer>  flagList=new ArrayList<>();
 	    	for(int i=0;i<haveMenuList.size();i++) {
 	    		Menu menu=haveMenuList.get(i);
 	    		for(int j=0;j<menuList.size();j++) {
 	    			Menu isHaveMenu=menuList.get(j);
 	    			if(menu==isHaveMenu) {
-	    				sendMenu.add(isHaveMenu);
+	    				sendMenu.add(isHaveMenu.poToVo());
+	    				if(isHaveMenu.getPower()!=null) {
+		    				sendUrl.add(isHaveMenu.getPower().getUrl());
+	    				    System.out.println(isHaveMenu.getPower().getUrl());
+	    				}else {
+		    				sendUrl.add("");
+	    				}
 	    				//标记判断是否有子菜单
 	    				List<Menu> nextChild =this.childMenuByFirstMenu(isHaveMenu.getId());
 	    				if(nextChild.size()>0) {
@@ -258,8 +265,10 @@ public class MenuServiceImpl implements MenuService {
 	    			}
 	    		}
 	    	}
+	     	map.put("sendUrl", sendUrl);
 	    	map.put("flagList", flagList);
 	    	map.put("sendMenu", sendMenu);
+	   
 	    	return map;
 	    }
 	         

@@ -85,7 +85,8 @@ public class LoginController extends BaseController{
 		Map<String,Object> tipMsg=new HashedMap<>();
 		Map<String,Object> map=this.menuService.findChildMenuByPid(pid,this.getCurrentSystemUser(request));
 		tipMsg.put("flagList", (List<Integer>)map.get("flagList"));
-		/*tipMsg.put("sendMenu", (List<Menu>)map.get("sendMenu"));*/
+		tipMsg.put("sendMenu", (List<Menu>)map.get("sendMenu"));
+		tipMsg.put("sendUrl", (List<String>)map.get("sendUrl"));
 		return tipMsg;
 	}
 	

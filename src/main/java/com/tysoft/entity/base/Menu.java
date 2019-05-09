@@ -171,7 +171,7 @@ public class Menu implements Serializable{
         vo.setPid(this.pid);
         vo.setIcon(this.icon);
         vo.setIconFlag(this.iconFlag);
-       return vo;
+        return vo;
     }
 
     /**PoToJson*/

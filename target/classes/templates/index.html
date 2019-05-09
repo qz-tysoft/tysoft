@@ -10,7 +10,7 @@
   <link rel="stylesheet" th:href="@{/static/layuiadmin/style/admin.css}" media="all"/>
 </head>
 <body class="layui-layout-body">
-  
+  <form class="layui-form">
   <div id="LAY_app">
     <div class="layui-layout layui-layout-admin">
       <div class="layui-header">
@@ -81,27 +81,29 @@
           </div>
           
           
-          <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
+          <ul   class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
            
            
-             <li data-name="home" class="layui-nav-item" th:each="menu: ${firstMenuList}">
-                <a  href="javascript:;" lay-tips="主页" lay-direction="2" th:id="${menu.id}" th:onclick="'appendMenu(this)'" >
+             <li data-name="home" class="layui-nav-item"  th:each="menu: ${firstMenuList}">
+                <a  href="javascript:;" lay-direction="2" th:onclick="'appendMenu(\''+${menu.id}+'\')'">
                 <i th:if="${menu.iconFlag==1}" th:class="${menu.icon}"></i>
                 <i th:if="${menu.iconFlag==0}"></i>
                 <!-- <i class="layui-icon layui-icon-home"></i> -->
                 <cite><font th:text="${menu.menuName}"></font></cite>
                </a>
-               <dl class="layui-nav-child" th:id="${menu.id}"></dl>
+               <dl class="layui-nav-child" th:id="${menu.id}" >
+               
+               </dl>
                
                
-             </li>
+               </li>
          
              <li data-name="home" class="layui-nav-item">
               <a href="javascript:;" lay-tips="主页" lay-direction="2" onclick="appendMenu(this)">
                 <i class="layui-icon layui-icon-home"></i>
                 <cite>主页</cite>
               </a>
-              <dl class="layui-nav-child" id="test">
+              <dl class="layui-nav-child" lay-filter="test1" id="test">
                 <dd data-name="console" class="layui-this">
                   <a lay-href="home/console.html">首页</a>
                 </dd>
@@ -117,14 +119,14 @@
                 <dd data-name="console">
                   <a lay-href="../baseManage/userView">人员管理</a>
                 </dd>
-                   <dd data-name="grid">
-                  <a href="javascript:;">栅格</a>
-                  <dl class="layui-nav-child">
+                  <dd data-name="grid">
+                  <a href="javascript:;" >栅格</a>
+                  <dl id="mmtest" class="layui-nav-child" >
                    
                   </dl>
                 </dd>
                <dd data-name="console">
-                  <a lay-href="../baseManage/menuView?menuViewType=menuView">菜单管理</a>
+                  <a lay-href="../baseManage/menuView?menuViewType=menuView" >菜单管理</a>
                 </dd>
                 
               </dl>
@@ -182,27 +184,67 @@
 	    ,iconPicker = layui.iconPicker
 	    ,element=layui.element
 	    ;
-  }) 
+	    
+	    //绑定事件
+         $(document).on('click', '.childMenu', function(data) {
+        	  var $ = layui.$ 
+        	  var childId=data.currentTarget.id;
+        	  var flag=childId.split("@")[1];
+        	  alert(flag);
+        	  //分情况折叠
+        	  if(flag==0){
+        		  appendMenu(childId.split("@")[0]); 
+        		  console.log($("#"+childId+""));
+        	  }
+        	  
+        });
+
+  })
   
-  function appendMenu(node){
+  
+  function appendMenu(id){
 	   var $ = layui.$
+	   var form = layui.form;
+	   var element=layui.element;
 	   	$.ajax({
 	        url:'findChildMenu',
 	        method:'post',
 	        dataType:'json',
-	        data:{"pid":node.id},
+	        data:{"pid":id},
 	        success:function(data){
-	            /*  var flagList=data.flagList;
-	             alert(flagList.length); */
+	          var sendMenu=data.sendMenu;
+	          var flagList=data.flagList;
+	          var sendUrl=data.sendUrl;
+	            //遍历循环进行append
+	            $("#"+id).html("");
+	            if(sendMenu.length>0){
+				  $.each(sendMenu,function(index, item){
+					  var flag=flagList[index];
+					  var menuName=item.menuName;
+					  var url=sendUrl[index];
+					  //开始进行appned 没有子菜单
+					  if(flag==0){
+						  $("#"+id).append('<dd data-name="console">'
+						            +'<a lay-href="'+url+'">'+menuName+'</a>'
+				                    +'</dd>'
+				           ); 
+					  }else{//有子菜单
+						  $("#"+id).append('<dd data-name="console" id="'+item.id+'%">'
+						            +'<a lay-href="javascript:;" id="'+item.id+'@0"  class="childMenu">'+menuName+'</a>'
+						            +'<input type="hidden"  id="'+item.id+'!" value="0"></input>'
+						            +'<dl  class="layui-nav-child" id="'+item.id+'"></dl>'
+						            +'</dd>'
+				           );
+						  element.render();
+					  }
+				  })
+	            }
+	          
 	        },
 	        error:function(){
 		    alert('请求超时或系统错误');
 	        }
             });
-	  /*  $("#test").append('<dd data-name="console">'
-			            +'<a lay-href="../baseManage/roleView?roleViewType=roleView">角色管理2</a>'
-	                    +'</dd>'
-	               ); */
    }
   </script>
   
@@ -216,6 +258,8 @@
     s.parentNode.insertBefore(hm, s);
   })();
   </script>
+  
+  </form>
 </body>
 </html>
 
