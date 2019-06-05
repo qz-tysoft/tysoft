@@ -269,6 +269,15 @@
               var field = data.field; //获取提交的字段
               var roleId=field.roleId;
               var powerId=field.powerId;
+              var chickFlag=field.chickFlag;
+              //未点击
+              if(chickFlag==0){
+            	   layer.msg("设置成功!",{
+   	 	            time:1000
+   		 	       });
+            	  layer.close(index);
+            	  return;
+              }
       		  $.ajax({
     	        url:'rolePowerSet',
     	        method:'post',

@@ -14,6 +14,7 @@
 	   <div class="layui-input-inline">
        <input type="hidden" id="roleId" name="roleId" th:value="${roleId}"/>
 	   <input type="hidden" id="powerId" name="powerId"/>
+	   <input type="hidden" id="chickFlag" name="chickFlag" value="0"/>
       </div>
 
 	
@@ -59,6 +60,7 @@
 					// 获取所有已选中节点
 					var checked = authtree.getChecked('#LAY-auth-tree-index');
 				    $("#powerId").val(checked);
+				    $("#chickFlag").val(1);
 				});
 			},
 			error: function(xml, errstr, err) {
