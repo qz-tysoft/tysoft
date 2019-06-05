@@ -125,7 +125,7 @@ public class MenuServiceImpl implements MenuService {
 		 return this.menuRepository.findOne(criteria);
 	 }
 	  
-	    public Object treeMenu(List<Menu> menuList) {
+	    public Object treeMenu(List<Menu> menuList,int type) {
 	    	List<Menu> allMenu=new ArrayList<>();
 	    	for(int i=0;i<menuList.size();i++) {
 	    		Menu childMenu=menuList.get(i);
@@ -142,11 +142,13 @@ public class MenuServiceImpl implements MenuService {
 	    	}
 	    	
 	    	//将所有的子权限去除-得到父级
+	    	if(type==1) {
 	    	for(int i=0;i<menuList.size();i++) {
 	    		Menu  childMenu=menuList.get(i);
 	    		if(allMenu.indexOf(childMenu)!=-1) {
 	    			allMenu.remove(childMenu);
 	    		}
+	    	}
 	    	}
 	    	//得到当前所有的父级菜单
 	    	return allMenu;
@@ -220,7 +222,7 @@ public class MenuServiceImpl implements MenuService {
 	           }
 	           //查到所有拥有子菜单的级数
 	           if(type==0) {
-	           menuParentList=(List<Menu>)this.treeMenu(menuList);
+	           menuParentList=(List<Menu>)this.treeMenu(menuList,1);
 	           }else if(type==1){
 	        	   menuParentList=menuList;
 	           }
@@ -234,10 +236,11 @@ public class MenuServiceImpl implements MenuService {
 	    	List<Menu> menuList =this.childMenuByFirstMenu(pid);
 	    	//拥有所有的
 	    	List<Menu> haveMenuList =this.findUserAllMenu(user,1);
-	    	List<Menu> supplyHaveMenu =(List<Menu>)this.treeMenu(haveMenuList);
+	    	List<Menu> supplyHaveMenu =(List<Menu>)this.treeMenu(haveMenuList,1);
 	    	for(int i=0;i<supplyHaveMenu.size();i++) {
 	    		haveMenuList.add(supplyHaveMenu.get(i));
 	    	}
+	    	
 	    	List<Menu> sendMenu =new ArrayList<>();
 	    	List<String> sendUrl=new ArrayList<>();
 	    	List<Integer>  flagList=new ArrayList<>();
@@ -271,6 +274,31 @@ public class MenuServiceImpl implements MenuService {
 	   
 	    	return map;
 	    }
-	         
-	    
+	        
+	    //当前为递归
+	    public List<Menu> allMenuByChildMenu(List<Menu> childMenus){
+	        int  before=childMenus.size();
+	    	for(int i=0;i<childMenus.size();i++) {
+	    		Menu childMenu=childMenus.get(i);
+	    		Criteria<Menu> criteria=new Criteria<>();
+		    	criteria.add(Restrictions.eq("id", childMenu.getPid(), false));
+		    	Menu pmenu=this.uniqueMenuByCondtion(criteria);
+		    	if(!childMenus.contains(pmenu)) {
+		    		if(!childMenu.getMenuName().equals("公司菜单")) {
+			    		childMenus.add(pmenu);
+		    		}
+		    	}
+	    	}
+	    	//当前还有
+	        int now=childMenus.size();
+	        if(now!=before) {
+	        	allMenuByChildMenu(childMenus);
+	        }else {
+	        	Criteria<Menu> criteria=new Criteria<>();
+		    	criteria.add(Restrictions.eq("pid","first", false));
+		    	Menu pmenu=this.uniqueMenuByCondtion(criteria);
+		    	childMenus.remove(pmenu);
+	        }
+	    	return  childMenus;
+	    }
 }

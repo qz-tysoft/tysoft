@@ -26,7 +26,10 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.CascadeType;
 import com.tysoft.entity.base.Power;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.text.SimpleDateFormat;
 import javax.persistence.Entity;
@@ -170,6 +173,7 @@ public class Menu implements Serializable{
         vo.setMenuName(this.menuName);
         vo.setPid(this.pid);
         vo.setIcon(this.icon);
+        vo.setPower(this.power.poToVo());
         vo.setIconFlag(this.iconFlag);
         return vo;
     }
@@ -203,4 +207,12 @@ public class Menu implements Serializable{
         jsonMap.put("power", this.power==null?null:this.power.poToMap());
         return jsonMap;
     }
+    
+    public static List<Menu> poToVos(List<Menu> menu) {
+		List<Menu> vos = new ArrayList<Menu>();
+		for (Menu u : menu) {
+			vos.add(u.poToVo());
+		}
+		return vos;
+	}
 }

@@ -71,7 +71,7 @@ public interface MenuService {
     
     public Menu uniqueMenuByCondtion(Criteria<Menu> criteria);
     
-    public Object treeMenu(List<Menu> menuList);
+    public Object treeMenu(List<Menu> menuList,int type);
     
     public Object childMenu(List<Menu> menuList);
     
@@ -80,4 +80,6 @@ public interface MenuService {
     public List<Menu> findUserAllMenu(User user,int type);
     //根据父id查询拥有的子菜单那
     public Map<String,Object> findChildMenuByPid(String pid,User user);
+    //根据所有子菜单得到完整的菜单
+    public List<Menu> allMenuByChildMenu(List<Menu> childMenus);
 }

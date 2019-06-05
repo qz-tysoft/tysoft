@@ -82,24 +82,9 @@
           
           
           <ul   class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
-           
-           
-             <li data-name="home" class="layui-nav-item"  th:each="menu: ${firstMenuList}">
-                <a  href="javascript:;" lay-direction="2" th:onclick="'appendMenu(\''+${menu.id}+'\')'">
-                <i th:if="${menu.iconFlag==1}" th:class="${menu.icon}"></i>
-                <i th:if="${menu.iconFlag==0}"></i>
-                <!-- <i class="layui-icon layui-icon-home"></i> -->
-                <cite><font th:text="${menu.menuName}"></font></cite>
-               </a>
-               <dl class="layui-nav-child" th:id="${menu.id}" >
-               
-               </dl>
-               
-               
-               </li>
          
-             <li data-name="home" class="layui-nav-item">
-              <a href="javascript:;" lay-tips="主页" lay-direction="2" onclick="appendMenu(this)">
+         <!--     <li class="layui-nav-item">
+               <a href="javascript:;" lay-tips="主页" lay-direction="2">
                 <i class="layui-icon layui-icon-home"></i>
                 <cite>主页</cite>
               </a>
@@ -122,16 +107,13 @@
                   <dd data-name="grid">
                   <a href="javascript:;" >栅格</a>
                   <dl id="mmtest" class="layui-nav-child" >
-                   
                   </dl>
                 </dd>
-               <dd data-name="console">
+               <dd>
                   <a lay-href="../baseManage/menuView?menuViewType=menuView" >菜单管理</a>
                 </dd>
-                
               </dl>
-            </li>
-           
+            </li> -->
           </ul>
         </div>
       </div>
@@ -184,25 +166,73 @@
 	    ,iconPicker = layui.iconPicker
 	    ,element=layui.element
 	    ;
-	    
-	    //绑定事件
-         $(document).on('click', '.childMenu', function(data) {
-        	  var $ = layui.$ 
-        	  var childId=data.currentTarget.id;
-        	  var flag=childId.split("@")[1];
-        	  alert(flag);
-        	  //分情况折叠
-        	  if(flag==0){
-        		  appendMenu(childId.split("@")[0]); 
-        		  console.log($("#"+childId+""));
-        	  }
-        	  
-        });
+      
+	    //一次性加载所有的子菜单
+        $.ajax({
+	        url:'findChildMenu',
+	        method:'post',
+	        dataType:'json',
+	        success:function(data){
+	          var allMenu=data.allMenu;
+	          var firstMenuList=data.firstMenuList;
+	         $.each(firstMenuList,function(i,obj){
+	           var content='<li class="layui-nav-item">';
+                content+='<a href="javascript:;">';
+                content+='<i class="'+obj.icon+'"></i>';
+                content+='<cite>'+obj.menuName+'</cite>';
+                content+='</a>';
+                content+='<dl  class="layui-nav-child" >';
+                content+=loadchild(obj,allMenu);
+                content+='</dl>';
+                content+='</li>';
+                console.log(content);
+               $(".layui-nav-tree").append(content);
+            });
 
-  })
-  
-  
-  function appendMenu(id){
+	         element.render();
+	        },
+	        error:function(){
+		    alert('请求超时或系统错误');
+	        }
+            });
+
+ })
+ 
+ //递归查询所有的子菜单的
+ function loadchild(menu,allMenu){
+	   var $ = layui.$
+	   var content="";
+	   var pid=menu.id;
+	   $.each(allMenu,function(i,obj){
+		   if(obj.pid==pid){
+		   if(obj.power==null||obj.power==''){
+			   content+="<dd>"
+			   content+='<a href="javascript:;">';
+		       content+='<i class="'+obj.icon+'"></i>';
+	           content+='<cite>'+obj.menuName+'</cite>';
+	           content+='</a>';
+	           content+='<dl class="layui-nav-child" >';
+	           var childContent=loadchild(obj,allMenu);
+	           content+=childContent;
+	           content+='</dl>';
+	           content+="</dd>"
+	       }else if(obj.pid==pid){//无子菜单
+				  if(obj.power!=null){
+					   content+="<dd>"
+					   content+='<a lay-href="'+obj.power.url+'">';
+		               content+='<i class="'+obj.icon+'"></i>';
+		               content+='<cite>'+obj.menuName+'</cite>';
+		               content+='</a>';
+		               content+="</dd>"
+					  }
+	       }}
+		   
+	   });
+       	   return content;
+   }
+ 
+ 
+ function appendMenu(id){
 	   var $ = layui.$
 	   var form = layui.form;
 	   var element=layui.element;
@@ -229,9 +259,9 @@
 				                    +'</dd>'
 				           ); 
 					  }else{//有子菜单
-						  $("#"+id).append('<dd data-name="console" id="'+item.id+'%">'
+						  $("#"+id).append('<dd data-name="console" id="'+item.id+'hxx">'
 						            +'<a lay-href="javascript:;" id="'+item.id+'@0"  class="childMenu">'+menuName+'</a>'
-						            +'<input type="hidden"  id="'+item.id+'!" value="0"></input>'
+						            +'<input type="hidden"  id="1test1" value="0"></input>'
 						            +'<dl  class="layui-nav-child" id="'+item.id+'"></dl>'
 						            +'</dd>'
 				           );
@@ -244,22 +274,22 @@
 	        error:function(){
 		    alert('请求超时或系统错误');
 	        }
-            });
-   }
-  </script>
-  
-  <!-- 百度统计 -->
-  <script>
-  var _hmt = _hmt || [];
-  (function() {
-    var hm = document.createElement("script");
-    hm.src = "https://hm.baidu.com/hm.js?d214947968792b839fd669a4decaaffc";
-    var s = document.getElementsByTagName("script")[0]; 
-    s.parentNode.insertBefore(hm, s);
-  })();
-  </script>
-  
-  </form>
+           });
+  }
+ </script>
+ 
+ <!-- 百度统计 -->
+ <script>
+ var _hmt = _hmt || [];
+ (function() {
+   var hm = document.createElement("script");
+   hm.src = "https://hm.baidu.com/hm.js?d214947968792b839fd669a4decaaffc";
+   var s = document.getElementsByTagName("script")[0]; 
+   s.parentNode.insertBefore(hm, s);
+ })();
+ </script>
+ 
+ </form>
 </body>
 </html>
 

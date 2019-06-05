@@ -170,7 +170,12 @@
          <groupId>org.springframework.boot</groupId>
          <artifactId>spring-boot-starter-thymeleaf</artifactId>
 	   </dependency>
-	   
+	      <!-- spring热部署 -->
+            <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>springloaded</artifactId>
+              <version>1.2.6.RELEASE</version>
+            </dependency>
 	   <!--  cache -->
 	   <dependency>
 	    <groupId>org.springframework.boot</groupId>

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.commons.collections4.map.HashedMap;
+import org.hibernate.engine.transaction.jta.platform.internal.SynchronizationRegistryBasedSynchronizationStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Controller;
@@ -54,12 +55,15 @@ public class LoginController extends BaseController{
 			if(user.getState()==0) {
 				tipMsg.put("msg", 0);
 				//加入session
+			   List<Menu> haveMenuList =this.menuService.findUserAllMenu(user,1); 			    
+			   List<Menu> allMenu=this.menuService.allMenuByChildMenu(haveMenuList);
 			   List<Menu> firstMenuList=(List<Menu>) this.userService.findUserMenu(user);
 			   request.getSession().setAttribute("firstMenuList", firstMenuList);
+			   request.getSession().setAttribute("allMenu", allMenu);
 			   request.getSession().setAttribute("SYS_USER", user);
 			}else if(user.getState()==1) {
 				//用户被禁用
-				tipMsg.put("msg", 1);
+				 tipMsg.put("msg", 1);
 			}
 		}else {
 			tipMsg.put("msg", 2);
@@ -71,9 +75,7 @@ public class LoginController extends BaseController{
 	@RequestMapping("mainView")
 	public String mainView(HttpServletRequest request){
 		User user=(User) request.getSession().getAttribute("SYS_USER");
-		List<Menu> firstMenuList=(List<Menu>)request.getSession().getAttribute("firstMenuList");
 		request.setAttribute("user", user);
-		request.setAttribute("firstMenuList", firstMenuList);
 		return mainView;
 	}
 	
@@ -81,12 +83,11 @@ public class LoginController extends BaseController{
 	@RequestMapping("findChildMenu")
 	@ResponseBody
 	public Map<String, Object> findChildMenu(HttpServletRequest request) throws Exception{
-		String pid=request.getParameter("pid");
-		Map<String,Object> tipMsg=new HashedMap<>();
-		Map<String,Object> map=this.menuService.findChildMenuByPid(pid,this.getCurrentSystemUser(request));
-		tipMsg.put("flagList", (List<Integer>)map.get("flagList"));
-		tipMsg.put("sendMenu", (List<Menu>)map.get("sendMenu"));
-		tipMsg.put("sendUrl", (List<String>)map.get("sendUrl"));
+		Map<String,Object> tipMsg=new HashedMap<>();   
+		List<Menu> firstMenuList=(List<Menu>)request.getSession().getAttribute("firstMenuList");
+		List<Menu> allMenu=(List<Menu>)request.getSession().getAttribute("allMenu");
+		tipMsg.put("firstMenuList",firstMenuList);
+		tipMsg.put("allMenu",allMenu);
 		return tipMsg;
 	}
 	
