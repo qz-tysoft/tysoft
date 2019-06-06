@@ -272,7 +272,12 @@ public class BaseManageController extends BaseController {
 		}
 		return resultMap;
 	}
-
+    //webSocket测试界面
+	@RequestMapping("webSocketView")
+	public String webSocketView(HttpServletRequest request) {
+		return "baseManage/user/webSocketView";
+	}
+	
 	// 单位界面
 	@RequestMapping("unitView")
 	public String unitView(HttpServletRequest request) {
@@ -954,4 +959,7 @@ public class BaseManageController extends BaseController {
 
 		return null;
 	}
+	
+	
+	
 }

@@ -30,10 +30,6 @@ CREATE TABLE `bs_user` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
 
--- 请另存为UTF-8编码格式后再用mysql工具导入运行该文件（建议用EditPlus打开另存为UTF-8编码）
--- Date:2019-3-6 15:05:06
--- author:BearBear
-
 SET FOREIGN_KEY_CHECKS=0; 
 
 DROP TABLE IF EXISTS SS_ROLE_POWER;
@@ -49,9 +45,6 @@ CREATE TABLE SS_ROLE_POWER (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='';
 
 
--- 请另存为UTF-8编码格式后再用mysql工具导入运行该文件（建议用EditPlus打开另存为UTF-8编码）
--- Date:2019-3-6 15:05:06
--- author:BearBear
 
 SET FOREIGN_KEY_CHECKS=0; 
 
@@ -67,8 +60,7 @@ CREATE TABLE SS_USER_ROLE (
   PRIMARY KEY (`user_id`,`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='';
 
--- Date:2019-3-6 15:05:05
--- author:BearBear
+
 
 SET FOREIGN_KEY_CHECKS=0; 
 
@@ -93,6 +85,26 @@ CREATE TABLE `bs_role` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色表';
 
+ALTER TABLE `bs_power`
+ADD COLUMN `pid`  varchar(100) NULL AFTER `icon`;
+
+
+ALTER TABLE `bs_user`
+ADD COLUMN `phone`  int(20) NULL AFTER `unit_id`;
+
+ALTER TABLE `bs_user`
+MODIFY COLUMN `phone`  varchar(500) NULL DEFAULT NULL AFTER `unit_id`;
+
+## 2019-4-26 by hxx
+CREATE TABLE `bs_menu` (
+  `id` varchar(100) NOT NULL COMMENT 'id',
+  `power_id` varchar(100) DEFAULT NULL COMMENT '权限表powerId',
+  `menu_name` varchar(100) DEFAULT NULL COMMENT '菜单名称',
+  `pid` varchar(100) DEFAULT NULL COMMENT 'pid',
+  PRIMARY KEY (`id`),
+  KEY `FK_rs_power_menu` (`power_id`),
+  CONSTRAINT `FK_rs_power_menu` FOREIGN KEY (`power_id`) REFERENCES `bs_power` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='菜单表';
 
 ALTER TABLE `bs_menu`
 ADD COLUMN `icon`  varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '图标名称' AFTER `pid`;

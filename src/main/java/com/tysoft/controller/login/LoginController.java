@@ -37,7 +37,7 @@ public class LoginController extends BaseController{
 	private String noFindView="template/tips/404";
 	//500界面
 	private String errorView="template/tips/error";
-	
+	private String loginView="loginView";
 	@Autowired
 	UserService userService;
 	
@@ -70,7 +70,11 @@ public class LoginController extends BaseController{
 		}
 		return tipMsg;
 	}
-	
+	//登录页
+	@RequestMapping("loginView")
+	public String loginView(HttpServletRequest request){
+		return loginView;
+    }
 	//主界面
 	@RequestMapping("mainView")
 	public String mainView(HttpServletRequest request){
