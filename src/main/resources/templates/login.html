@@ -10,7 +10,7 @@
 <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
 <title>后台登陆</title>
 <link rel="stylesheet" th:href="@{/static/login/css/style.css}"/>
-<link rel="icon" th:href="@{/static/images/favicon.ico}"/>
+<link rel="icon" th:href="@{/static/images/avatar.png}"/>
 <link rel="stylesheet" th:href="@{/static/layui/css/layui.css}" media="all" />
 <link rel="stylesheet" th:href="@{/static/layui/css/public.css}" media="all" />
 <style type="text/css">
@@ -20,7 +20,7 @@
 <body  class="loginBody">
 	<form id="loginForm" class="layui-form">
 	<input type="hidden" id="getHeight" style="height: 100%"></input>
-		<div class="login_face"><img th:src="@{/static/images/face.jpg}" class="userAvatar"></img></div>
+		<div class="login_face"><img th:src="@{/static/images/avatar.png}" class="userAvatar"></img></div>
 		<div class="layui-form-item input-item">
 			<label for="userName">用户名</label>
 			<input type="text" placeholder="请输入用户名" autocomplete="off" id="userName" name="userName" class="layui-input" lay-verify="required"></input>
