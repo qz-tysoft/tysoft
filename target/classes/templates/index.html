@@ -27,9 +27,6 @@
               <i class="layui-icon layui-icon-refresh-3"></i>
             </a>
           </li>
-          <li class="layui-nav-item layui-hide-xs" lay-unselect="">
-            <input type="text" placeholder="搜索..." autocomplete="off" class="layui-input layui-input-search" layadmin-event="serach" lay-action="template/search.html?keywords="></input> 
-          </li>
         </ul>
         <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
           
@@ -46,11 +43,11 @@
               <i class="layui-icon layui-icon-theme"></i>
             </a>
           </li>
-          <li class="layui-nav-item layui-hide-xs" lay-unselect="">
+      <!--     <li class="layui-nav-item layui-hide-xs" lay-unselect="">
             <a href="javascript:;" layadmin-event="note">
               <i class="layui-icon layui-icon-note"></i>
             </a>
-          </li>
+          </li> -->
           <li class="layui-nav-item layui-hide-xs" lay-unselect="">
             <a href="javascript:;" layadmin-event="fullscreen">
               <i class="layui-icon layui-icon-screen-full"></i>
@@ -61,10 +58,9 @@
               <cite><span th:text="${user.name}"></span></cite>
             </a>
             <dl class="layui-nav-child">
-              <dd><a lay-href="set/user/info.html">基本资料</a></dd>
-              <dd><a lay-href="set/user/password.html">修改密码</a></dd>
+              <dd  style="text-align: center;"><a lay-href="../baseManage/revise-password-view" >修改密码</a></dd>
               <hr></hr>
-              <dd layadmin-event="logout" style="text-align: center;"><a>退出</a></dd>
+              <dd layadmin-event="logout"><a lay-href="../baseManage/login-out">退出</a></dd>
             </dl>
           </li>
            <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect="">
@@ -133,9 +129,7 @@
 	    var $ = layui.$
 	    ,form = layui.form
 	    ,iconPicker = layui.iconPicker
-	    ,element=layui.element
-	    ;
-      
+	    ,element=layui.element;
 	    //一次性加载所有的子菜单
         $.ajax({
 	        url:'findChildMenu',
@@ -163,7 +157,6 @@
 		    alert('请求超时或系统错误');
 	        }
             });
-
  })
  
  //递归查询所有的子菜单的
@@ -199,51 +192,6 @@
        	   return content;
    }
  
- 
- function appendMenu(id){
-	   var $ = layui.$
-	   var form = layui.form;
-	   var element=layui.element;
-	   	$.ajax({
-	        url:'findChildMenu',
-	        method:'post',
-	        dataType:'json',
-	        data:{"pid":id},
-	        success:function(data){
-	          var sendMenu=data.sendMenu;
-	          var flagList=data.flagList;
-	          var sendUrl=data.sendUrl;
-	            //遍历循环进行append
-	            $("#"+id).html("");
-	            if(sendMenu.length>0){
-				  $.each(sendMenu,function(index, item){
-					  var flag=flagList[index];
-					  var menuName=item.menuName;
-					  var url=sendUrl[index];
-					  //开始进行appned 没有子菜单
-					  if(flag==0){
-						  $("#"+id).append('<dd data-name="console">'
-						            +'<a lay-href="'+url+'">'+menuName+'</a>'
-				                    +'</dd>'
-				           ); 
-					  }else{//有子菜单
-						  $("#"+id).append('<dd data-name="console" id="'+item.id+'hxx">'
-						            +'<a lay-href="javascript:;" id="'+item.id+'@0"  class="childMenu">'+menuName+'</a>'
-						            +'<input type="hidden"  id="1test1" value="0"></input>'
-						            +'<dl  class="layui-nav-child" id="'+item.id+'"></dl>'
-						            +'</dd>'
-				           );
-						  element.render();
-					  }
-				  })
-	            }
-	          
-	        },
-	        error:function(){
-		    alert('请求超时或系统错误');
-	        }
-           });
-  }
  </script>
  
  <!-- 百度统计 -->

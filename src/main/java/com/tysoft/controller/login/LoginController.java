@@ -56,8 +56,8 @@ public class LoginController extends BaseController{
 				tipMsg.put("msg", 0);
 				//加入session
 			   List<Menu> haveMenuList =this.menuService.findUserAllMenu(user,1); 			    
-			   List<Menu> allMenu=this.menuService.allMenuByChildMenu(haveMenuList);
 			   List<Menu> firstMenuList=(List<Menu>) this.userService.findUserMenu(user);
+			   List<Menu> allMenu=this.menuService.allMenuByChildMenu(haveMenuList);
 			   request.getSession().setAttribute("firstMenuList", firstMenuList);
 			   request.getSession().setAttribute("allMenu", allMenu);
 			   request.getSession().setAttribute("SYS_USER", user);
@@ -75,6 +75,7 @@ public class LoginController extends BaseController{
 	public String loginView(HttpServletRequest request){
 		return loginView;
     }
+	
 	//主界面
 	@RequestMapping("mainView")
 	public String mainView(HttpServletRequest request){

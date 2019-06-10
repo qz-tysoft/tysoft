@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.hibernate.criterion.Expression;
@@ -69,6 +70,7 @@ public class BaseManageController extends BaseController {
 	private String roleAddView = "baseManage/role/roleAddView";
 	private String rolePowerSetView = "baseManage/role/rolePowerSet";
 	private String userUnitSet = "baseManage/user/user-unit-set";
+    private String revisePasswordView="baseManage/user/password";	
     //private String userPowerSet = "baseManage/user/user-power-set";
 	// 菜单操作
 	private String menuView = "baseManage/menu/menuSet";
@@ -511,9 +513,6 @@ public class BaseManageController extends BaseController {
 			if (isUser != null) {
 				tipMsg.put("msg", 0);
 			} else {
-				int unitNum = unit.getUnitNum();
-				unit.setUnitNum(unitNum + 1);
-				this.unitService.saveUnit(unit);
 				tipMsg.put("msg", 1);
 				this.userService.saveUser(user);
 			}
@@ -527,10 +526,6 @@ public class BaseManageController extends BaseController {
 	@ResponseBody
 	public String peopleDelet(HttpServletRequest request) {
 		String id = request.getParameter("id");
-		User user = this.userService.findUserById(id);
-		Unit unit = user.getUnit();
-		unit.setUnitNum(unit.getUnitNum() - 1);
-		this.unitService.saveUnit(unit);
 		this.userService.deleteUserByIds(id);
 		return Success;
 	}
@@ -943,23 +938,36 @@ public class BaseManageController extends BaseController {
 		this.menuService.deleteMenuByIds(ids);
 		return Success;
 	}
-
-	// 菜单编辑
-	@RequestMapping("menu-edit")
-	@ResponseBody
-	public Object menuEdit(HttpServletRequest request) throws Exception {
-
-		return null;
-	}
-
-	// 菜单图标选择
-	@RequestMapping("menu-icon")
-	@ResponseBody
-	public Object menuIcon(HttpServletRequest request) throws Exception {
-
-		return null;
+    
+	@RequestMapping("revise-password-view")
+	public String revisePasswordView(HttpServletRequest request,HttpServletResponse response) {
+		return revisePasswordView;
 	}
 	
+	//人员密码修改
+	@RequestMapping("revise-passWork")
+	@ResponseBody
+    public Map<String,Object> revisePassWork(HttpServletRequest request) throws Exception {
+		User user=this.getCurrentSystemUser(request);
+		String oldPassWord=request.getParameter("oldPassword");
+		Map<String,Object> msg=new HashMap<>();
+		//密码验证成功
+		if(user.getLoginPsw().equals(MD5Util.encode(oldPassWord))) {
+			String newPassWord=request.getParameter("newPassword");
+			user.setLoginPsw(MD5Util.encode(newPassWord));
+			this.userService.saveUser(user);
+			msg.put("msg",0);
+		}else {
+			msg.put("msg",1);
+		}
+		return msg;
+	}
 	
-	
+	//人员登出
+	@RequestMapping("login-out")
+	public String loginOut(HttpServletRequest request,HttpServletResponse response) {
+		request.getSession().removeAttribute("SYS_USER");
+		return "redirect:/"+request.getContextPath();
+	}
+ 	
 }
