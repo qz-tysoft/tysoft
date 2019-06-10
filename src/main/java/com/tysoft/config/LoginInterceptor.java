@@ -20,9 +20,9 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 检查每个到来的请求对应的session域中是否有登录标识
-        User user = (User) request.getSession().getAttribute("SYS_USER");
+    	User user = (User) request.getSession().getAttribute("SYS_USER");
         if (null == user ) {
-        	response.sendRedirect("/tysoft");
+        	response.sendRedirect(request.getContextPath());
             return false;
         }
         return true;

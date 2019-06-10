@@ -29,11 +29,11 @@ public class LoginConfiguration implements WebMvcConfigurer {
         // 注册拦截器
         LoginInterceptor loginInterceptor = new LoginInterceptor();
         InterceptorRegistration loginRegistry = registry.addInterceptor(loginInterceptor);
-        System.out.println("------------------------------------------------------------------");
         // 拦截路径
         loginRegistry.addPathPatterns("/**");
+        //排除路径
         loginRegistry.excludePathPatterns("/");
-
+        loginRegistry.excludePathPatterns("/login/validate");
     }
 
 	@Override

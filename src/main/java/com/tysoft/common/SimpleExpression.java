@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
  * @Title: SimpleExpression.java   
  * @Package com.lottery.respository.common   
  * @Description: TODO(简单条件表达式)   
- * @author 李世康     
+ * @author hxx    
  * @date 2017年10月27日 上午8:48:48   
  * @version V1.0     
  */
