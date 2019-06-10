@@ -66,6 +66,7 @@
 <div style="height: 100%">
 <!-- 初始化删除标记-->
 <input type="hidden" id="delFlag" value="0" />
+<input type="hidden" id="companyId" th:value="${menu.id}" />
     <div class="dHead" style="margin-top:20px;margin-bottom: 20px;">
            <div class="layui-row">  
            
@@ -82,6 +83,10 @@
            
            <button  style="margin-left:10px;"    class="layui-btn layuiadmin-btn-admin" lay-submit="" onclick="clearName()">
                              清空
+          </button>
+          
+          <button  style="margin-left:10px;"    class="layui-btn layuiadmin-btn-admin" lay-submit="" onclick="add(null,1)">
+                           添加一级菜单
           </button>
            
            <button  style="margin-left:10px;"    class="layui-btn layuiadmin-btn-admin" lay-submit="" onclick="openAll()">
@@ -123,15 +128,13 @@
           ,height:'100%'
           ,isFilter:false
           ,iconOpen:false//是否显示图标【默认显示】
-          ,isOpenDefault:true//节点默认是展开还是折叠【默认展开】
+          ,isOpenDefault:false//节点默认是展开还是折叠【默认展开】
           ,loading:true
           ,method:'post'
           ,isPage:false
           ,cols: [[
-               {type:'numbers'}
-              ,{field:'name', width:300,align:'center',title: '菜单名'}
-              ,{field:'powerName',width:300,align:'center', title: '权限名'}
-              ,{field:'icon', title: 'icon',width:100,sort:true,align:'center',templet: function(d){
+               {field:'name', width:150,align:'center',title: '菜单名'}
+              ,{field:'icon', title: 'icon',width:100,align:'center',templet: function(d){
                   var  icon='  <i class="'+d.icon+'"></i>';
             	  var html='';
                   return icon;
@@ -273,15 +276,22 @@
 
   var i=1000000;
   //添加
-  function add(pObj) {
+  function add(pObj,type) {
       //打开菜单添加界面
       var $ = layui.$;
+      var url;
+      if(type==null){
+    	   url='menuView?menuViewType=menuPower&amp;pid='+pObj.data.id;  
+      }else{
+   	      var  pid=$("#companyId").val();
+    	  url='menuView?menuViewType=menuPower&amp;pid='+pid;  
+      }
       var width=window.screen.availWidth*0.7;
  	  var height=window.screen.availHeight*0.6;
       var index=layer.open({
                type: 2
               ,title: '添加菜单权限'
-              ,content: 'menuView?menuViewType=menuPower&amp;pid='+pObj.data.id
+              ,content: url
               ,maxmin: true
               ,btn: ['确定', '取消']
               //,area:[width+"px",height+"px"]
@@ -310,16 +320,11 @@
 	                  dataType:'json',
 	                  data:{"data":JSON.stringify(field)},
 	                  success:function(data){
-	                	  treeGrid.reload(tableId,{
-	                          page:{
-	                              curr:1
-	                          }
-	                      });
-	                   /* var id=data.id;
-	                   var pdata=pObj?pObj.data:null;
-		    	       var param={name:data.menuName,id:data.id,pId:data.pid};
-		    	       treeGrid.addRow(tableId,pdata?pdata[treeGrid.config.indexName]+1:0,param); */
-		    	       layer.msg("添加成功!",{
+	                  var id=data.id;
+	                  var pdata=pObj?pObj.data:null;
+		    	      var param={name:data.menuName,id:data.id,pId:data.pid};
+		    	      treeGrid.addRow(tableId,pdata?pdata[treeGrid.config.indexName]+1:0,param);
+		    	      layer.msg("添加成功!",{
 		   	            time:1000
 		   	 	       });
 	                  },

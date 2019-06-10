@@ -823,6 +823,10 @@ public class BaseManageController extends BaseController {
 			request.setAttribute("power", menu.getPower());
 			view = menuEdit;
 		} else if (menuViewType.equals("menuView")) {
+			Criteria<Menu> first = new Criteria<>();
+			first.add(Restrictions.eq("pid", "first", false));
+			Menu firstMenu = this.menuService.uniqueMenuByCondtion(first);
+			request.setAttribute("menu", firstMenu);
 			view = menuView;
 		} else if (menuViewType.equals("powerChoose")) {
 			view = powerChoose;
@@ -847,14 +851,14 @@ public class BaseManageController extends BaseController {
 		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
 		// 查询所有的菜单
 		// 先查询第一个菜单
-		Criteria<Menu> first = new Criteria<>();
-		first.add(Restrictions.eq("pid", "first", false));
-		Menu firstMenu = this.menuService.uniqueMenuByCondtion(first);
-		Map<String, Object> firstMap = new HashMap<>();
-		firstMap.put("name", firstMenu.getMenuName());
-		firstMap.put("pId", "first");
-		firstMap.put("id", firstMenu.getId());
-		listMap.add(firstMap);
+//		Criteria<Menu> first = new Criteria<>();
+//		first.add(Restrictions.eq("pid", "first", false));
+//		Menu firstMenu = this.menuService.uniqueMenuByCondtion(first);
+//		Map<String, Object> firstMap = new HashMap<>();
+//		firstMap.put("name", firstMenu.getMenuName());
+//		firstMap.put("pId", "first");
+//		firstMap.put("id", firstMenu.getId());
+//		listMap.add(firstMap);
 		// 进行数据的下发
 		for (int i = 0; i < menuList.size(); i++) {
 			Menu menu = menuList.get(i);
@@ -916,6 +920,11 @@ public class BaseManageController extends BaseController {
 		menu.setPower(power);
 		// 进行保存
 		Menu saveMenu = this.menuService.saveMenu(menu);
+		//得到主界面pid
+		Menu pMenu=this.menuService.findMenuById((String) obj.get("pid"));
+		//主菜单权限设置为空
+		pMenu.setPower(null);
+		this.menuService.saveMenu(pMenu);
 		return saveMenu;
 	}
 

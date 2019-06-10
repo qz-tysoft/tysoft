@@ -141,7 +141,11 @@
 	         $.each(firstMenuList,function(i,obj){
 	           var content='<li class="layui-nav-item">';
                 content+='<a href="javascript:;">';
-                content+='<i class="'+obj.icon+'"></i>';
+                if(obj.iconFlag==1){
+                	content+='<i class="'+obj.icon+'"></i>';
+                }else if(obj.iconFlag==0){
+                	content+='<i></i>';
+                }
                 content+='<cite>'+obj.menuName+'</cite>';
                 content+='</a>';
                 content+='<dl  class="layui-nav-child" >';
@@ -169,7 +173,11 @@
 		   if(obj.power==null||obj.power==''){
 			   content+="<dd>"
 			   content+='<a href="javascript:;">';
-		       content+='<i class="'+obj.icon+'"></i>';
+			   if(obj.iconFlag==1){
+               	content+='<i class="'+obj.icon+'"></i>';
+               }else if(obj.iconFlag==0){
+               	content+='<i></i>';
+               }
 	           content+='<cite>'+obj.menuName+'</cite>';
 	           content+='</a>';
 	           content+='<dl class="layui-nav-child" >';
