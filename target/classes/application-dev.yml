@@ -1,6 +1,6 @@
   ##上传文件目录
 web: 
-  upload-path: D:/webapps/tysoft/
+  upload-path: D:/tysoft_oa/
   
 spring: 
   resources:

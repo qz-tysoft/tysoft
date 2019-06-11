@@ -5,27 +5,18 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
-import java.util.Comparator;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,16 +24,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
-import com.tysoft.entity.base.Unit;
+import com.tysoft.entity.base.Annex;
+import com.tysoft.entity.base.AnnexFolder;
 import com.tysoft.entity.base.User;
-import com.tysoft.entity.security.Annex;
-import com.tysoft.entity.security.AnnexFolder;
-import com.tysoft.entity.security.Authority;
+import com.tysoft.service.base.AnnexService;
+
 import net.sf.json.JSONObject;
 
 /**     
  * @Title: BaseController.java   
- * @Package com.sailboat.controller   
  * @Description: TODO(用一句话描述该文件做什么)   
  * @author 黄雄雄   
  * @date 2018年12月28日 上午11:21:44   
@@ -57,85 +47,9 @@ public abstract class BaseController {
 	@Value("${web.upload-path}")
 	protected String webUploadPath;
 
-	//	@Autowired
-//	protected AnnexService annexService;
-//	
-//	@Autowired  
-//    protected Audience audienceEntity;
-	
-	/**
-	 * 移动端-登录获取token
-	 * @param user
-	 * @return
-	 */
-//	protected AccessToken getAccessToken(SystemUser user){
-//		//拼装accessToken  
-//        String accessToken = JwtHelper.createJWT(user.getLoginName(), user.getId(),  
-//        		audienceEntity.getClientId(), audienceEntity.getName(),  
-//        		audienceEntity.getExpiresSecond() * 1000, audienceEntity.getBase64Secret());
-//        AccessToken accessTokenEntity = new AccessToken();  
-//        accessTokenEntity.setAccess_token(accessToken);  
-//        accessTokenEntity.setExpires_in(audienceEntity.getExpiresSecond());  
-//        accessTokenEntity.setToken_type("bearer");
-//        accessTokenEntity.setCurMillis(System.currentTimeMillis());
-//		return accessTokenEntity;
-//	}
-	
-	/**
-	 * 验证是否有权限
-	 * @param request
-	 * @return
-	 * @throws ServletException
-	 */
-//	@SuppressWarnings("unchecked")
-//	protected void validateAuth(HttpServletRequest request) throws ServletException {
-//		String url = request.getRequestURI().substring(request.getContextPath().length()+1);
-//		Set<Authority> auths = (Set<Authority>)request.getSession().getAttribute("CUR_AUTHS");
-//    	if(auths!=null&&auths.size()>0) {
-//    		boolean hasAuth = false;
-//    		for(Authority auth : auths) {
-//    			if(StringUtils.isEmpty(auth.getUrl())||auth.getUrl().equals("frame:")||auth.getUrl().equals("window:")) {continue;}
-//    			if(auth.getUrl().substring(auth.getUrl().indexOf(":")+1).contains(url)) {
-//    				hasAuth = true;break;
-//    			}
-//    		}
-//    		if(!hasAuth) {
-//    			throw new ServletException("暂无权限访问");
-//    		}
-//    	}else {
-//    		throw new ServletException("暂无权限访问");
-//    	}
-//	}
-	/**
-	 * 根据标识(即URL)验证是否有非菜单权限
-	 * @param request
-	 * @param authName
-	 * @return
-	 * @throws ServletException
-	 */
-//	protected Boolean validateNoMenuAuth(HttpServletRequest request,String URL) throws ServletException {
-//		@SuppressWarnings("unchecked")
-//		Set<Authority> auths = (Set<Authority>)request.getSession().getAttribute("CUR_AUTHS");
-//		boolean hasAuth = false;
-//		if(auths!=null&&auths.size()>0) {
-//			for(Authority auth : auths) {
-//				if(URL.equals(auth.getUrl())) {
-//					hasAuth = true;break;
-//				}
-//			}
-//		}
-//		return hasAuth;
-//	}
-	/**
-	 * 获取当前用户所属的项目
-	 * @param request
-	 * @return
-	 */
-//	protected ProjectInfo getCurrentProjectInfo(HttpServletRequest request) throws Exception{
-//		ProjectInfo projectInfo = (ProjectInfo)request.getSession().getAttribute("CUR_PROJECT");
-//		return projectInfo;
-//	}
-	
+    @Autowired
+	protected AnnexService annexService;
+
 	/**
 	 * 获取当前用户
 	 * @param request
@@ -146,55 +60,7 @@ public abstract class BaseController {
 		User user = (User)request.getSession().getAttribute("SYS_USER");
 		return user;
 	}
-	
-	/**
-	 * 获取当前所属租户
-	 * @param request
-	 * @return
-	 * @throws Exception
-	 */
-//	protected String getCurrentLesseeId(HttpServletRequest request) throws Exception{
-//		SystemUser user = (SystemUser)request.getSession().getAttribute("SYS_USER");
-//		if(user!=null) {
-//			return user.getLesseeId();
-//		}
-//		return null;
-//	}
-	
-	/**
-	 * 权限排序
-	 * @param set
-	 * @return
-	 */
-//	protected Set<Authority> sortByValue(Set<Authority> set){  
-//        List<Authority> setList= new ArrayList<Authority>(set);  
-//        Collections.sort(setList, new Comparator<Authority>() {  
-//            @Override  
-//            public int compare(Authority o1, Authority o2) {  
-//                // TODO Auto-generated method stub  
-//                return o1.getSort().toString().compareTo(o2.getSort().toString());  
-//            }  
-//        });  
-//        set = new LinkedHashSet<Authority>(setList);//这里注意使用LinkedHashSet  
-//        return set;  
-//    }
-	/**
-	 * 权限排序2
-	 * @param set
-	 * @return
-	 */
-	protected Set<Map<String, Object>> sortByValue2(Set<Map<String, Object>> set){  
-        List<Map<String, Object>> setList= new ArrayList<Map<String, Object>>(set);  
-        Collections.sort(setList, new Comparator<Map<String, Object>>() {  
-            @Override  
-            public int compare(Map<String, Object> o1, Map<String, Object> o2) {  
-                // TODO Auto-generated method stub  
-                return o1.get("sort").toString().compareTo(o2.get("sort").toString());  
-            }  
-        });  
-        set = new LinkedHashSet<Map<String, Object>>(setList);//这里注意使用LinkedHashSet  
-        return set;  
-    }
+
 	
 	/**
 	 * 文件上传通用方法
@@ -203,108 +69,57 @@ public abstract class BaseController {
 	 * @param request
 	 * @return
 	 */
-//	protected Annex uploadFile(MultipartFile file,AnnexFolder annexFolder, HttpServletRequest request){
-//		// 数据库保存的目录
-//		String datdDirectory = null;
-//		
-//		try {
-//			if (!file.isEmpty()) {
-//				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-//				String temp = "annex" + File.separator + "upload" + File.separator + sdf.format(new Date()) + File.separator;  
-//				// 获取图片的文件名
-//				String fileName = file.getOriginalFilename();
-//				//获取文件大小
-//				long fileSize = file.getSize();//字节
-//				//获取文件类型
-//				String contentType = file.getContentType();
-//				// 获取图片的扩展名
-//				String extensionName = StringUtils.substringAfter(fileName, ".");
-//				// 文件路径
-//				String filePath = webUploadPath.concat(temp);
-//				File dest = new File(filePath, fileName);
-//				if (!dest.getParentFile().exists()) {
-//				   dest.getParentFile().mkdirs();
-//				}
-//				// 上传到指定目录
-//				FileOutputStream fos = new FileOutputStream(dest);
-//				fos.write(file.getBytes());
-//				fos.flush();
-//				fos.close();
-//				datdDirectory = temp.concat(fileName).replaceAll("\\\\", "/");
-//				SystemUser userinfo = this.getCurrentSystemUser(request);
-//				//保存附件记录
-//				Annex annex = new Annex();
-//				annex.setAnnexFolder(annexFolder);
-//				annex.setContextType(contentType);
-//				annex.setExtendName(extensionName);
-//				annex.setFileSize(new BigDecimal(fileSize));
-//				annex.setName(StringUtils.substringBefore(fileName, "."));
-//				annex.setCreator(userinfo!=null?userinfo.getName():null);
-//				annex.setRelativePath(datdDirectory);
-//				annex.setUploadTime(new Date());
-//				annex = this.annexService.saveAnnex(annex);
-//				return annex;
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
+	protected Annex uploadFile(MultipartFile file,String oldName,String newName,HttpServletRequest request){
+		// 数据库保存的目录
+		String datdDirectory = null;
+		
+		try {
+			if (!file.isEmpty()) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+				String temp = "annex" + File.separator + "upload" + File.separator + sdf.format(new Date()) + File.separator;  
+				// 获取图片的文件名
+				String fileName = file.getOriginalFilename();
+				//获取文件大小
+				long fileSize = file.getSize();//字节
+				//获取文件类型
+				String contentType = file.getContentType();
+				// 获取图片的扩展名
+				String extensionName = StringUtils.substringAfter(oldName, ".");
+				// 文件路径
+				String filePath = webUploadPath.concat(temp);
+				File dest = new File(filePath, oldName);
+				if (!dest.getParentFile().exists()) {
+				   dest.getParentFile().mkdirs();
+				}
+				// 上传到指定目录
+				FileOutputStream fos = new FileOutputStream(dest);
+				fos.write(file.getBytes());
+				fos.flush();
+				fos.close();
+				datdDirectory = temp.concat(newName).replaceAll("\\\\", "/");
+				User userinfo = this.getCurrentSystemUser(request);
+				//保存附件记录
+				Annex annex = new Annex();
+				annex.setContextType(contentType);
+				annex.setExtendName(extensionName);
+				annex.setFileSize(new BigDecimal(fileSize));
+				annex.setName(StringUtils.substringBefore(oldName, "."));
+				annex.setCreator(userinfo!=null?userinfo.getName():null);
+				annex.setRelativePath(datdDirectory);
+				annex.setUploadTime(new Date());
+				annex = this.annexService.saveAnnex(annex);
+				//保存成功进行文件的重命名
+				File oldFile=new File(webUploadPath+temp.concat(oldName).replaceAll("\\\\", "/"));
+				File newFile = new File(webUploadPath+annex.getRelativePath());
+				oldFile.renameTo(newFile);
+				return annex;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
-	/**
-	 * 合同正文
-	 * @param file
-	 * @param annexFolder
-	 * @param request
-	 * @return
-	 */
-//	protected Annex uploadContract(MultipartFile file,AnnexFolder annexFolder, HttpServletRequest request,String oldName,String newName){
-//		// 数据库保存的目录
-//		String datdDirectory = null;
-//		
-//		try {
-//			if (!file.isEmpty()) {
-//				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-//				String temp = "annex" + File.separator + "uploadContract" + File.separator + sdf.format(new Date()) + File.separator;  
-//				// 获取图片的文件名
-//				String fileName = file.getOriginalFilename();
-//				//获取文件大小
-//				long fileSize = file.getSize();//字节
-//				//获取文件类型
-//				String contentType = file.getContentType();
-//				// 获取图片的扩展名
-//				String extensionName = StringUtils.substringAfter(oldName, ".");
-//				// 文件路径
-//				String filePath = webUploadPath.concat(temp);
-//				File dest = new File(filePath, oldName);
-//				if (!dest.getParentFile().exists()) {
-//				   dest.getParentFile().mkdirs();
-//				}
-//				// 上传到指定目录
-//				FileOutputStream fos = new FileOutputStream(dest);
-//				fos.write(file.getBytes());
-//				fos.flush();
-//				fos.close();
-//				datdDirectory = temp.concat(newName).replaceAll("\\\\", "/");
-//				SystemUser userinfo = this.getCurrentSystemUser(request);
-//				//保存附件记录
-//				Annex annex = new Annex();
-//				annex.setAnnexFolder(annexFolder);
-//				annex.setContextType(contentType);
-//				annex.setExtendName(extensionName);
-//				annex.setFileSize(new BigDecimal(fileSize));
-//				annex.setName(StringUtils.substringBefore(oldName, "."));
-//				annex.setCreator(userinfo!=null?userinfo.getName():null);
-//				annex.setRelativePath(datdDirectory);
-//				annex.setUploadTime(new Date());
-//				annex = this.annexService.saveAnnex(annex);
-//				return annex;
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
 	/**
 	 * 图片文件转base64
 	 * @param file
