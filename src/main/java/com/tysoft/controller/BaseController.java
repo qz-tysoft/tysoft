@@ -109,9 +109,11 @@ public abstract class BaseController {
 				annex.setUploadTime(new Date());
 				annex = this.annexService.saveAnnex(annex);
 				//保存成功进行文件的重命名
-				File oldFile=new File(webUploadPath+temp.concat(oldName).replaceAll("\\\\", "/"));
-				File newFile = new File(webUploadPath+annex.getRelativePath());
-				oldFile.renameTo(newFile);
+				if(annex!=null) {
+					File oldFile=new File(webUploadPath+temp.concat(oldName).replaceAll("\\\\", "/"));
+					File newFile = new File(webUploadPath+annex.getRelativePath());
+					oldFile.renameTo(newFile);
+				}
 				return annex;
 			}
 		} catch (Exception e) {
