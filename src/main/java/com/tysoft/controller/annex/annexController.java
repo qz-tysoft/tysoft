@@ -26,6 +26,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.tysoft.controller.BaseController;
 import com.tysoft.entity.base.Annex;
 
+import jodd.util.StringUtil;
+
 @Controller
 @RequestMapping("/annex")
 public class annexController extends BaseController {
@@ -77,6 +79,30 @@ public class annexController extends BaseController {
         }
 		return map;
 	}
+	
+	@RequestMapping("batchAnnexDel")
+	@ResponseBody
+	public String  batchAnnexDel(HttpServletRequest request){
+		String annexIds=request.getParameter("annexIds");
+        String delAnnexIds[]=annexIds.split(",");
+        //开始批量删除
+        for(int i=0;i<delAnnexIds.length;i++) {
+        	String annexId=delAnnexIds[i].replaceAll(" ", "");
+        	if(StringUtil.isNotBlank(annexId)) {
+        		//开始进行删除
+                Annex annex=this.annexService.findAnnexById(annexId);
+                String relativePath=annex.getRelativePath();
+                String realPath=webUploadPath+relativePath;
+                File file=new File(realPath);
+                if(file.exists()&&file.isFile()) {
+                    file.delete();
+                    annexService.deleteAnnexByIds(annexId);
+                }
+        	}
+        }
+		return Success;
+	}
+	
 	
 	
 	@RequestMapping("annexDownload")

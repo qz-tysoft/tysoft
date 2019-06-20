@@ -2,6 +2,7 @@
  * 
  */
 //为空是默认上传的文件数量为5个,文件类型为file
+var callBackAnnexId;
 function openUploadView(fileNum,fileType){
 	  var $ = layui.$;
 	  var layer = layui.layer;
@@ -17,27 +18,27 @@ function openUploadView(fileNum,fileType){
         ,title: '上传附件'
         ,content: '../annex/annexView?fileNum='+fileNum+'&amp;fileType='+fileType+''
         ,maxmin: true
-        ,btn: ['取消']
-        ,end: function(index, layero){
-         var iframeWindow = window['layui-layer-iframe'+ index]
-        //,submitID = 'annexUpload-submit'
-        //,submit = layero.find('iframe').contents().find('#'+ submitID);
-        //监听提交
-         //iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
-            // var field = data.field; //获取提交的字段
-            // var annexArray=field.annexArray;
-           //  uploadCallBack(annexArray);
-             
-         //  });
-/*         var arr=$(layero).find('iframe')[0].contentWindow.callBackData();
-         alert(arr.test);*/
-         var body = layer.getChildFrame('body', index);
-         var companyId=body.document.getElementById("annexArray").value;
-         console.log(companyId);
+        ,btn: ['确定','关了']
+	    //,closeBtn:0
+        ,yes: function(index,layero){
+         var iframeWindow = window['layui-layer-iframe'+ index];
+         var data=$(layero).find('iframe')[0].contentWindow.callBackData();
+         callBackAnnexId=data;
+         var annexArray=data.annexArray;
+         uploadCallBack(annexArray);
+         layer.close(index);
+       },
+       //点击关闭按钮
+       btn2: function (index,layero) {
+    	   var iframeWindow = window['layui-layer-iframe'+ index];
+           var data=iframeWindow.callBackData();
+           var annexArray=data.annexArray;
+           if(annexArray!=null&&annexArray!=''){
+        	   //ajax进行删除
+        	   iframeWindow.batchDelAnnex(annexArray);
+           }
        }
      });
 	  layer.full(index);
-	
-	
-	
 }
+

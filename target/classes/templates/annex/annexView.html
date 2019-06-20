@@ -15,8 +15,6 @@
 </head>
 
 <body>
-  <input id="fileNum" type="hidden" value="${fileNum}"/>
-  <input id="fileType" type="hidden" value="${fileType}"/>
   <div class="layui-form">
   <div class="layui-fluid" style="align-content: center;">   
     <div class="layui-card">
@@ -24,7 +22,9 @@
          <div class="layui-upload">
                <!--返回数据Ids-->
                <div class="layui-input-inline">
-               <input type="hidden" id="annexArray" name="annexArray" value="111"/>
+               <input type="hidden" id="annexArray" name="annexArray" />
+               <input id="fileNum" type="hidden" th:value="${fileNum}"/>
+               <input id="fileType" type="hidden" th:value="${fileType}"/>
                </div>
                 <table class="layui-table">
                   <thead>
@@ -41,7 +41,7 @@
               <button type="button" class="layui-btn layui-btn-normal" id="test-upload-testList">选择多文件</button>
               &nbsp;&nbsp;
               <button type="button" class="layui-btn" id="test-upload-testListAction">开始上传</button>
-             <button type="button" class="layui-btn" onclick="openUploadView(5,'images')" >测试</button>
+             <button type="button" class="layui-btn"  onclick="openUploadView(2,'images')" >测试</button>
               </div> 
             </div> 
       </div>
@@ -67,13 +67,16 @@
     ,upload = layui.upload
     ,table = layui.table;
     //多文件列表
+    //得到文件
+    var fileNum=$("#fileNum").val();
+    var fileType=$("#fileType").val();
     var demoListView = $('#test-upload-demoList')
     ,uploadListIns = upload.render({
       elem: '#test-upload-testList'
       ,url: 'annexUpload'
-      ,accept: 'file'
+      ,accept: fileType
       ,multiple: true
-      ,number: 5
+      ,number: parseInt(fileNum)
       ,auto: false
       ,bindAction: '#test-upload-testListAction'
       ,choose: function(obj){   
@@ -148,15 +151,33 @@
         }); 
   }
   
-/*   var callBackData=function (){
-	  var data={test:"11111"};
-	  return data;
-  } */
+ var callBackData=function (){
+	 var $ = layui.$;
+	 var annexArray=$("#annexArray").val();
+	 var data={annexArray:annexArray};
+	 return data;
+  }
+ 
+ //批量删除附件
+ function batchDelAnnex(annexIds){
+	  var $ = layui.$;
+	  $.ajax({
+	        url:'batchAnnexDel',
+	        method:'post',
+	        dataType:'json',
+	        data:{"annexIds":annexIds},
+	        success:function(data){
+	        },
+	        error:function(){
+		    alert('请求超时或系统错误');
+	        }
+       }); 
+	 
+ }
   
   //看当前界面是否成功回调
   function uploadCallBack(annexArray){
-	  console.log("==上传附件成功进行回调==");
-	  console.log("对应附件Id:"+annexArray);
+	  
   }
   </script>
 </body>
