@@ -43,13 +43,16 @@ public class annexController extends BaseController {
 	public String annexView(HttpServletRequest request){
 		String fileNum=request.getParameter("fileNum");
 		String fileType=request.getParameter("fileType");
+		String exts=request.getParameter("exts");
 		//单独打开此界面默认条件
-		if(!StringUtil.isNotBlank(fileNum)&&!StringUtil.isNotBlank(fileType)) {
+		if(!StringUtil.isNotBlank(fileNum)&&!StringUtil.isNotBlank(fileType)&&!StringUtil.isNotBlank(exts)){
 			fileNum="5";
 			fileType="file";
+			exts="";
 		}
 		request.setAttribute("fileNum", fileNum);
 		request.setAttribute("fileType", fileType);
+		request.setAttribute("exts", exts);
 		return annexView;
 	}
 	
