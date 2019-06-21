@@ -15,6 +15,7 @@
 </head>
 
 <body>
+<form id="downForm" method="post" action=""></form>
   <div class="layui-form">
   <div class="layui-fluid" style="align-content: center;">   
     <div class="layui-card">
@@ -35,6 +36,9 @@
                     <th><div align="center">操作</div></th>
                   </tr>
                   </thead>
+             <!--      <tr>
+                   <th><button onclick="downloadAnnex('402820b56b77a54d016b77ad1ae00000')">测试文件下载</button></th>
+                  </tr> -->
                   <tbody id="test-upload-demoList"></tbody>
                 </table>
               <div align="center">
@@ -54,7 +58,6 @@
   <script type="text/javascript" th:src="@{/static/layuiadmin/layui/layui.js}"></script>
   <script type="text/javascript" th:src="@{/static/js/uploadOrDownload.js}"></script>
   <script>
-  //var CTX = [[@{/}]];
   //定义全局的附件
   var annexIds=[];
   layui.config({

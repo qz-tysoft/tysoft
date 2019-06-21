@@ -42,3 +42,13 @@ function openUploadView(fileNum,fileType){
 	  layer.full(index);
 }
 
+//ajax下载附件
+function downloadAnnex(annexId){
+	var $ = layui.$;
+	var pathName = window.document.location.pathname; 
+    var projectName = pathName.substring(0, pathName.substr(1).indexOf('/') + 1); 
+	var url=projectName+'/annex/downloadAnnex?annexId='+annexId;
+    $("#downForm").attr("action",url);
+    $("#downForm").submit();
+}
+

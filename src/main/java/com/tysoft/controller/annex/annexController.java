@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,6 +43,11 @@ public class annexController extends BaseController {
 	public String annexView(HttpServletRequest request){
 		String fileNum=request.getParameter("fileNum");
 		String fileType=request.getParameter("fileType");
+		//单独打开此界面默认条件
+		if(!StringUtil.isNotBlank(fileNum)&&!StringUtil.isNotBlank(fileType)) {
+			fileNum="5";
+			fileType="file";
+		}
 		request.setAttribute("fileNum", fileNum);
 		request.setAttribute("fileType", fileType);
 		return annexView;
@@ -105,18 +111,23 @@ public class annexController extends BaseController {
 	
 	
 	
-	@RequestMapping("annexDownload")
-	public void  annexDownload(HttpServletRequest request,HttpServletResponse response) throws UnsupportedEncodingException{
+	@RequestMapping("downloadAnnex")
+	public String  downloadAnnex(HttpServletRequest request,HttpServletResponse response) throws UnsupportedEncodingException{
 	   String annexId=request.getParameter("annexId");   
 	   Annex annex=this.annexService.findAnnexById(annexId);
        String relativePath=annex.getRelativePath();
        String realPath=webUploadPath+relativePath;
        String fileName=annex.getName();
+       String fileType=annex.getExtendName();
        File file=new File(realPath);	  
            //File file = new File(realPath , fileName);
            if (file.exists()) {
-               response.setContentType("application/force-download");// 设置强制下载不打开
-               response.addHeader("Content-Disposition", "attachment;fileName=" + fileName);// 设置文件名
+        	   // 配置文件下载
+               response.setHeader("content-type", "application/octet-stream");
+               response.setContentType("application/octet-stream");
+               // 下载文件能正常显示中文
+               response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName+"."+fileType, "UTF-8"));
+               // 实现文件下载
                byte[] buffer = new byte[1024];
                FileInputStream fis = null;
                BufferedInputStream bis = null;
@@ -129,9 +140,12 @@ public class annexController extends BaseController {
                        os.write(buffer, 0, i);
                        i = bis.read(buffer);
                    }
-               } catch (Exception e) {
-                   e.printStackTrace();
-               } finally {
+                  // System.out.println("Download the song successfully!");
+               }
+               catch (Exception e) {
+                 //  System.out.println("Download the song failed!");
+               }
+               finally {
                    if (bis != null) {
                        try {
                            bis.close();
@@ -148,6 +162,7 @@ public class annexController extends BaseController {
                    }
                }
            }
+           return null;
        }
 
 }
