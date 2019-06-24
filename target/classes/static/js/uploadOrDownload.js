@@ -1,7 +1,7 @@
 /**
  * 
  */
-//为空是默认上传的文件数量为5个,文件类型为file,exts为空能上传所有
+//为空是默认上传的文件数量为5个,文件类型为file
 var callBackAnnexId;
 function openUploadView(fileNum,fileType,exts){
 	  var $ = layui.$;
@@ -13,15 +13,13 @@ function openUploadView(fileNum,fileType,exts){
 	  if(fileType==null){
 		  fileType='file';
 	  }
-	  
 	  if(exts==null){
 		  exts='';
 	  }
 	  var index=layer.open({
          type: 2
         ,title: '上传附件'
-        ,content: '../annex/annexView?fileNum='+fileNum+'&amp;
-                 +'fileType='+fileType+'&amp;exts='+exts
+        ,content: '../annex/annexView?fileNum='+fileNum+'&amp;fileType='+fileType+'&amp;exts='+exts+''
         ,maxmin: true
         ,btn: ['确定','关了']
 	    //,closeBtn:0

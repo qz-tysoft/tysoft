@@ -50,6 +50,10 @@ public class annexController extends BaseController {
 			fileType="file";
 			exts="";
 		}
+		
+		if(StringUtil.isNotBlank(exts)) {
+			request.setAttribute("tipMsg", "当前可上传的文件格式:"+exts);;
+		}
 		request.setAttribute("fileNum", fileNum);
 		request.setAttribute("fileType", fileType);
 		request.setAttribute("exts", exts);
