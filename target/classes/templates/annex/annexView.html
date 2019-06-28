@@ -29,7 +29,7 @@
                 <input id="exts" type="hidden" th:value="${exts}"/>
                </div>
                 <span style="color: red"  th:if="${not #strings.isEmpty(exts)}" th:text="${tipMsg}"></span>
-                <table class="layui-table">
+                <table id='dataTable' class="layui-table">
                   <thead>
                     <tr>
                     <th><div align="center">文件名</div></th>
@@ -47,7 +47,7 @@
               <button type="button" class="layui-btn layui-btn-normal" id="test-upload-testList">选择多文件</button>
               &nbsp;&nbsp;
               <button type="button" class="layui-btn" id="test-upload-testListAction">开始上传</button>
-              <button type="button" class="layui-btn"  onclick="openUploadView(1,'file','txt')" >测试</button>
+              <button type="button" class="layui-btn"  onclick="openUploadView(3,'file','')" >测试</button>
               </div> 
             </div> 
       </div>
@@ -87,10 +87,25 @@
       ,exts:exts
       ,bindAction: '#test-upload-testListAction'
       ,choose: function(obj){   
-        var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+    	  //判断当前有数据
+    /* 	    var chooseNum=0;
+            obj.preview(function(index, file, result){
+            	++chooseNum;
+            	var length=document.getElementById("dataTable").rows.length-1;
+            	var fileNum2=parseInt(length)+parseInt(chooseNum);
+          	  
+            }) */
+    	 var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
         //读取本地文件
+    
         obj.preview(function(index, file, result){
-          var tr = $(['<tr id="upload-'+ index +'">'
+        	var length=document.getElementById("dataTable").rows.length;
+            if(!compareLength(length)){
+            	alert(length);
+            	return
+            }
+             
+        	var tr = $(['<tr id="upload-'+ index +'">'
             ,'<td  align="center">'+ file.name +'</td>'
             ,'<td  align="center">'+ (file.size/1014).toFixed(1) +'kb</td>'
             ,'<td  align="center">等待上传</td>'
@@ -99,7 +114,7 @@
               ,'<button class="layui-btn layui-btn-mini layui-btn-danger upload-delete">删除</button>'
             ,'</td>'
           ,'</tr>'].join(''));
-          
+        
           //单个重传
           tr.find('.test-upload-demo-reload').on('click', function(){
             obj.upload(index, file);
@@ -111,7 +126,6 @@
             tr.remove();
             uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
           });
-          
           demoListView.append(tr);
         });
       }
@@ -164,6 +178,18 @@
 	 var data={annexArray:annexArray};
 	 return data;
   }
+ 
+ function compareLength(length){
+	 var $ = layui.$
+	 var fileNum=$("#fileNum").val();
+	 if(fileNum>length){
+	    return true
+	 }else{
+		return  false
+	 }
+	 
+ }
+ 
  
  //批量删除附件
  function batchDelAnnex(annexIds){

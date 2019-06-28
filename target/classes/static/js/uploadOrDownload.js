@@ -16,6 +16,8 @@ function openUploadView(fileNum,fileType,exts){
 	  if(exts==null){
 		  exts='';
 	  }
+	  
+	  //var realNum=parseInt(fileNum)-1;
 	  var index=layer.open({
          type: 2
         ,title: '上传附件'
