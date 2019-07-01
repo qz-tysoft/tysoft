@@ -2,6 +2,7 @@
  * 
  */
 //为空是默认上传的文件数量为5个,文件类型为file
+//openUploadView(3,'file','','true')参数分别为数量,文件类型,文件后缀,是否多选
 var callBackAnnexId;
 function openUploadView(fileNum,fileType,exts,isSingle){
 	  var $ = layui.$;
