@@ -44,16 +44,31 @@ public class annexController extends BaseController {
 		String fileNum=request.getParameter("fileNum");
 		String fileType=request.getParameter("fileType");
 		String exts=request.getParameter("exts");
+		String isSingle=request.getParameter("isSingle");
+		
 		//单独打开此界面默认条件
 		if(!StringUtil.isNotBlank(fileNum)&&!StringUtil.isNotBlank(fileType)&&!StringUtil.isNotBlank(exts)){
 			fileNum="5";
 			fileType="file";
 			exts="";
 		}
-		
-		if(StringUtil.isNotBlank(exts)) {
-			request.setAttribute("tipMsg", "当前可上传的文件格式:"+exts);;
+		if(!StringUtil.isNotBlank(isSingle)) {
+			isSingle="fasle";
 		}
+		if(StringUtil.isNotBlank(exts)&&StringUtil.isNotBlank(fileNum)) {
+			if(isSingle.equals("true")) {
+			request.setAttribute("tipMsg", "当前可上传的文件格式:"+exts+" 文件最多上传:"+fileNum+"个");
+			}else {
+				request.setAttribute("tipMsg", "当前可上传的文件格式:"+exts);
+			}
+	    }
+		
+		if(!StringUtil.isNotBlank(exts)) {
+			if(isSingle.equals("true")) {
+		 	request.setAttribute("tipMsg", "当前文件最多上传:"+fileNum+"个");
+		    }
+		}
+		request.setAttribute("isSingle",isSingle);
 		request.setAttribute("fileNum", fileNum);
 		request.setAttribute("fileType", fileType);
 		request.setAttribute("exts", exts);

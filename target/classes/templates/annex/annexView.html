@@ -24,11 +24,13 @@
                <!--返回数据Ids-->
                <div class="layui-input-inline">
                <input type="hidden" id="annexArray" name="annexArray" />
+               <input type="hidden" id="annexNum" name="annexNum"/>
                <input id="fileNum" type="hidden" th:value="${fileNum}"/>
                <input id="fileType" type="hidden" th:value="${fileType}"/>
+               <input id="isSingle" type="hidden" th:value="${isSingle}"/>
                 <input id="exts" type="hidden" th:value="${exts}"/>
                </div>
-                <span style="color: red"  th:if="${not #strings.isEmpty(exts)}" th:text="${tipMsg}"></span>
+                <span style="color: red"  th:if="${not #strings.isEmpty(tipMsg)}" th:text="${tipMsg}"></span>
                 <table id='dataTable' class="layui-table">
                   <thead>
                     <tr>
@@ -47,7 +49,7 @@
               <button type="button" class="layui-btn layui-btn-normal" id="test-upload-testList">选择多文件</button>
               &nbsp;&nbsp;
               <button type="button" class="layui-btn" id="test-upload-testListAction">开始上传</button>
-              <button type="button" class="layui-btn"  onclick="openUploadView(3,'file','')" >测试</button>
+              <button type="button" class="layui-btn"  onclick="openUploadView(3,'file','','true')" >测试</button>
               </div> 
             </div> 
       </div>
@@ -62,6 +64,8 @@
   <script>
   //定义全局的附件
   var annexIds=[];
+	//读取本地文件
+  var time=0;
   layui.config({
     base: '../static/layuiadmin/' //静态资源所在路径
   }).extend({
@@ -76,35 +80,39 @@
     var fileNum=$("#fileNum").val();
     var fileType=$("#fileType").val();
     var exts=$("#exts").val();
+    var isSingle=$("#isSingle").val();
+    var multipleType=false;
+    if(isSingle=='false'){
+    	multipleType=false;
+    }else{
+    	multipleType=true;
+    }
     var demoListView = $('#test-upload-demoList')
     ,uploadListIns = upload.render({
       elem: '#test-upload-testList'
       ,url: 'annexUpload'
       ,accept: fileType
-      ,multiple: true
+      ,multiple: multipleType
       ,number: parseInt(fileNum)
       ,auto: false
       ,exts:exts
       ,bindAction: '#test-upload-testListAction'
       ,choose: function(obj){   
-    	  //判断当前有数据
-    /* 	    var chooseNum=0;
-            obj.preview(function(index, file, result){
-            	++chooseNum;
-            	var length=document.getElementById("dataTable").rows.length-1;
-            	var fileNum2=parseInt(length)+parseInt(chooseNum);
-          	  
-            }) */
-    	 var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
-        //读取本地文件
-    
-        obj.preview(function(index, file, result){
-        	var length=document.getElementById("dataTable").rows.length;
-            var flag=0;
-        	if(!compareLength(length)){
-            	delete files[index];
-            	flag=1;
-            }
+    	  ++time;
+    	  var files = this.files = obj.pushFile();//将每次选择的文件追加到文件队列
+    	  var countTip=0;
+    	  //获得当前要上传文件个数
+         obj.preview(function(index, file, result){
+        	var length=document.getElementById("dataTable").rows.length-1;
+       	    //当前上传个数
+        	var count = Object.keys(files).length;
+      	    var firstCount=count+countTip;
+       	    var nextLength=length+1;
+        	var flag=0;
+        	if(firstCount>parseInt(fileNum)){
+            		flag=1;
+                	layer.msg('上传文件数不能超过'+fileNum, {icon:5,anim:6});
+    	     }
             if(flag==0){
         	var tr = $(['<tr id="upload-'+ index +'">'
             ,'<td  align="center">'+ file.name +'</td>'
@@ -115,7 +123,7 @@
               ,'<button class="layui-btn layui-btn-mini layui-btn-danger upload-delete">删除</button>'
             ,'</td>'
           ,'</tr>'].join(''));
-            }
+          
           //单个重传
           tr.find('.test-upload-demo-reload').on('click', function(){
             obj.upload(index, file);
@@ -128,6 +136,10 @@
             uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
           });
           demoListView.append(tr);
+          }else if(flag==1){
+        	  delete files[index]; 
+         	  ++countTip;
+          }
         });
       }
       ,done: function(res, index, upload){
@@ -180,10 +192,10 @@
 	 return data;
   }
  
- function compareLength(length){
+ function compareLength(nowNum){
 	 var $ = layui.$
 	 var fileNum=$("#fileNum").val();
-	 if(fileNum>length){
+	 if(fileNum>nowNum||fileNum==nowNum){
 	    return true
 	 }else{
 		return  false

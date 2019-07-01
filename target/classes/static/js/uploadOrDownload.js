@@ -3,25 +3,30 @@
  */
 //为空是默认上传的文件数量为5个,文件类型为file
 var callBackAnnexId;
-function openUploadView(fileNum,fileType,exts){
+function openUploadView(fileNum,fileType,exts,isSingle){
 	  var $ = layui.$;
 	  var layer = layui.layer;
 	  //先进行判断是否为空
-	  if(fileNum==null){
+	  if(fileNum==null||fileNum==''){
 		  fileNum=5;
 	  }
-	  if(fileType==null){
+	  if(fileType==null||fileType==''){
 		  fileType='file';
 	  }
-	  if(exts==null){
+	  if(exts==null||exts==''){
 		  exts='';
 	  }
+	  
+	  if(isSingle==null||isSingle==''){
+		  isSingle='false';
+	  }
+	  
 	  
 	  //var realNum=parseInt(fileNum)-1;
 	  var index=layer.open({
          type: 2
         ,title: '上传附件'
-        ,content: '../annex/annexView?fileNum='+fileNum+'&amp;fileType='+fileType+'&amp;exts='+exts+''
+        ,content: '../annex/annexView?fileNum='+fileNum+'&amp;fileType='+fileType+'&amp;exts='+exts+'&amp;isSingle='+isSingle+''
         ,maxmin: true
         ,btn: ['确定','关了']
 	    //,closeBtn:0
