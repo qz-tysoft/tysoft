@@ -25,7 +25,9 @@ import org.opencv.imgproc.Imgproc;
 public class FaceUtils {
 
 	static {
-		System.load("D:\\其他软件\\opencv\\build\\java\\x64\\opencv_java320.dll");
+		System.out.println("====我要进入加载了====");
+		System.load("D:\\opencv\\build\\java\\x64\\opencv_java320.dll");
+		System.out.println("====加载成功====");
 	}
 
 	public static void loadImg() {
@@ -76,7 +78,7 @@ public class FaceUtils {
 	}
         opencv_core.RectVector faces = new opencv_core.RectVector();
       //初始化人脸检测器
-        CascadeClassifier face_cascade = new CascadeClassifier("D:\\其他软件\\opencv\\sources\\data\\haarcascades_cuda\\haarcascade_frontalface_alt.xml");
+        CascadeClassifier face_cascade = new CascadeClassifier("D:\\opencv\\sources\\data\\haarcascades_cuda\\haarcascade_frontalface_alt.xml");
         //当前帧图片进行灰度+直方均衡
         Mat videoMatGray = new Mat();
         opencv_imgproc.cvtColor(image, videoMatGray, Imgproc.COLOR_BGRA2GRAY);
@@ -108,8 +110,8 @@ public class FaceUtils {
         grabber.start();
         OpenCVFrameConverter.ToMat convertToMat = new OpenCVFrameConverter.ToMat();
         //加载检测器
-        CascadeClassifier face_cascade = new CascadeClassifier("D:\\其他软件\\\\opencv\\sources\\data\\haarcascades_cuda\\haarcascade_frontalface_alt.xml");//初始化人脸检测器
-        CascadeClassifier eye_cascade = new CascadeClassifier("D:\\其他软件\\\\opencv\\sources\\data\\haarcascades_cuda\\haarcascade_eye_tree_eyeglasses.xml");//初始化眼部检测器
+        CascadeClassifier face_cascade = new CascadeClassifier("D:\\opencv\\sources\\data\\haarcascades_cuda\\haarcascade_frontalface_alt.xml");//初始化人脸检测器
+        CascadeClassifier eye_cascade = new CascadeClassifier("D:\\opencv\\sources\\data\\haarcascades_cuda\\haarcascade_eye_tree_eyeglasses.xml");//初始化眼部检测器
         //定义人脸集合，矩形集合
         opencv_core.RectVector faces = new opencv_core.RectVector();
         opencv_core.RectVector eyes = new opencv_core.RectVector();
@@ -149,7 +151,7 @@ public class FaceUtils {
 	
 	 public static double CmpPic(String src, String des) {
 		 System.out.println("\n==========直方图比较==========");
-		 //自定义阈值
+	     //自定义阈值
 		 //相关性阈值，应大于多少，越接近1表示越像，最大为1
 		 double HISTCMP_CORREL_THRESHOLD = 0.7;
 		 //卡方阈值，应小于多少，越接近0表示越像
@@ -216,6 +218,12 @@ public class FaceUtils {
 		    	 System.out.println("例外:" + e);
 		    	 }	
 		 return 0;  
+	 }
+	 
+	 public static void test() {
+		 String imgPath1="D:\\face\\1.jpg";
+		 String imgPath2="D:\\face\\3.jpg";
+		 System.out.println(FaceUtils.CmpPic(imgPath1,imgPath2));
 	 }
 
 }

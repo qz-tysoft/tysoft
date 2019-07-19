@@ -14,8 +14,8 @@ public class faceRecognitionController extends BaseController{
 
 	@RequestMapping("faceMainView")
 	public String faceMainView(HttpServletRequest request){
-		//比较两张图片相似度的
-		return faceMainView;
+		FaceUtils.test();
+     	return faceMainView;
 	}
 	
 }

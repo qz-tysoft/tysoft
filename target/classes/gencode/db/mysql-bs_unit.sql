@@ -1,0 +1,12 @@
+﻿-- Date:2019-4-30 14:55:28
+-- author:BearBear
+
+SET FOREIGN_KEY_CHECKS=0; 
+
+-- DROP TABLE IF EXISTS `bs_unit`;
+CREATE TABLE `bs_unit` (
+  `id` VARCHAR(100) NOT NULL  COMMENT 'id',
+  `unit_name` VARCHAR(500) DEFAULT NULL  COMMENT '单位名',
+  `unit_num` INT(20) DEFAULT NULL  COMMENT '单位人数',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='单位表';

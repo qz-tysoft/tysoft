@@ -1,0 +1,11 @@
+﻿-- Date:2019-4-30 14:55:28
+-- author:BearBear
+
+SET FOREIGN_KEY_CHECKS=0; 
+
+-- DROP TABLE IF EXISTS `bs_role`;
+CREATE TABLE `bs_role` (
+  `id` VARCHAR(100) NOT NULL  COMMENT 'id',
+  `role_name` VARCHAR(500) DEFAULT NULL  COMMENT '角色名',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色表';

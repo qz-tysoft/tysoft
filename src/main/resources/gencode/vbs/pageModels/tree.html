@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
+<title>%entityName%管理</title>
+<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.min.css}" />
+<link rel="stylesheet" th:href="@{/static/dist/css/font-awesome.min.css}" />
+<link rel="stylesheet" th:href="@{/static/dist/css/ionicons.min.css}" />
+<link rel="stylesheet" th:href="@{/static/css/common.css}" />
+<link rel="stylesheet" th:href="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.css}" />
+<link rel="stylesheet" th:href="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.css}" />
+<link rel="stylesheet" th:href="@{/static/plugins/bootstrap-validator/css/bootstrapValidator.min.css}" />
+<link rel="stylesheet" th:href="@{/static/dist/css/AdminLTE.css}" />
+<link rel="stylesheet" th:href="@{/static/dist/css/skins/_all-skins.min.css}" />
+<link rel="stylesheet" th:href="@{/static/plugins/jquery-comfirm/jquery-confirm.min.css}" />
+<style type="text/css">
+html, body {
+	overflow-x: hidden;
+}
+
+body {
+	padding-top: 50px;
+}
+
+.navbar {
+	padding: 0 10px;
+}
+
+.bar_left {
+	float: left;
+	line-height: 49px;
+}
+
+.bar_right {
+	float: right;
+	line-height: 49px;
+}
+
+.page_title {
+	width: 50%;
+	position: absolute;
+	left: 25%;
+	font-weight: 400;
+	text-align: center;
+	color: #232528;
+	font-size: 18px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	margin-top: none;
+}
+
+.col-sm-10 span {
+	word-break: break-all;
+	word-wrap: break-word;
+	white-space: normal;
+	display: block;
+	float: left;
+	height: 34px;
+	padding: 6px 12px 6px 0px;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #777;
+}
+
+#treeBody {
+	margin-top: 10px;
+}
+
+.form-group.no-valid-btn.has-feedback.has-error .glyphicon.glyphicon-remove:before{
+	content: ''
+}
+
+.form-group.no-valid-btn.has-feedback.has-success .glyphicon.glyphicon-ok:before{
+	content: ''
+}
+</style>
+</head>
+<body>
+	<nav class="navbar navbar-fixed-top navbar-default">
+		<div class="bar_left">
+			<button class="btn btn-default" type="button" onclick="fnGoBack()">
+				<em class="glyphicon glyphicon-arrow-left"></em>
+			</button>
+		</div>
+		<h2 class="page_title" style="margin-top: 15px;" th:text="'菜单权限配置'"></h2>
+	</nav>
+	<div id="container" class="container">
+		<div class="row clearfix">
+			<div class="col-md-12 column">
+				<input type="hidden" id="parentId" />
+				<div id="treeBody" data-toggle="context" data-target="#context-menu"></div>
+			</div>
+		</div>
+		<div id="context-menu">
+			<ul class="dropdown-menu" role="menu">
+				<li><a tabindex="-1" id="addMenu"><em id="addMenu" class="glyphicon glyphicon-plus"></em>增加子菜单</a></li>
+				<li><a tabindex="-1" id="editMenu"><em id="editMenu" class="glyphicon glyphicon-pencil"></em>修改菜单</a></li>
+				<li><a tabindex="-1" id="downMenu"><em id="downMenu" class="glyphicon glyphicon-arrow-down"></em>下移</a></li>
+				<li><a tabindex="-1" id="upMenu"><em id="upMenu" class="glyphicon glyphicon-arrow-up"></em>上移</a></li>
+				<li><a tabindex="-1" id="removeMenu"><em id="removeMenu" class="glyphicon glyphicon-remove"></em>删除</a></li>
+			</ul>
+		</div>
+	</div>
+
+
+	<!-- 编辑%entityName%窗体 -->
+	<div class="modal fade" id="modalWin" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title" id="modalLabel">新增%entityName%</h4>
+				</div>
+				<div class="modal-body">
+					<form id="inputForm" role="form" class="form-horizontal">
+						<input type="hidden" name="id" /> 
+%attrHtmlHidden%
+%attrHtml%
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" onclick="doSave(this)">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+	var CTX = [[@{/}]];
+	var STATIC = [[@{/static/}]];
+/*]]>*/		
+</script>
+<script type="text/javascript" th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-toggle/bootstrap-toggle.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-validator/js/bootstrapValidator.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-treeview/bootstrap-treeview.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/bootstrap-contextmenu.js}"></script>
+<script type="text/javascript" th:src="@{/static/plugins/bootstrap-contextmenu/prettify.js}"></script>
+<script th:src="@{/static/plugins/jquery-comfirm/jquery-confirm.min.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+	$(function(){
+
+		//初始化菜单树
+		initTree();
+		//初始化表单
+	    $('#inputForm').bootstrapValidator({
+			message: '此处输入有误',
+	        excluded: [':disabled'],
+	        feedbackIcons: {
+	            valid: 'glyphicon glyphicon-ok',
+	            invalid: 'glyphicon glyphicon-remove',
+	            validating: 'glyphicon glyphicon-refresh'
+	        },
+	        fields:{
+	        	'name':{
+	        		message: '名称输入不合法',
+	                validators: {
+	                    notEmpty: {
+	                        message: '名称不可为空'
+	                    },
+	                    stringLength: {
+	                        max: 10,
+	                        message: '长度必须在10个字内'
+	                    }
+	                }
+	        	}
+	        }
+		});
+		//编辑窗口关闭事件
+		$('#modalWin').on('hidden.bs.modal',function(){
+			fnResetInputForm();
+		});
+	});
+	
+	function fnResetInputForm(){
+%attrColumnEmp%
+		$('#inputForm').bootstrapValidator('resetForm', true);
+	}
+	
+	function initTree(){
+		loading("正在加载...");
+		$.ajax({
+			url:CTX+'%packageCode%/%controlllerCode%/query',
+			method:'GET',
+			dataType:'json',
+			data:{parentId:$('#parentId').val()},
+			success:function(json){
+				var treedata = [{
+					id:$('#parentId').val(),
+			    	text: "右击创建树形%entityName%",
+			    	treeCode:'0',
+			    	color:'#ccc',
+			    	selectable:false,
+			    	nodes:json
+			  	}];
+				
+				$('#treeBody').treeview({
+					showTags: true,
+					data: treedata
+				});
+				$('#treeBody').treeview('expandAll');
+				initTreeContextmenu();
+				loaded();
+			},
+			error:function(){
+				loaded();
+				showMessage('请求超时或系统出错');
+			}
+		});
+	}
+	var currentNode = null;
+	function initTreeContextmenu(){
+		$('#treeBody').contextmenu({
+			target:'#context-menu',
+			before: function(e, context) {
+				var nodeId = e.target.getAttribute("data-nodeid");
+				var node = $('#treeBody').treeview('getNode', nodeId);
+				currentNode = node;
+				var treeCodeLen = currentNode.treeCode.split(',');
+				$('#addMenu,#removeMenu,#editMenu,#upMenu,#downMenu').show();
+				if(currentNode.treeCode=='0'){
+					$('#removeMenu,#editMenu,#upMenu,#downMenu').hide();
+				}else if(treeCodeLen.length>=4){
+					$('#addMenu').hide();
+				}
+			},
+			onItem: function(context, e) {
+				var operId = e.target.getAttribute('id');
+				if(operId=='addMenu'){
+					goAdd();
+				}
+				if(operId == 'editMenu'){
+					goEdit();
+				}
+				if(operId == 'removeMenu'){
+					goDel();
+				}
+				if(operId == 'upMenu' || operId == 'downMenu'){
+					goUporDown(operId);
+				}
+			}
+		});
+	}
+	//删除
+	function goDel(){
+		var delIds = currentNode.id;
+		showConfirm('确定要删除所选项吗?',function(){
+			loading('正在删除,请稍后...');
+			$.ajax({
+				url:CTX+'%packageCode%/%controlllerCode%/delete',
+				type:'POST',
+				data:{ids:delIds},
+				dataType:'json',
+				success:function(json){
+					loaded();
+					if(json.success){
+						showMessage(json.msg);
+						initTree();
+					}else{
+						showMessage(json.msg);
+					}
+				},
+				error:function(){
+					showMessage('请求超时或系统出错!');
+					loaded();
+				}
+			});
+		});
+	}
+	//上下移动
+	function goUporDown(operId){
+		var id = currentNode.id;
+		$.ajax({
+			url:CTX+'%packageCode%/%controlllerCode%/save-sort',
+			data:{id:id,operId:operId},
+			method:'POST',
+			dataType:'text',
+			success:function(result){
+				if(result=='success'){
+					initTree();
+				}else{
+					showMessage('保存失败');
+				}
+			},
+			error: function(){
+				showMessage('系统错误或请求超时');
+			}
+		});
+	}
+	//新增
+	function goAdd(){
+		fnResetInputForm();
+		$('#modalWin').modal('toggle');
+		$('#modalLabel').text('新增%entityName%');
+		$('#inputForm').find("input[name='parent.id']").val(currentNode.id);
+		if(currentNode.id==$('#parentId').val())
+			$('#parent_name').val('一级%entityName%');
+		else
+			$('#parent_name').val(currentNode.text);
+	}
+	//编辑
+	function goEdit(){
+		fnResetInputForm();
+		$('#modalWin').modal('toggle');
+		$('#modalLabel').text('编辑%entityName%');
+		var id = currentNode.id;
+		$.ajax({
+			url:CTX+'%packageCode%/%controlllerCode%/find',
+			data:{id:id},
+			method:'GET',
+			dataType:'json',
+			success:function(json){
+				if(json){
+				    var %entityCode% = json.%entityCode%;
+					var $form = $('#inputForm');
+					$form.find("input[name='id']").val(auth.id);
+					if(%entityCode%.parent!=null)
+						$form.find("input[name='parent.id']").val(%entityCode%.parent.id);
+%attrColumnVal%
+				}
+			},
+			error: function(){
+				showMessage('系统错误或请求超时');
+				$('#modalWin').modal('toggle');
+			}
+		});
+	}
+	//提交保存
+	function doSave(_this){
+		var result = $('#inputForm').data('bootstrapValidator');
+		result.validate();
+		if(result.isValid()){
+			var oldTxt = $(_this).text();
+			$(_this).attr('disabled','disabled');
+			$(_this).html('保存中...');
+			$.ajax({  
+				url: CTX+'%packageCode%/%controlllerCode%/save',
+	            type: 'POST',  
+	            data:$('#inputForm').serialize(),// 序列化表单值  
+	            dataType: 'json',
+	            success:function(json) {
+					$(_this).removeAttr('disabled');
+					$(_this).html(oldTxt);
+					if(json.success){
+						$('#modalWin').modal('toggle');
+						initTree();
+					}
+					showMessage(json.msg);
+	            },  
+	            error:function(json) {  
+	            	showMessage('请求超时或系统出错!');
+	            	$(_this).removeAttr('disabled');
+					$(_this).html(oldTxt);
+	            }  
+	        });  
+		}
+	}
+	
+	//返回列表
+	function fnGoBack(){
+		window.location.href = CTX+'%packageCode%/%controlllerCode%/list/';
+	}
+    //提示信息
+    function showMessage(content){
+    	$.alert({
+   	      type:'blue',
+   	      title: '系统提示',
+   	      content: content || "保存成功",
+   	      icon:'glyphicon glyphicon-info-sign'
+   	    });
+    }
+    
+    //确认提示框
+    function showConfirm(content,callback){
+    	$.confirm({
+   	      title: '系统提示',
+   	      content: content || '确认要删除吗？',
+   	      type:'blue',
+   	      icon:'glyphicon glyphicon-question-sign',
+   	      buttons: {
+   	        ok: {
+   	            text: '确认',
+   	            btnClass: 'btn-primary',
+   	            action: function(){
+   	            	callback();
+   	            }
+   	        },
+   	        cancel: {
+   	            text: '取消',
+   	            btnClass: 'btn-primary',
+   	            action: function(){
+   	                
+   	            }
+   	        },
+   	      }
+   	    });
+    }
+/*]]>*/		
+</script>
+</html>
