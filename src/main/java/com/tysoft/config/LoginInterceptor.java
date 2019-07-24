@@ -6,6 +6,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.tysoft.entity.base.User;
+import com.tysoft.workflow.RequestHolder;
 
 public class LoginInterceptor implements HandlerInterceptor {
  
@@ -20,12 +21,16 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 检查每个到来的请求对应的session域中是否有登录标识
-    	User user = (User) request.getSession().getAttribute("SYS_USER");
+    	HttpServletRequest httpRequest = (HttpServletRequest) request;
+		User user = (User) request.getSession().getAttribute("SYS_USER");
         if (null == user ) {
         	response.sendRedirect(request.getContextPath());
             return false;
+        }else {
+        	RequestHolder.setThreadLocal(httpRequest);
+        	return true;
         }
-        return true;
+       
     }
  
     /**

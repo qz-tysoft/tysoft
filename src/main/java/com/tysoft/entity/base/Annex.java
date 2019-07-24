@@ -12,8 +12,11 @@
 package com.tysoft.entity.base;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -268,6 +271,24 @@ public class Annex implements Serializable{
        vo.setRootPath(this.rootPath);
        vo.setAnnexFolder(this.annexFolder!=null?this.annexFolder.poToVo():null);
        return vo;
+    }
+	
+	  /**PoToMap*/
+    public Map<String, Object> poToMap() {
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	Map<String, Object> jsonMap = new HashMap<String, Object>();
+        jsonMap.put("id",this.id);
+        jsonMap.put("name",this.name);
+        jsonMap.put("extendName",this.extendName);
+        jsonMap.put("relativePath",this.relativePath);
+        jsonMap.put("fileSize",this.fileSize);
+        jsonMap.put("creator",this.creator);
+        jsonMap.put("uploadTime",this.uploadTime== null ? null : sdf.format(this.uploadTime));
+        jsonMap.put("contextType",this.contextType);
+        jsonMap.put("remark",this.remark);
+        jsonMap.put("rootPath",this.rootPath);
+        jsonMap.put("annexFolder",this.annexFolder!=null?this.annexFolder.poToVo():null);
+        return jsonMap;
     }
     
     public static List<Annex> poToVos(List<Annex> annexes){

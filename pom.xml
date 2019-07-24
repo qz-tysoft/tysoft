@@ -201,7 +201,7 @@
             <artifactId>opencv-platform</artifactId>
             <version>3.4.1-1.4.1</version>
         </dependency>
-        <!-- 人脸试别 -->
+        <!-- 人脸识别 -->
 	</dependencies>
 	<build>
 		<plugins>
