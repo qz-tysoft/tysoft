@@ -26,6 +26,7 @@ import org.thymeleaf.util.StringUtils;
 
 import com.tysoft.entity.base.Annex;
 import com.tysoft.entity.base.AnnexFolder;
+import com.tysoft.entity.base.Unit;
 import com.tysoft.entity.base.User;
 import com.tysoft.service.base.AnnexService;
 
@@ -60,6 +61,12 @@ public abstract class BaseController {
 		User user = (User)request.getSession().getAttribute("SYS_USER");
 		return user;
 	}
+	 
+	 protected Unit getCurrentSystemUnit(HttpServletRequest request) throws Exception{
+			Unit unit = (Unit)request.getSession().getAttribute("SYS_UNIT");
+			return unit;
+		}
+
 
 	
 	/**

@@ -61,6 +61,7 @@ public class LoginController extends BaseController{
 			   request.getSession().setAttribute("firstMenuList", firstMenuList);
 			   request.getSession().setAttribute("allMenu", allMenu);
 			   request.getSession().setAttribute("SYS_USER", user);
+			   request.getSession().setAttribute("SYS_UNIT", user.getUnit());
 			}else if(user.getState()==1) {
 				//用户被禁用
 				 tipMsg.put("msg", 1);

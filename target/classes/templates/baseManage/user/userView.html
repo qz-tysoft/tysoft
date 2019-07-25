@@ -229,6 +229,27 @@
         }); 
   }
   
+  function setUnit(node){
+	  var $ = layui.$;
+	  var table = layui.table;
+	  var index = layer.open({
+	              type: 2
+	             ,title: node.userName+'-部门分配'
+	             ,content: 'userUnitSetView?id='+node.id
+	             ,maxmin: true
+	             ,area: ['350px', '200px']
+	             ,btn: ['确定', '取消']
+	             ,end:function(){
+	            	var setUnitFlag=$("#setUnitFlag").val();
+	            	if(setUnitFlag==1){
+	            		$("#setUnitFlag").val("0"); 
+	            		table.reload('user-table-page');
+	            	}
+	              }
+	           });
+	   layer.full(index);
+  }
+  
   //编辑用户信息
   function edit(node){
 	  var $ = layui.$;
@@ -322,22 +343,6 @@
 		    alert('请求超时或系统错误');
 	        }
       }); 
-  }
-  
-  function setUnit(node){
-	  var index = layer.open({
-	              type: 2
-	             ,title: node.userName+'-部门分配'
-	             ,content: 'userUnitSetView?id='+node.id
-	             ,maxmin: true
-	             ,area: ['350px', '200px']
-	             ,btn: ['确定', '取消']
-	             ,end: function(){
-	            	 var setUnitFlag=$("#setUnitFlag").val();
-	            	 alert(setUnitFlag);
-	             }
-	           });
-	   layer.full(index);
   }
   
   function setRole(node){

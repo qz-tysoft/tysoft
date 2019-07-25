@@ -627,11 +627,6 @@ public class BaseManageController extends BaseController {
 		String userId = request.getParameter("userId");
 		User user = this.userService.findUserById(userId);
 		Unit unit = this.unitService.findUnitById(unitId);
-		// 未分配人员单位减1
-		Unit beforeUnit = user.getUnit();
-		beforeUnit.setUnitNum(beforeUnit.getUnitNum() - 1);
-		this.unitService.saveUnit(beforeUnit);
-		unit.setUnitNum(unit.getUnitNum() + 1);
 		Unit useUnit = this.unitService.saveUnit(unit);
 		user.setUnit(useUnit);
 		this.userService.saveUser(user);
