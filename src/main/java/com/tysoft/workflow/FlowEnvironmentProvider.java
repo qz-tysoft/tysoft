@@ -48,7 +48,6 @@ public class FlowEnvironmentProvider implements EnvironmentProvider {
 				username=unit.getUnitName()+"-"+user.getName();
 			}
 		}
-		System.out.println("用户:"+username);
 		return username;
 	}
 }

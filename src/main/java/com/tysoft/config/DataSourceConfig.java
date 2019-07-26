@@ -22,7 +22,7 @@ import javax.sql.DataSource;
 	    @Qualifier("primaryDataSource")
 	    @ConfigurationProperties(prefix="spring.datasource")
 	    public DataSource primaryDataSource() {
-	        return DataSourceBuilder.create().build();
+	         return DataSourceBuilder.create().build();
 	    }
 	    
 	  
