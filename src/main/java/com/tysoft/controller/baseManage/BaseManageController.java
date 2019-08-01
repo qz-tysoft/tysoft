@@ -1,6 +1,8 @@
 package com.tysoft.controller.baseManage;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.geo.Circle;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,6 +37,7 @@ import com.tysoft.entity.base.Power;
 import com.tysoft.entity.base.Role;
 import com.tysoft.entity.base.Unit;
 import com.tysoft.entity.base.User;
+import com.tysoft.repository.base.MenuRepository;
 import com.tysoft.service.base.MenuService;
 import com.tysoft.service.base.PowerService;
 import com.tysoft.service.base.RoleService;
@@ -41,6 +45,7 @@ import com.tysoft.service.base.UnitService;
 import com.tysoft.service.base.UserService;
 
 import antlr.StringUtils;
+import cn.hutool.core.date.DateUtil;
 import jodd.util.StringUtil;
 import net.sf.json.JSONObject;
 
@@ -58,6 +63,10 @@ public class BaseManageController extends BaseController {
 	protected UserService userService;
 	@Autowired
 	protected MenuService menuService;
+	@Autowired
+	protected MenuRepository menuRepository;
+	
+	
 	private String userView = "baseManage/user/userView";
 	private String userAdd = "baseManage/user/user-add";
 	private String powerView = "baseManage/power/powerView";
@@ -834,27 +843,58 @@ public class BaseManageController extends BaseController {
 	@ResponseBody
 	public Object queryMenuTree(HttpServletRequest request) throws Exception {
 		String menuName = request.getParameter("menuName");
+		String page = request.getParameter("page");
+		String limit = request.getParameter("limit");
+		//判断当前是否有进行修改
+		String editMenuId=request.getParameter("editMenuId");
+		Page<Menu> pages=null;
 		List<Menu> menuList = new ArrayList<>();
 		Criteria<Menu> criteria = new Criteria<>();
 		if (StringUtil.isNotBlank(menuName)) {
 			criteria.add(Restrictions.like("menuName", menuName, false));
-			menuList = this.menuService.queryMenuByCondition(criteria, null);
+			pages=this.menuService.queryMenuByPage(criteria, null,Integer.valueOf(page)-1, Integer.valueOf(limit));
 		} else {
-			criteria.add(Restrictions.ne("pid", "first", false));
-			menuList = this.menuService.queryMenuByCondition(criteria, null);
+			criteria.add(Restrictions.eq("pid", "first", false));
+			Menu fatherMenu=this.menuService.uniqueMenuByCondtion(criteria);
+			Criteria<Menu> criteria2 = new Criteria<>();
+			criteria2.add(Restrictions.eq("pid",fatherMenu.getId(), false));
+			Order order = new Order(Direction.DESC, "creatTime");// 根据创建时间进行排序
+			Sort sort = new Sort(order);
+			pages=this.menuService.queryMenuByPage(criteria2, sort,Integer.valueOf(page)-1, Integer.valueOf(limit));
+			if (pages.getTotalPages() > 0) {
+				for (Menu menu : pages.getContent()) {
+					List<Menu> menus=new ArrayList<>();
+					menus.add(menu);
+					List<Menu> nowMenus=this.menuService.getAllMenuByFatherMeun(menus);
+					if(nowMenus.size()==0) {
+						menuList.add(menu);
+					}
+					//主菜单添加
+					//先按照时间进行排序
+					Criteria<Menu> criteriaMenu=new Criteria();
+					List<Long> dateList=new ArrayList<>();
+					Map<Long,Menu> map=new HashMap<>();
+					for(int i=0;i<nowMenus.size();i++) {
+						//menuList.add(nowMenus.get(i));
+						if(nowMenus.get(i).getCreatTime()==null) {
+							dateList.add(Long.valueOf(i));
+							map.put(Long.valueOf(i),nowMenus.get(i));
+						}else {
+							dateList.add(nowMenus.get(i).getCreatTime().getTime());
+							map.put(nowMenus.get(i).getCreatTime().getTime(),nowMenus.get(i));
+						}
+					}
+
+					//时间排序完成
+					Collections.sort(dateList,Collections.reverseOrder());
+					for(int i=0;i<dateList.size();i++) {
+						menuList.add(map.get(dateList.get(i)));
+					}
+				}
+			}
 		}
 		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
 		// 查询所有的菜单
-		// 先查询第一个菜单
-//		Criteria<Menu> first = new Criteria<>();
-//		first.add(Restrictions.eq("pid", "first", false));
-//		Menu firstMenu = this.menuService.uniqueMenuByCondtion(first);
-//		Map<String, Object> firstMap = new HashMap<>();
-//		firstMap.put("name", firstMenu.getMenuName());
-//		firstMap.put("pId", "first");
-//		firstMap.put("id", firstMenu.getId());
-//		listMap.add(firstMap);
-		// 进行数据的下发
 		for (int i = 0; i < menuList.size(); i++) {
 			Menu menu = menuList.get(i);
 			Power power = menu.getPower();
@@ -877,18 +917,35 @@ public class BaseManageController extends BaseController {
 			}else {
 				map.put("icon","");
 			}
+			//进行判断当前是否修改
+			if(StringUtil.isNotBlank(editMenuId)) {
+				Menu editMenu=this.menuService.findMenuById(editMenuId);
+				Criteria<Menu> condition=new Criteria<>();
+				condition.add(Restrictions.eq("pid","first", false));
+				Menu firstMenu=this.menuService.uniqueMenuByCondtion(condition);
+				if(!editMenu.getPid().equals(firstMenu.getId())) {
+				    Menu father=this.menuService.getFatherMenuByChildMenu(editMenu);
+				    if(father.getId().equals(menu.getId())) {
+						map.put("lay_is_open", true);
+				    }
+				}
+			}
+			//map.put("lay_is_open", true);
 			map.put("id", menu.getId());
 			map.put("name", menu.getMenuName());
 			map.put("powerName", powerName);
 			map.put("url", url);
 			listMap.add(map);
+		
 		}
 		Map<String, Object> msgMap = new LinkedHashMap<String, Object>();
+		msgMap.put("count", pages.getTotalElements());
 		msgMap.put("code", 0);
 		msgMap.put("is", true);
 		msgMap.put("msg", "");
 		msgMap.put("tip", "操作成功");
 		msgMap.put("data", listMap);
+		msgMap.put("pages", Integer.valueOf(page));
 		return msgMap;
 	}
 
@@ -902,9 +959,19 @@ public class BaseManageController extends BaseController {
 		Menu menu = new Menu();
 		menu.setId((String) obj.get("menuId"));
 		menu.setPid((String) obj.get("pid"));
+		String time=(String)obj.get("creatTime");
+		if(StringUtil.isNotBlank(time)) {
+			menu.setCreatTime(DateUtil.parseDateTime(time));
+		}else {
+			menu.setCreatTime(new Date());
+		}
+		
 		if (obj.get("icon") != null) {
 			menu.setIcon((String) obj.get("icon"));
 		}
+//		if(!StringUtil.isNotBlank((String) obj.get("menuId"))) {
+//			menu.setCreatTime(new Date());
+//		}
 		menu.setIconFlag(Integer.valueOf((String) obj.get("iconFlag")));
 		menu.setMenuName((String) obj.get("menuName"));
 		Power power = null;

@@ -32,6 +32,4 @@ import javax.sql.DataSource;
 	        return new JdbcTemplate(dataSource);
 	    }
 	    
-	    
-	
 }

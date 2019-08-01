@@ -2,15 +2,15 @@
   "hints": [],
   "groups": [
     {
-      "sourceType": "com.tysoft.config.DataSourceConfig",
-      "name": "spring.datasource",
-      "sourceMethod": "public javax.sql.DataSource primaryDataSource() ",
-      "type": "javax.sql.DataSource"
-    },
-    {
       "sourceType": "com.tysoft.config.DruidConfiguration",
       "name": "spring.datasource",
       "sourceMethod": "public javax.sql.DataSource druid() ",
+      "type": "javax.sql.DataSource"
+    },
+    {
+      "sourceType": "com.tysoft.config.DataSourceConfig",
+      "name": "spring.datasource",
+      "sourceMethod": "public javax.sql.DataSource primaryDataSource() ",
       "type": "javax.sql.DataSource"
     }
   ],

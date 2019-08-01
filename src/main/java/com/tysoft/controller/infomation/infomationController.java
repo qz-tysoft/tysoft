@@ -25,7 +25,9 @@ public class infomationController  extends BaseController{
     */
    @RequestMapping("infomationView")
    public String list(HttpServletRequest request) {
-       return infomationView;
+       String type=request.getParameter("type");
+       request.setAttribute("type", type);
+	   return infomationView;
    }
    
    /**

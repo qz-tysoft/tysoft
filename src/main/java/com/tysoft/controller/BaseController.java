@@ -25,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
 import com.tysoft.entity.base.Annex;
-import com.tysoft.entity.base.AnnexFolder;
 import com.tysoft.entity.base.Unit;
 import com.tysoft.entity.base.User;
 import com.tysoft.service.base.AnnexService;
@@ -142,45 +141,6 @@ public abstract class BaseController {
 		}
 		return null;
 	}
-	/**
-	 * base64转图片
-	 * @param base64
-	 * @param annexFolder
-	 * @return
-	 * @throws Exception
-	 */
-//	protected Annex decodeBase64File(String base64,AnnexFolder annexFolder) throws Exception{
-//		if(!StringUtils.isEmpty(base64)) {
-//			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-//			String temp = "annex" + File.separator + "upload" + File.separator + sdf.format(new Date()) + File.separator;
-//			byte[] buffer = Base64.getDecoder().decode(base64);
-//			// 文件路径
-//			String filePath = webUploadPath.concat(temp);
-//			if(!new File(filePath).exists()) {
-//				new File(filePath).mkdirs();
-//			}
-//			String fileName = System.currentTimeMillis()+".jpg";
-//			filePath = filePath + File.separator + fileName;
-//			OutputStream out = new FileOutputStream(filePath);  
-//            out.write(buffer);  
-//            out.flush();  
-//            out.close();
-//            File file = new File(filePath);
-//            //保存附件记录
-//			Annex annex = new Annex();
-//			annex.setAnnexFolder(annexFolder);
-//			annex.setContextType("image/jpeg");
-//			annex.setExtendName("jpg");
-//			annex.setFileSize(new BigDecimal(file.length()));
-//			annex.setName(StringUtils.substringBefore(fileName, "."));
-//			annex.setRelativePath(temp.concat(fileName).replaceAll("\\\\", "/"));
-//			annex.setUploadTime(new Date());
-//			annex = this.annexService.saveAnnex(annex);
-//			return annex;
-//		}
-//		return null;
-//	}
-	
 	/**
 	 * http请求公共方法
 	 * @param requestUrl

@@ -78,6 +78,16 @@ public class Menu implements Serializable{
      * iconFlag
      */
     private java.lang.Integer iconFlag;
+    
+    /**
+     * 创建时间
+     */
+    private java.util.Date creatTime;
+    
+    /**
+     * sort
+     */
+    private java.lang.String sortFlag;
 
     /**
      *  权限表
@@ -156,8 +166,21 @@ public class Menu implements Serializable{
     public void setIconFlag(java.lang.Integer iconFlag){ 
       this.iconFlag=iconFlag;
     }
+    
 
-    @ManyToOne( cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY )
+    public java.util.Date getCreatTime() {
+		return creatTime;
+	}
+	public void setCreatTime(java.util.Date creatTime) {
+		this.creatTime = creatTime;
+	}
+	public java.lang.String getSortFlag() {
+		return sortFlag;
+	}
+	public void setSortFlag(java.lang.String sortFlag) {
+		this.sortFlag = sortFlag;
+	}
+	@ManyToOne( cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY )
     @JoinColumn(name="power_id",nullable = true,foreignKey=@ForeignKey(name="fk_rs_power_menu"))
     public Power getPower() {
        return power;
@@ -175,6 +198,8 @@ public class Menu implements Serializable{
         vo.setIcon(this.icon);
         vo.setPower(this.power.poToVo());
         vo.setIconFlag(this.iconFlag);
+        vo.setSortFlag(this.sortFlag);
+        vo.setCreatTime(this.creatTime);
         return vo;
     }
 
@@ -191,6 +216,10 @@ public class Menu implements Serializable{
         sb.append("\"icon\":\"").append(this.getIcon()).append("\"");
         sb.append(",");
         sb.append("\"iconFlag\":\"").append(this.getIconFlag()).append("\"");
+        sb.append(",");
+        sb.append("\"sortFlag\":\"").append(this.getSortFlag()).append("\"");
+        sb.append(",");
+        sb.append("\"creatTime\":\"").append(this.getSortFlag()).append("\"");
         sb.append("}");
         return sb.toString();
     }
@@ -204,6 +233,8 @@ public class Menu implements Serializable{
         jsonMap.put("pid",this.pid);
         jsonMap.put("icon",this.icon);
         jsonMap.put("iconFlag",this.iconFlag);
+        jsonMap.put("sortFlag",this.sortFlag);
+        jsonMap.put("creatTime",this.creatTime== null ? null : sdf.format(this.creatTime));
         jsonMap.put("power", this.power==null?null:this.power.poToMap());
         return jsonMap;
     }

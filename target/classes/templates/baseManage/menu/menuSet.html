@@ -67,6 +67,7 @@
 <!-- 初始化删除标记-->
 <input type="hidden" id="delFlag" value="0" />
 <input type="hidden" id="companyId" th:value="${menu.id}" />
+<input type="hidden" id="pages" value=""/>
     <div class="dHead" style="margin-top:20px;margin-bottom: 20px;">
            <div class="layui-row">  
            
@@ -131,7 +132,7 @@
           ,isOpenDefault:false//节点默认是展开还是折叠【默认展开】
           ,loading:true
           ,method:'post'
-          ,isPage:false
+          ,isPage:true
           ,cols: [[
                {field:'name', width:150,align:'center',title: '菜单名'}
               ,{field:'icon', title: 'icon',width:100,align:'center',templet: function(d){
@@ -159,12 +160,14 @@
               }
           ]]
           ,parseData:function (res) {//数据加载后回调
-              return res;
+        	  //进行页码保存
+        	  $("#pages").val(res.pages);
+        	  return res;
           }
-          ,onClickRow:function (index, o) {
-              //console.log(index,o,"单击！");
-              //msg("单击！,按F12，在控制台查看详细参数！");
-          }
+        /*   ,onClickRow:function (index, o) {
+              console.log(index,o,"单击！");
+             //msg("单击！,按F12，在控制台查看详细参数！");
+          } */
           /*
           ,onDblClickRow:function (index, o) {
               console.log(index,o,"双击");
@@ -229,11 +232,17 @@
 	                  dataType:'json',
 	                  data:{"data":JSON.stringify(field)},
 	                  success:function(data){
-	                	  treeGrid.reload(tableId,{
-	                          page:{
-	                              curr:1
+	                	
+	                	 var pages=$(".layui-laypage-em").next().html();
+	                /* 	 treeGrid.reload(tableId,{
+	                         where:{
+	                        	editMenuId: data.id,
+	                         } 
+	                	     ,
+	                		 page:{
+	                              curr:pages
 	                          }
-	                      });
+	                      }); */
 	                	  layer.msg("修改成功!",{
 		   	            time:1000
 		   	 	       });
@@ -320,19 +329,13 @@
 	                  dataType:'json',
 	                  data:{"data":JSON.stringify(field)},
 	                  success:function(data){
-	                 /*  var id=data.id;
+	                  var id=data.id;
 	                  var pdata=pObj?pObj.data:null;
-		    	      var param={name:data.menuName,id:data.id,pId:data.pid};
-		    	      treeGrid.addRow(tableId,pdata?pdata[treeGrid.config.indexName]+1:0,param); */
+		    	      var param={name:data.menuName,id:data.id,pId:data.pid,icon:data.icon};
+		    	      treeGrid.addRow(tableId,pdata?pdata[treeGrid.config.indexName]+1:0,param);
 		    	      layer.msg("添加成功!",{
 		   	            time:1000
 		   	 	       });
-		    	      
-		    	      treeGrid.reload(tableId,{
-                          page:{
-                              curr:1
-                          }
-                      });
 	                  },
 	                  error:function(){
 		              alert('请求超时或系统错误');

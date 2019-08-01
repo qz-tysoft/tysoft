@@ -301,4 +301,43 @@ public class MenuServiceImpl implements MenuService {
 	        }
 	    	return  childMenus;
 	    }
+
+	    //得到所有菜单通过父菜单
+		@Override
+		public List<Menu> getAllMenuByFatherMeun(List<Menu> menus) {
+			 int  before=menus.size();
+		    	for(int i=0;i<menus.size();i++) {
+		    		Menu menu=menus.get(i);
+		    		Criteria<Menu> criteria=new Criteria<>();
+			    	criteria.add(Restrictions.eq("pid", menu.getId(), false));
+			    	List<Menu> childMenu=this.queryMenuByCondition(criteria, null);
+			    	for(int j=0;j<childMenu.size();j++) {
+			    	 Menu cmenu=childMenu.get(j);
+			    	 if(!menus.contains(cmenu)) {
+			    		 menus.add(cmenu);
+			    	 }
+			    	}
+		    	}
+		    	//当前还有
+		        int now=menus.size();
+		        if(now!=before) {
+		        	allMenuByChildMenu(menus);
+		        }
+		    	return  menus;
+		}
+
+		@Override
+		public Menu getFatherMenuByChildMenu(Menu menu) {
+			// TODO Auto-generated method stub
+			Criteria<Menu> criteria=new Criteria<>();
+		    criteria.add(Restrictions.eq("id", menu.getPid(), false));
+		    Menu childMenu=this.uniqueMenuByCondtion(criteria);
+            if(childMenu!=null) {
+            	getFatherMenuByChildMenu(childMenu);
+            }
+			
+			return childMenu;
+		}
+	    
+	    
 }

@@ -82,4 +82,10 @@ public interface MenuService {
     public Map<String,Object> findChildMenuByPid(String pid,User user);
     //根据所有子菜单得到完整的菜单
     public List<Menu> allMenuByChildMenu(List<Menu> childMenus);
+    //递归根据父菜单递归得到所有子菜单
+    public List<Menu> getAllMenuByFatherMeun(List<Menu> menus);
+    //递归根据子菜单递归得到顶层父菜单
+    public Menu getFatherMenuByChildMenu(Menu menu);
+
+    
 }
