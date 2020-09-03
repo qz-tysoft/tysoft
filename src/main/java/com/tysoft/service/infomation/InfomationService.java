@@ -1,4 +1,4 @@
-﻿/**
+/**
 * <p>Description: 2.消息系统 im</p>
 * <p>Copyright: Copyright (c) 2019</p>
 * <p>Company: 厦门路桥信息股份有限公司</p>

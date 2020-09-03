@@ -26,8 +26,6 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 @EnableScheduling
 @EnableAsync//开启异步任务
 @EnableAspectJAutoProxy
-@EnableCaching//redis
-@ImportResource("classpath:context.xml")//加载工作流配置文件
 public class MainApplication extends SpringBootServletInitializer  {
 
 	public static void main(String[] args) {
