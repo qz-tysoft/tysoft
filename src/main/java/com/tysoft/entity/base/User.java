@@ -1,4 +1,4 @@
-﻿/**
+/**
 * <p>Description: SEGS_COM SEGS_COM</p>
 *
 * <p>Copyright: Copyright (c) 2019</p>
