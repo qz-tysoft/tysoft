@@ -113,3 +113,45 @@ ADD COLUMN `icon_flag`  int(2) NULL AFTER `icon`;
 
 ALTER TABLE `bs_menu`
 ADD COLUMN `creat_time`  datetime NULL DEFAULT NULL AFTER `sort_flag`;
+
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- DROP TABLE IF EXISTS `cr_customer_company`;
+CREATE TABLE `cr_customer_company` (
+  `id` VARCHAR(100) NOT NULL  COMMENT 'id',
+  `company_name` VARCHAR(100) DEFAULT NULL  COMMENT '公司名',
+  `lessee_id` VARCHAR(100) DEFAULT NULL  COMMENT '租户id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户公司设置表';
+
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- DROP TABLE IF EXISTS `cr_customer_product`;
+CREATE TABLE `cr_customer_product` (
+  `id` VARCHAR(100) NOT NULL  COMMENT 'id',
+  `product_name` VARCHAR(100) DEFAULT NULL  COMMENT '产品名',
+  `specs` VARCHAR(100) DEFAULT NULL  COMMENT '规格',
+  `lessee_id` VARCHAR(100) DEFAULT NULL  COMMENT '租户id',
+  `customer_company_id` VARCHAR(100) DEFAULT NULL COMMENT '客户公司设置表',
+  KEY `rs_company_product` (`customer_company_id`) USING BTREE,
+  CONSTRAINT `fk_rs_company_product` FOREIGN KEY (`customer_company_id`) REFERENCES `cr_customer_company` (`id`),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户产品表';
+
+
+SET FOREIGN_KEY_CHECKS=0;
+-- DROP TABLE IF EXISTS `cr_customer_product_del`;
+CREATE TABLE `cr_customer_product_del` (
+  `id` VARCHAR(100) NOT NULL  COMMENT 'id',
+  `product_num` VARCHAR(100) DEFAULT NULL  COMMENT '数量',
+  `product_price` VARCHAR(100) DEFAULT NULL  COMMENT '单价',
+  `product_time` DATETIME DEFAULT NULL  COMMENT '时间',
+  `annex_ids` VARCHAR(100) DEFAULT NULL  COMMENT '附件id',
+  `lessee_id` VARCHAR(100) DEFAULT NULL  COMMENT '租户id',
+  `customer_product_id` VARCHAR(100) DEFAULT NULL COMMENT '客户产品表',
+  KEY `rs_product_del` (`customer_product_id`) USING BTREE,
+  CONSTRAINT `fk_rs_product_del` FOREIGN KEY (`customer_product_id`) REFERENCES `cr_customer_product` (`id`),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户产品详情表';

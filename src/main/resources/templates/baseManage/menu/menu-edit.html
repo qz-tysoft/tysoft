@@ -25,7 +25,7 @@
               <input type="hidden" id="choosePowerId" th:if="${power}!=null" name="choosePowerId"  th:value="${power.id}"/>
               <input type="hidden" id="choosePowerId" th:if="${power}==null" name="choosePowerId"  value=""/>
               <input type="hidden" id="pid" name="pid" th:value="${pid}"></input>
-              <input type="hidden" id="creatTime" name="creatTime" th:value="${menu.creatTime}"></input>
+              <input type="hidden" id="creatTime" name="creatTime" th:value="${createTime}"></input>
             </div>
           </div>
           
@@ -42,7 +42,7 @@
           <div class="layui-inline">
             <label class="layui-form-label">菜单名称</label>
             <div class="layui-input-block">
-            <input type="text" id="menuName" th:value="${menu.menuName}" name="menuName" placeholder="请输入菜单名" autocomplete="off" class="layui-input"></input>
+            <input type="text" id="menuName" th:value="${nameAndSort}" name="menuName" placeholder="请输入菜单名" autocomplete="off" class="layui-input"></input>
             <input type="hidden" id="menuId" name="menuId" th:value="${menu.id}"/>
             <input type="hidden" id="pid" name="pid" th:value="${menu.pid}"/>
             

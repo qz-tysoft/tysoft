@@ -60,7 +60,8 @@
             <dl class="layui-nav-child">
               <dd  style="text-align: center;"><a lay-href="../baseManage/revise-password-view" >修改密码</a></dd>
               <hr></hr>
-              <dd layadmin-event="logout"><a lay-href="../baseManage/login-out">退出</a></dd>
+              <!--<dd layadmin-event="logout"><a lay-href="../baseManage/login-out">退出</a></dd>-->
+              <dd layadmin-event="logout" style="text-align: center;"><a>退出</a></dd>
             </dl>
           </li>
            <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect="">
@@ -162,6 +163,10 @@
 	        }
             });
  })
+
+   function logout(){
+       alert(1);
+   }
  
  //递归查询所有的子菜单的
  function loadchild(menu,allMenu){
