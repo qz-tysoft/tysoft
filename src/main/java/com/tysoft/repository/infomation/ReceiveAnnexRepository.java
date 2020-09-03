@@ -1,4 +1,4 @@
-﻿/**
+/**
 * <p>Description: 接收的附件表管理</p>
 * <p>Copyright: Copyright (c) 2019</p>
 * <p>Company: 厦门路桥信息股份有限公司</p>

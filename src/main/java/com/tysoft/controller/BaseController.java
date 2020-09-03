@@ -10,17 +10,17 @@ import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.tysoft.common.Criteria;
+import com.tysoft.common.Restrictions;
+import com.tysoft.entity.base.Menu;
+import com.tysoft.service.base.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
@@ -49,6 +49,9 @@ public abstract class BaseController {
 
     @Autowired
 	protected AnnexService annexService;
+
+    @Autowired
+	protected MenuService menuService;
 
 	/**
 	 * 获取当前用户
@@ -393,6 +396,19 @@ public abstract class BaseController {
 	   Object obj=JSONObject.toBean(objStr, beanClass);
 	   return obj;
    }
-    
+
+
+	//进行排序
+	public List<Menu> sortMenu(List<Menu> sortMenu){
+		Criteria<Menu> criteria=new Criteria<>();
+		List<String> ids=new ArrayList<>();
+		for (Menu menu:sortMenu){
+			ids.add(menu.getId());
+		}
+		criteria.add(Restrictions.in("id",ids,false));
+		Sort sort=new Sort(Sort.Direction.ASC,"sortFlag");
+		List<Menu> menus=this.menuService.queryMenuByCondition(criteria,sort);
+		return menus;
+	}
   
 }

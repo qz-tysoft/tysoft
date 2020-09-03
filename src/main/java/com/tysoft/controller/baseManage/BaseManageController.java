@@ -824,6 +824,18 @@ public class BaseManageController extends BaseController {
 			String menuId = request.getParameter("id");
 			Menu menu = this.menuService.findMenuById(menuId);
 			request.setAttribute("menu", menu);
+			//菜单和排序
+			if(StringUtil.isNotBlank(menu.getSortFlag())){
+				request.setAttribute("nameAndSort", menu.getMenuName()+"-"+menu.getSortFlag());
+			}else{
+				request.setAttribute("nameAndSort", menu.getMenuName());
+			}
+			//时间转字符串
+			String createTime="";
+			if(menu.getCreatTime()!=null){
+				createTime=DateUtil.format(menu.getCreatTime(),"yyyy-MM-dd HH:mm:ss");
+			}
+			request.setAttribute("createTime", createTime);
 			request.setAttribute("power", menu.getPower());
 			view = menuEdit;
 		} else if (menuViewType.equals("menuView")) {
@@ -870,8 +882,6 @@ public class BaseManageController extends BaseController {
 						menuList.add(menu);
 					}
 					//主菜单添加
-					//先按照时间进行排序
-					Criteria<Menu> criteriaMenu=new Criteria();
 					List<Long> dateList=new ArrayList<>();
 					Map<Long,Menu> map=new HashMap<>();
 					for(int i=0;i<nowMenus.size();i++) {
@@ -895,7 +905,8 @@ public class BaseManageController extends BaseController {
 		}
 		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
 		// 查询所有的菜单
-		for (int i = 0; i < menuList.size(); i++) {
+		List<Menu> sortMenuList=sortMenu(menuList);
+		for (int i = 0; i < sortMenuList.size(); i++) {
 			Menu menu = menuList.get(i);
 			Power power = menu.getPower();
 			String powerName = "";
@@ -969,11 +980,17 @@ public class BaseManageController extends BaseController {
 		if (obj.get("icon") != null) {
 			menu.setIcon((String) obj.get("icon"));
 		}
-//		if(!StringUtil.isNotBlank((String) obj.get("menuId"))) {
-//			menu.setCreatTime(new Date());
-//		}
 		menu.setIconFlag(Integer.valueOf((String) obj.get("iconFlag")));
-		menu.setMenuName((String) obj.get("menuName"));
+		String addMenuName=((String) obj.get("menuName"));
+		//包含排序
+		if(addMenuName.indexOf("-")!=-1){
+			String oneMenu=addMenuName.split("-")[0];
+			String soft=addMenuName.split("-")[1];
+			menu.setMenuName(oneMenu);
+			menu.setSortFlag(soft);
+		}else{
+			menu.setMenuName((String) obj.get("menuName"));
+		}
 		Power power = null;
 		String powerId = (String) obj.get("choosePowerId");
 		if (!powerId.equals("clearPower")) {
